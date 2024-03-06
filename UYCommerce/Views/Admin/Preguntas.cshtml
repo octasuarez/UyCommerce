@@ -1,0 +1,68 @@
+﻿@model List<Pregunta>
+
+
+<body class="bg-body-tertiary">
+
+    <div class="container p-0">
+
+        <h3 class="pt-5 mb-4">Preguntas</h3>
+
+
+        <select class="form-select mb-4" onchange="window.location= this.value" >
+            <option>Todas las preguntas</option>
+            <option value="/admin/preguntas/sin responder">Sin Responder</option>
+            <option value="/admin/preguntas/respondidas">Respondidas</option>
+        </select>
+
+        @if (Model != null && Model.Any())
+        {
+
+            <div class="bg-white">
+
+                @foreach (var p in Model)
+                {
+                    <div class="border pt-3 pb-3 ps-5 pe-5 d-flex">
+
+                        <div class="col-8 me-5">
+
+                            <h6>@p.Usuario.Nombre @p.Usuario.Email @p.Fecha</h6>
+                            <p>@p.Contenido</p>
+
+                            @if (p.Respuesta != null)
+                            {
+
+                                <p>@p.Respuesta.Contenido</p>
+                            }
+                            else
+                            {
+                                <div class="d-flex">
+                                    <form id="@p.Id" action="AgregarRespuesta(this)">
+                                        <input name="preguntaId" type="number" value="@p.Id" hidden />
+                                        <input name="respuesta" type="text" class="form-control" />
+                                        <button type="submit" class="btn btn-primary">Responder</button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-4">
+                            <a class="fs-3" href="/@p.Producto.NombreClave">@p.Producto.Nombre</a>
+                            <img class="object-fit-contain border row" style="height:150px;width:150px" src="~/Imagenes/Productos/@p.Producto.Imagenes!.First().ImagenNombre" />
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        }
+
+    </div>
+
+    <script>function AgregarRespuesta(e) {
+
+            alert(e);
+
+
+
+        }</script>
+</body>

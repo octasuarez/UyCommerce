@@ -1,0 +1,122 @@
+﻿@model Carrito
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal JS SDK Standard Integration</title>
+</head>
+<body>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=Ab3oHLrxl1Go9442dLDXSZTUtPQC-HPiO5LAPZrDvSFxu2ONgG8pjKmpUcq7goOJRUVp7VaXPWJ_svGU"></script>
+
+    <div class="container border d-flex flex-column" style="height:100%;">
+
+        <div class="my-4">
+            <h2>Mi Carrito (@Model.Productos.Count items)</h2>
+        </div>
+
+        <div class="mt-2 w-100 h-100 d-flex">
+
+            <div class="col-8 border h-100 p-3">
+
+                <h5>Productos</h5>
+                <div class="border my-4"></div>
+                <div>
+                    @foreach (var p in Model.Productos)
+                    {
+                            <div class="border p-2" >
+                                <img class="object-fit-contain border" src="~/Imagenes/Productos/@p.Sku.Imagenes.First().ImagenNombre" style="height:100px;width:100px;"/>
+                            </div>
+                    }
+                </div>
+            </div>
+
+            <div class="border w-100" id="paypal-button-container"></div>
+
+            <p id="result-message"></p>
+        </div>
+
+    </div>
+
+
+    <script>paypal.Buttons({
+            async createOrder() {
+                try {
+                    const response = await fetch("/create-paypal-order", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    const orderData = await response.json();
+
+                    if (orderData.id) {
+                        return orderData.id;
+                    } else {
+                        const errorDetail = orderData?.details?.[0];
+                        const errorMessage = errorDetail
+                            ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+                            : JSON.stringify(orderData);
+
+                        throw new Error(errorMessage);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+                }
+            },
+            async onApprove(data, actions) {
+                try {
+                    const response = await fetch(`/orders/${data.orderID}/capture`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    const orderData = await response.json();
+
+                    console.log(orderData?.details?.[0]);
+
+                    const errorDetail = orderData?.details?.[0];
+
+                    if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+                        // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                        // recoverable state, per https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
+                        return actions.restart();
+                    } else if (errorDetail) {
+                        resultMessage("No se pudo completar la transaccion")
+                    } else if (!orderData.purchase_units) {
+                        throw new Error(JSON.stringify(orderData));
+                    } else {
+                        // (3) Successful transaction
+                        console.log(
+                            "Capture result",
+                            orderData,
+                            JSON.stringify(orderData, null, 2),
+                        );
+
+                        window.location.href = "/Pagos/Success";
+                    }
+                } catch (error) {
+                    console.error(error);
+                    resultMessage(
+                        `Sorry, your transaction could not be processed...<br><br>${error}`,
+                    );
+                }
+            },
+
+        }).render('#paypal-button-container');
+
+        function resultMessage(message) {
+            const container = document.querySelector("#result-message");
+            container.innerHTML = message;
+        }</script>
+
+
+
+</body>
+</html>

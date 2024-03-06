@@ -1,0 +1,142 @@
+﻿html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /*    margin-bottom: 0px;
+    margin-block-end: 0px;
+    margin: 0px;*/
+}
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+a {
+    color: #0077cc;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+#footer {
+    /*    position: relative;*/
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.product-card {
+    border-radius: 4px;
+/*    background: #fff;*/
+    box-shadow: 0 0px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+    transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+    cursor: pointer;
+}
+
+.product-card:hover {
+/*    transform: scale(1.05);*/
+    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+
+.ui-autocomplete {
+    z-index: 9999999 !important;
+}
+
+.ui-menu img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.ui-menu li span {
+    font-size: 1em;
+    padding: 0 0 10px 10px;
+    margin: 0 0 10px 0 !important;
+    white-space: nowrap;
+}
+
+.dropdown-menu li {
+    position: relative;
+}
+
+.dropdown-menu .dropdown-submenu {
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+
+.dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+
+.dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+}
+
+/*magnifying glass*/
+
+.glass {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+    box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.85), 0 0 7px 7px rgba(0, 0, 0, 0.25), inset 0 0 40px 2px rgba(0, 0, 0, 0.25);
+    display: none;
+}
+
+.active-img {
+    border-style: solid;
+    border-width: 3px;
+    border-color: lightskyblue;
+}
+

@@ -1,0 +1,39 @@
+﻿@model List<Orden>
+
+
+<div class="container">
+
+    <div class="mt-5">
+
+        <h3>Compras</h3>
+        <p>@Model.Count compras</p>
+
+        @if (Model.Any())
+        {
+
+            foreach (var o in Model)
+            {
+
+                <div class="d-flex">
+
+                    <h5>@o.FechaDeCompra</h5>
+                    <p>Estado: @o.Estado</p>
+
+                    @if (o.Productos != null && o.Productos.Any())
+                    {
+                        foreach (var p in o.Productos)
+                        {
+                            <p>@p.Nombre</p>
+                            <p>@p.Cantidad</p>
+                            <p>@p.Precio</p>
+                        }
+                    }
+                </div>
+
+            }
+
+        }
+    </div>
+
+</div>
+
