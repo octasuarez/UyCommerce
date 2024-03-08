@@ -49,7 +49,7 @@
                 <p>In vel eros ornare, ultrices justo sit amet, condimentum tortor. Cras quis arcu libero. Integer dictum sapien ac faucibus gravida. Vivamus in nisl malesuada dui volutpat dignissim sit amet a nisl. Fusce molestie lorem ac elit sagittis, non scelerisque augue tempus. Suspendisse eu augue rutrum, convallis mi sit amet</p>
 
                 <div class="mb-5">
-                    @for (int i = 0; i < Model.Opciones!.Count(); i++)
+                    @for (int i = 0; i < Model.Opciones.Count(); i++ )
                     {
                         <select class="form-select" name="@Model.Opciones.ElementAt(i).Key.Nombre" id="@i" onchange="cambioAtributo(this)">
 
