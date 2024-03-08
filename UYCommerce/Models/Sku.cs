@@ -5,6 +5,7 @@ namespace UYCommerce.Models
 	{
         public int Id { get; set; }
         public int ProductoId { get; set; }
+        public virtual Producto? Producto { get; set; }
         public required string Nombre { get; set; }
         public int Stock { get; set; }
         public double Precio { get; set; }

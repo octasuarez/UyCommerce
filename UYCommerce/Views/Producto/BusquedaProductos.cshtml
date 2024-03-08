@@ -155,38 +155,6 @@
                             }
                         </div>
                     }
-                    @*@if (Model.Productos != null && Model.Productos!.Any())
-                        {
-                            foreach (var p in Model.Productos)
-                            {
-                                <div id="" class="card product-card me-3" style="width: 400px;">
-                                    <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
-                                    </a>
-                                    <a href="/@p.NombreClave" class="text-decoration-none text-reset">
-                                        <img class="card-img-top object-fit-contain w-100" style="height:400px;" src="~/Imagenes/Productos/@p.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
-                                    </a>
-                                    <div class="card-body">
-                                        <ul class="d-block row text-center p-0">
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-half"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
-                                        </ul>
-                                        <a href="/@p.NombreClave" class="text-decoration-none text-reset">
-                                            <h4 class="card-title text-center">@p.Nombre</h4>
-                                            <p class="card-text text-center">
-                                                <strike class="card-text">$@(p.Skus!.First().Precio + 100)</strike><b class="card-text text-center"> $@p.Skus!.First().Precio</b>
-                                            </p>
-                                        </a>
-                                    </div>
-                                </div>
-                            }
-
-
-
-                        }*@
                 </div>
             </div>
 

@@ -64,7 +64,7 @@ namespace UYCommerce.Controllers
 
                 if (filtros is not null && filtros.Any())
                 {
-                    var atributosValores = new List<KeyValuePair<string,string>>();
+                    var atributosValores = new List<KeyValuePair<string, string>>();
 
                     for (int i = 0; i < filtros.Count(); i++)
                     {
@@ -81,7 +81,8 @@ namespace UYCommerce.Controllers
 
                 }
             }
-            if(!filtros.Any()) {
+            if (!filtros.Any())
+            {
                 result.Skus = productos.SelectMany(p => p.Skus).ToList();
             }
 
@@ -100,52 +101,38 @@ namespace UYCommerce.Controllers
         /// <returns>verProductoViewModel</returns>
         [HttpGet]
         [Route("/{key}")]
-        public async Task<IActionResult> BuscarProductoPorKey(string key, string? options)
+        public async Task<IActionResult> BuscarProductoPorKey(string key)
         {
-            Producto? producto = await BuscarProductoPorClave(key);
 
-            if (producto != null && producto.Skus != null && producto.Categoria != null && producto.Imagenes != null)
+            var sku = await _context.Skus
+                .Include(s => s.AtributosValores)!.ThenInclude(av => av.Atributo)
+                .Include(s => s.Producto).ThenInclude(p => p.Preguntas)
+                .Include(s => s.Producto).ThenInclude(p => p.Reviews)
+                .Include(s => s.Producto).ThenInclude(p => p.Marca)
+                .Include(s => s.Imagenes)
+                .FirstOrDefaultAsync(s => s.Nombre.Contains(key));
+
+            if (sku is not null)
             {
-                VerProductoVM verProductoVM = new()
+                var skus = _context.Skus
+                    .Where(s => s.ProductoId == sku.ProductoId)
+                    .Include(s => s.AtributosValores)!.ThenInclude(a => a.Atributo).ToList();
+
+                List<AtributoValor> opciones = skus.SelectMany(s => s.AtributosValores!.Where(a => a.Atributo!.Id == sku.AtributosValores!.First().Atributo!.Id)).ToList();
+
+                opciones.AddRange(skus.Where(s => s.AtributosValores!.Contains(sku.AtributosValores!.First())).SelectMany(s => s.AtributosValores!).ToList());
+
+                opciones = opciones.Distinct().ToList();
+                var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo);
+
+                VerProductoVM result = new()
                 {
-                    Producto = producto,
-                    ProductosRelacionados = producto.Categoria.Productos,
-                    Imagenes = producto.Imagenes.Select(i => i.ImagenNombre).ToList()!,
-                    Preguntas = producto.Preguntas
+                    Sku = sku,
+                    Opciones = opcionesPorAtributo,
+
                 };
 
-                if (producto.Skus.Count > 1)
-                {
-                    verProductoVM.PrecioMin = producto.Skus.Min(s => s.Precio);
-                    verProductoVM.PrecioMax = producto.Skus.Max(s => s.Precio);
-                }
-
-                Dictionary<string, string>? opciones = new();
-
-                if (!string.IsNullOrEmpty(options))
-                {
-                    opciones = FormatearOpcionesProductoQuery(options.ToLower());
-
-                    if (opciones is not null)
-                    {
-                        verProductoVM.OpcionesElegidas = opciones;
-                        var skuElegido = producto.Skus.FirstOrDefault(s => s.AtributosValores!.All(a => opciones.Values.Contains(a.Valor!.ToLower())));
-                        verProductoVM.Sku = skuElegido;
-                        if (skuElegido != null)
-                        {
-                            if (skuElegido.Imagenes != null && skuElegido.Imagenes.Any())
-                            {
-                                verProductoVM.Imagenes = skuElegido.Imagenes.Select(i => i.ImagenNombre).ToList()!;
-                            }
-                            verProductoVM.Precio = skuElegido.Precio;
-                        }
-                    }
-                }
-
-                verProductoVM.Atributos = FiltrarAtributosDeProductoSkus(producto.Skus, opciones);
-                verProductoVM.Opciones = CrearOpciones(verProductoVM.Atributos, opciones);
-
-                return View("VerProducto", verProductoVM);
+                return View("VerProducto", result);
             }
 
             return Redirect("/NotFound");
@@ -199,110 +186,6 @@ namespace UYCommerce.Controllers
                 .FirstOrDefaultAsync(p => p.NombreClave == nombreClave);
 
             return producto;
-        }
-
-        /// <summary>
-        /// Crea las opciones para el usuario poder especificar los atributos que quiere de un producto
-        /// </summary>
-        /// <returns>Lista de AtributoOpcion</returns>
-        private List<AtributoOpcion> CrearOpciones(ICollection<Atributo> atributos, Dictionary<string, string>? opciones)
-        {
-
-            List<AtributoOpcion> AtributosOpciones = new();
-
-            string linkReferencia = "";
-
-            for (int i = 0; i < atributos.Count; i++)
-            {
-                Atributo? atributoElegido = null;
-
-                var opcion = i > (opciones!.Count - 1) ? default(KeyValuePair<string, string>) : opciones!.ElementAt(i);
-
-                if (!opcion.Equals(default(KeyValuePair<string, string>)))
-                {
-                    atributoElegido = atributos.FirstOrDefault(a => a.Nombre!.ToLower() == opcion.Key.ToLower());
-                }
-
-                if (atributoElegido == null)
-                {
-                    var atributosYaExisten = AtributosOpciones.Select(s => s.AtributoNombre).Distinct();
-                    atributoElegido = atributos.FirstOrDefault(a => !atributosYaExisten.Contains(a.Nombre!));
-                }
-
-                AtributoOpcion AtrOpcionNuevo = new() { AtributoNombre = atributoElegido!.Nombre };
-
-                if (atributoElegido is not null && atributoElegido.Valores is not null)
-                {
-
-                    foreach (var atributoValor in atributoElegido.Valores)
-                    {
-                        string link = "";
-
-                        if (string.IsNullOrEmpty(linkReferencia))
-                        {
-                            link = $"?options={atributoValor.Atributo!.Nombre}:{atributoValor.Valor}";
-                        }
-                        else
-                        {
-                            link = linkReferencia + $",{atributoValor.Atributo!.Nombre}:{atributoValor.Valor}";
-                        }
-
-                        AtrOpcionNuevo.Valores.Add(atributoValor.Valor!.ToLower(), link);
-                    }
-
-                    AtributosOpciones.Add(AtrOpcionNuevo);
-
-                    if (opcion.Key != null)
-                    {
-                        linkReferencia = AtrOpcionNuevo.Valores.FirstOrDefault(s => s.Key.ToLower() == opcion.Value.ToLower()).Value;
-                    }
-
-                }
-            }
-            return AtributosOpciones;
-        }
-
-        /// <summary>
-        /// Retorna los atributos de los skus de un producto, agrupados por tipo y considernado las opciones elegidas.
-        /// </summary>
-        /// <param name="productoSkus"></param>
-        /// <param name="opciones"></param>
-        /// <returns></returns>
-        private List<Atributo> FiltrarAtributosDeProductoSkus(ICollection<Sku> productoSkus, Dictionary<string, string>? opciones)
-        {
-
-            var skus = new List<Sku>();
-
-            List<AtributoValor> atributosValores = new();
-
-            if (opciones is not null)
-            {
-                for (int i = 1; i < opciones.Count + 1; i++)
-                {
-                    foreach (var s in productoSkus)
-                    {
-                        atributosValores.AddRange(s.AtributosValores!.Where(a => a.Atributo!.Nombre!.ToLower() == opciones.First().Key));
-
-                        var skusAtributos = s.AtributosValores!.ToDictionary(a => a.Atributo!.Nombre!.ToLower(), a => a.Valor!.ToLower());
-
-                        var skuTieneOpciones = opciones.Take(i).All(o => skusAtributos!.ContainsKey(o.Key) && skusAtributos[o.Key] == o.Value);
-
-                        if (skuTieneOpciones)
-                        {
-                            skus.Add(s);
-                        }
-                    }
-                }
-            }
-
-            atributosValores.AddRange(skus.Any() ? skus.SelectMany(s => s.AtributosValores!) : productoSkus.SelectMany(s => s.AtributosValores!));
-
-            var atributosAgrupados = (from atributoValor in atributosValores
-                                      group atributoValor by atributoValor.Atributo into a
-                                      orderby a.Key.Nombre
-                                      select new Atributo() { Nombre = a.Key.Nombre, Valores = a.Distinct().ToList() }).ToList();
-
-            return atributosAgrupados;
         }
         /// <summary>
         /// Retrona los productos que esten dentro de la categoria especificada

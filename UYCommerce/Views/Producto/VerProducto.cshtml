@@ -7,20 +7,20 @@
 
         <div class="d-flex row col-12 mt-5">
             <div class="col-6">
-                <img id="imgmain" class="magniflier object-fit-contain" style="height:500px;width:500px;" src="~/Imagenes/Productos/@Model.Imagenes!.ElementAt(0)" />
+                <img id="imgmain" class="magniflier object-fit-contain" style="height:500px;width:500px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
 
                 <ul class="list-unstyled d-flex">
                     <li class="me-2">
                         <img onmouseover="cambiarImagen(this)"
-                             class="object-fit-contain active-img" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Imagenes.ElementAt(0)" />
+                             class="object-fit-contain active-img" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
                     </li>
-                    @if (Model.Imagenes.Count > 1)
+                    @if (Model.Sku.Imagenes!.Count > 1)
                     {
-                        for (int i = 1; i < Model.Imagenes!.Count; i++)
+                        for (int i = 1; i < Model.Sku.Imagenes!.Count; i++)
                         {
                             <li class="me-2">
                                 <img onmouseover="cambiarImagen(this)"
-                                     class="object-fit-contain" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Imagenes.ElementAt(i)" />
+                                     class="object-fit-contain" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i).ImagenNombre" />
                             </li>
 
                         }
@@ -37,33 +37,31 @@
             @*Detalles del producto y sus atributos*@
 
             <div class="col-6 border p-3 ">
-                <h1>@Model.Producto.Nombre</h1>
+                <h1>@Model.Sku.Producto.Nombre</h1>
                 @if (Model.Sku != null)
                 {
                     <h3>Precio $@Model.Sku.Precio</h3>
                 }
                 else
                 {
-                    <h3>Precio $@Model.PrecioMin - @Model.PrecioMax</h3>
+                    <h3>Precio $@Model.Sku!.Precio</h3>
                 }
                 <p>In vel eros ornare, ultrices justo sit amet, condimentum tortor. Cras quis arcu libero. Integer dictum sapien ac faucibus gravida. Vivamus in nisl malesuada dui volutpat dignissim sit amet a nisl. Fusce molestie lorem ac elit sagittis, non scelerisque augue tempus. Suspendisse eu augue rutrum, convallis mi sit amet</p>
 
                 <div class="mb-5">
-                    @foreach (var opcion in Model.Opciones)
+                    @for (int i = 0; i < Model.Opciones!.Count(); i++)
                     {
-                        <select class="form-select" name="@opcion.AtributoNombre" id="@opcion.AtributoNombre" onchange="cambioAtributo(this)">
-                            <option value="-1" >Seleccione un @opcion.AtributoNombre!.ToLower()</option>
+                        <select class="form-select" name="@Model.Opciones.ElementAt(i).Key.Nombre" id="@i" onchange="cambioAtributo(this)">
 
-                            @foreach (var valor in opcion.Valores)
+                            @foreach (var atributo in Model.Opciones.ElementAt(i))
                             {
-                                if (Model.OpcionesElegidas != null && Model.OpcionesElegidas.ContainsValue(valor.Key.ToLower()))
+                                if (Model.Sku.AtributosValores!.Contains(atributo))
                                 {
-                                    <option value="@valor.Value" selected>@valor.Key</option>
-
+                                    <option value="@atributo.Valor" selected>@atributo.Valor</option>
                                 }
                                 else
                                 {
-                                    <option value="@valor.Value">@valor.Key</option>
+                                    <option value="@atributo.Valor">@atributo.Valor</option>
                                 }
                             }
                         </select>
@@ -107,7 +105,7 @@
 
         <div class="mt-5 mb-5">
             <h3 class="text-center">Descripcion</h3>
-            <span>@Model.Producto.Descripcion</span>
+            <span>@Model.Sku.Producto.Descripcion</span>
         </div>
 
         @* Preguntas *@
@@ -115,8 +113,7 @@
 
             <h3 class="text-center">Preguntas</h3>
 
-            <h5>@Model.Preguntas.Count preguntas</h5>
-
+            <h5>@Model.Sku.Producto.Preguntas.Count preguntas</h5>
 
             <div class="row mb-4 mt-3">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -134,9 +131,9 @@
 
             <div id="Preguntas">
 
-                @if (Model.Preguntas.Any())
+                @if (Model.Sku.Producto.Preguntas != null && Model.Sku.Producto.Preguntas.Any())
                 {
-                    foreach (var p in Model.Preguntas)
+                    foreach (var p in Model.Sku.Producto.Preguntas)
                     {
                         <h5>@p.Usuario.Nombre</h5>
                         <p>@p.Contenido</p>
@@ -158,36 +155,43 @@
         </div>
 
         @* La lista de productos relacionados *@
-        <div>
-            <h3 class="text-center">Productos Relacionados</h3>
-            <div class="d-flex mt-5">
+        <!--<div>
+                <h3 class="text-center">Productos Relacionados</h3>
+                <div class="d-flex mt-5">-->
+        @*@foreach (var p in Model.ProductosRelacionados!)
+            {
+                <div class="card me-3" style="width: 300px;">
 
-                @foreach (var p in Model.ProductosRelacionados!)
-                {
-                    <div class="card me-3" style="width: 300px;">
-
-                        <img class="card-img-top object-fit-contain" style="height:300px;" src="~/Imagenes/Productos/@p.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
-                        <div class="card-body">
-                            <a href="/@p.NombreClave" class="text-decoration-none text-reset">
-                                <h3 class="card-title">@p.Nombre</h3>
-                                <h5 class="card-text">$@p.Skus!.First().Precio</h5>
-                            </a>
-                            <button class="btn btn-primary">Add to cart</button>
-                        </div>
+                    <img class="card-img-top object-fit-contain" style="height:300px;" src="~/Imagenes/Productos/@p.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                    <div class="card-body">
+                        <a href="/@p.NombreClave" class="text-decoration-none text-reset">
+                            <h3 class="card-title">@p.Nombre</h3>
+                            <h5 class="card-text">$@p.Skus!.First().Precio</h5>
+                        </a>
+                        <button class="btn btn-primary">Add to cart</button>
                     </div>
-                }
-            </div>
-        </div>
+                </div>
+            }*@
+        <!--</div>
+        </div>-->
 
     </div>
 
 
     <script>function cambioAtributo(e) {
-            if (e.value !== "-1") {
+                    var url = "/@Model.Sku.Producto.NombreClave";
+                    if (e.id == 0) {
+                        window.location.href = (url + `-${e.value}`).toLowerCase();
 
-                window.location.href = e.value;
-            }
-        }</script>
+                    } else {
+                    let selects = e.parentElement.children;
+
+                    for (i = 0; i < selects.length; i++) {
+                        url = url + "-" + selects[i].value;
+                    }
+                    window.location.href = url.toLowerCase();
+                    }
+            }</script>
 
     <script>
     function AgregarProductoAlCarrito(e) {
