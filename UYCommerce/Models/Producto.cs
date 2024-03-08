@@ -18,8 +18,6 @@ namespace UYCommerce.Models
         public ICollection<Sku>? Skus { get; set; }
         public ICollection<Review>? Reviews { get; set; }
 
-        [NotMapped]
-        public bool Favorito;
     }
 }
 

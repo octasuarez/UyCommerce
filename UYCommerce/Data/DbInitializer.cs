@@ -18,7 +18,7 @@ namespace UYCommerce.Data
                 serviceProvider.GetRequiredService<DbContextOptions<ShopContext>>()))
             {
 
-                //context.Database.EnsureDeleted();
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
 
@@ -181,7 +181,7 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Nombre="iphone-11-azul",
+                                    Nombre="iphone-11-azul-64gb",
                                     Stock = 4,
                                     Precio = 759.99,
                                     Imagenes = new SkuImagen[]
@@ -197,7 +197,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="iphone-11-rojo",
+                                    Nombre="iphone-11-rojo-64gb",
                                     Stock = 4,
                                     Precio = 800,
                                     Imagenes = new SkuImagen[]
@@ -244,7 +244,7 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Nombre="vlone-1",
+                                    Nombre="remera-vlone-violeta",
                                     Stock = 4,
                                     Precio = 135,
                                     Imagenes = new SkuImagen[]
@@ -257,7 +257,7 @@ namespace UYCommerce.Data
                                     },
                                 },
                                 new Sku{
-                                    Nombre="vlone-2",
+                                    Nombre="remera-vlone-azul",
                                     Stock = 4,
                                     Precio = 140,
                                     AtributosValores = new AtributoValor[]
@@ -270,7 +270,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="vlone-3",
+                                    Nombre="remera-vlone-rojo",
                                     Stock = 4,
                                     Precio = 300,
                                     AtributosValores = new AtributoValor[]
@@ -283,7 +283,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="vlone-4",
+                                    Nombre="remera-vlone-naranja",
                                     Stock = 4,
                                     Precio = 399.99,
                                     AtributosValores = new AtributoValor[]
@@ -315,7 +315,7 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Nombre="macbook-1-8gb",
+                                    Nombre="macbook-m2-8gb",
                                     Stock = 1,
                                     Precio = 1250,
                                     AtributosValores = new AtributoValor[]
@@ -330,7 +330,7 @@ namespace UYCommerce.Data
                                     },
                                 },
                                 new Sku{
-                                    Nombre="macbook-1-16gb",
+                                    Nombre="macbook-m2-16gb",
                                     Stock = 5,
                                     Precio = 1689,
                                     AtributosValores = new AtributoValor[]
