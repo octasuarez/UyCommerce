@@ -28,7 +28,7 @@
                     @if (Model.Categoria != null && Model.Categoria.CategoriaPadre != null)
                     {
                         <li class="breadcrumb-item" aria-current="page">
-                            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/search?categoria=@Model.Categoria.CategoriaPadre.Nombre">@Model.Categoria.CategoriaPadre.Nombre</a>
+                            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Model.Categoria.CategoriaPadre.Nombre</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">@Model.Categoria!.Nombre</li>
                     }
@@ -53,7 +53,7 @@
                             <li class="mb-2">
                                 @if (Model.Categoria != null && c.Id == Model.Categoria.Id)
                                 {
-                                    <a href="/search?categoria=@c.Nombre" class="fs-5 text-decoration-none text-info">@c.Nombre</a>
+                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-info">@c.Nombre</a>
                                     <div class="ps-3 mt-3">
                                         <ul class="list-unstyled">
                                             @foreach (var sc in Model.Categoria.SubCategorias)
@@ -61,11 +61,11 @@
                                                 <li class="mb-3">
                                                     @if (sc.Id == Model.Categoria.Id)
                                                     {
-                                                        <a href="/search?categoria=@sc.Nombre" class="fs-5 text-decoration-none text-info">@sc.Nombre</a>
+                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-info">@sc.Nombre</a>
                                                     }
                                                     else
                                                     {
-                                                        <a href="/search?categoria=@sc.Nombre" class="fs-5 text-decoration-none text-body">@sc.Nombre</a>
+                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-body">@sc.Nombre</a>
                                                     }
                                                 </li>
                                             }
@@ -75,7 +75,7 @@
                                 }
                                 else
                                 {
-                                    <a href="/search?categoria=@c.Nombre" class="fs-5 text-decoration-none text-body">@c.Nombre</a>
+                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-body">@c.Nombre</a>
                                 }
                             </li>
                         }
@@ -129,9 +129,16 @@
 
                             @foreach (var s in Model.Skus)
                             {
-                                <div id="" class="card product-card m-3" style="height:500px;width: 300px;">
+                                <div id="@s.Id" class="card product-card m-3" style="height:500px;width: 300px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
+                                        @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
+                                        {
+                                            <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
+                                        }
                                     </a>
                                     <a href="/@s.Nombre" class="text-decoration-none text-reset">
                                         <img class="card-img-top" style="height:300px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
@@ -163,19 +170,6 @@
     </div>
 
 
-    <script>function AgregarAFavoritos(e) {
+    <script src="~/js/site.js"></script>
 
-            console.log(e);
-
-            var element = e.firstElementChild.classList;
-
-            if (element.contains('bi-heart-fill', 0)) {
-                element.replace('bi-heart-fill', 'bi-heart')
-                element.replace('text-danger', 'text-secondary')
-            } else {
-                element.replace('bi-heart', 'bi-heart-fill');
-                element.add('text-secondary', 'text-danger')
-            }
-
-        }</script>
 </body>

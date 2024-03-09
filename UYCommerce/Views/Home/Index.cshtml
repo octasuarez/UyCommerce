@@ -51,7 +51,7 @@
             {
                 <div class="me-3 border-0" style="width: 20rem;">
 
-                    <a class="text-decoration-none text-reset h-100" href="/search?categoria=@c.Nombre">
+                    <a class="text-decoration-none text-reset h-100" href="/c/@c.Nombre">
                         <img class="card-img-top h-100 object-fit-cover" src="~/Imagenes/Categorias/@c.ImagenNombre" alt="categoria">
                     </a>
                     <div class="card-body">
@@ -73,7 +73,7 @@
                 {
 
                     <div id="@p.Id" class="card product-card me-3" style="width: 400px;">
-                        <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Agregar a Favoritos">
+                        @*<a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Agregar a Favoritos">
                             @if (Model.Favoritos.Contains(p))
                             {
                                 <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
@@ -82,7 +82,7 @@
                             {
                                 <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
                             }
-                        </a>
+                        </a>*@
                         <a href="/@p.NombreClave" class="text-decoration-none text-reset">
                             <img class="card-img-top object-fit-contain w-100" style="height:400px;" src="~/Imagenes/Productos/@p.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                         </a>

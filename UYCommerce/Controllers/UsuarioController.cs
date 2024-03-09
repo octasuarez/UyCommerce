@@ -21,12 +21,9 @@ namespace UYCommerce.Controllers
 
         public UsuarioController(ShopContext context)
         {
-
             _context = context;
         }
 
-
-        
 
         [HttpGet]
         [Route("Compras")]
@@ -50,21 +47,24 @@ namespace UYCommerce.Controllers
             return View("Compras", compras);
         }
 
-        [HttpGet]
-        [Route("Favoritos")]
-        public async Task<IActionResult> GetFavoritos()
+        
+        public async Task<ICollection<Sku>?> GetFavoritos()
         {
             var usuario = await _context.Usuarios
-                .Include(u => u.Favoritos)!.ThenInclude(p => p.Skus)!
-                .Include(u => u.Favoritos)!.ThenInclude(p => p.Imagenes)!
+                .Include(u => u.Favoritos)!
+                .Include(u => u.Favoritos)!.ThenInclude(s => s.Imagenes)!
                 .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (usuario is null)
-            {
-                return Redirect("/Login");
-            }
-            return View("Favoritos", usuario.Favoritos);
+            if(usuario is null) { return null; }
 
+            return usuario!.Favoritos;
+        }
+
+        [HttpGet]
+        [Route("Favoritos")]
+        public async Task<IActionResult> VerFavoritos() {
+
+            return View("Favoritos", await GetFavoritos());
         }
 
         [HttpPost]

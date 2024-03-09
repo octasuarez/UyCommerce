@@ -7,6 +7,7 @@ namespace UYCommerce.Models
         public ICollection<Producto>? Productos { get; set; }
         public ICollection<Sku>? Skus { get; set; }
         public Categoria? Categoria { get; set; }
+		public ICollection<Sku>? Favoritos { get; set; }
 	}
 }
 
