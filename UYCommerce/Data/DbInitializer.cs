@@ -366,10 +366,10 @@ namespace UYCommerce.Data
                         Email = "juan@gmail.com",
                         Rol = roles[0],
                         Password = "123",
-                        Favoritos = new Producto[]
+                        Favoritos = new Sku[]
                         {
-                            productos[0],
-                            productos[1],
+                            productos[0].Skus.ElementAt(1),
+                            productos[1].Skus.ElementAt(1),
                         }
                     }
                 };

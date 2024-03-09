@@ -21,7 +21,6 @@ namespace UYCommerce.Controllers
 
         public ProductoController(ShopContext context)
         {
-
             _context = context;
         }
 
@@ -33,7 +32,7 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("/search")]
-        public async Task<IActionResult> BuscarProductos(string? query, string? categoria, string[]? filtros)
+        public async Task<IActionResult> BuscarProductosPorQuery(string query)
         {
             BusquedaProductoVM result = new();
 
@@ -44,50 +43,70 @@ namespace UYCommerce.Controllers
              .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
              .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
 
-            if (!string.IsNullOrEmpty(query))
+            productos = productos.Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower()));
+
+            result.Skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
+
+            result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
+                .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
+
+            if (User.Identity!.IsAuthenticated)
             {
-                productos = productos.Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower()));
+                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
             }
-            else if (!string.IsNullOrEmpty(categoria)) //si no hay search query pero si categoria
+
+            return View("BusquedaProductos", result);
+        }
+
+        [HttpGet]
+        [Route("/c/{categoria}")]
+        public async Task<IActionResult> BuscarProductosPorCategoria(string categoria, string[]? filtros)
+        {
+
+            BusquedaProductoVM result = new BusquedaProductoVM();
+
+            IQueryable<Producto> productos = _context.Productos
+             .Include(p => p.Categoria)
+             .ThenInclude(c => c!.CategoriaPadre)
+             .Include(p => p.Imagenes)
+             .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+             .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
+
+            result.Categoria = _context.Categorias
+                .Include(c => c.CategoriaPadre)
+                .Include(c => c.Atributos)!.ThenInclude(a => a.Valores)
+                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower());
+
+            if (result.Categoria != null)
             {
+                productos = productos.Where(p => p.Categoria!.Nombre!.ToLower() == categoria.ToLower()
+                || p.Categoria.CategoriaPadre!.Nombre!.Equals(categoria));
 
-                result.Categoria = _context.Categorias
-                    .Include(c => c.CategoriaPadre)
-                    .Include(c => c.Atributos)!.ThenInclude(a => a.Valores)
-                    .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower());
+                result.Skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
+            }
+            if (filtros is not null && filtros.Any())
+            {
+                var atributosValores = new List<KeyValuePair<string, string>>();
 
-                if (result.Categoria != null)
+                for (int i = 0; i < filtros.Count(); i++)
                 {
-                    productos = productos.Where(p => p.Categoria!.Nombre!.ToLower() == categoria.ToLower()
-                    || p.Categoria.CategoriaPadre!.Nombre!.Equals(categoria));
-                }
-
-                if (filtros is not null && filtros.Any())
-                {
-                    var atributosValores = new List<KeyValuePair<string, string>>();
-
-                    for (int i = 0; i < filtros.Count(); i++)
+                    if (filtros[i].Contains('-'))
                     {
-                        if (filtros[i].Contains('-'))
-                        {
-                            var atributoValor = filtros[i].Split("-");
-                            atributosValores.Add(new KeyValuePair<string, string>(atributoValor[0].ToLower(), atributoValor[1].ToLower()));
-                        }
+                        var atributoValor = filtros[i].Split("-");
+                        atributosValores.Add(new KeyValuePair<string, string>(atributoValor[0].ToLower(), atributoValor[1].ToLower()));
                     }
-
-                    result.Skus = productos.SelectMany(p => p.Skus).ToList();
-                    result.Skus =
-                        result.Skus.Where(s => atributosValores.All(atr => s.AtributosValores.Any(av => av.Atributo.Nombre.ToLower() == atr.Key && av.Valor.ToLower() == atr.Value))).ToList();
-
                 }
-            }
-            if (!filtros.Any())
-            {
-                result.Skus = productos.SelectMany(p => p.Skus).ToList();
+
+                result.Skus = result.Skus.Where(s => atributosValores.All(atr => s.AtributosValores!.Any(av => av.Atributo!.Nombre!.ToLower() == atr.Key && av.Valor!.ToLower() == atr.Value))).ToList();
             }
 
             result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
                 .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
+
+            if (User.Identity!.IsAuthenticated)
+            {
+                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+            }
 
             return View("BusquedaProductos", result);
         }
@@ -138,89 +157,6 @@ namespace UYCommerce.Controllers
             return Redirect("/NotFound");
         }
 
-        /// <summary>
-        /// Formatea las opciones de un producto
-        /// </summary>
-        /// <param name="opciones"></param>
-        /// <returns>Diccionario de valores string</returns>
-        private Dictionary<string, string>? FormatearOpcionesProductoQuery(string? opciones)
-        {
-
-            if (!string.IsNullOrEmpty(opciones))
-            {
-                string[] atributosFiltro = opciones.Contains(',') ? opciones.Split(",") : new string[] { opciones };
-
-                var atributosValores = new Dictionary<string, string>();
-
-                foreach (var a in atributosFiltro)
-                {
-                    if (a.Contains(':'))
-                    {
-                        var atributoValor = a.Split(":");
-                        atributosValores.Add(atributoValor[0], atributoValor[1]);
-                    }
-                }
-
-                return atributosValores;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Busca un producto por su nombre clave
-        /// </summary>
-        /// <param name="nombreClave"></param>
-        /// <returns>Producto o Null</returns>
-        private async Task<Producto?> BuscarProductoPorClave(string nombreClave)
-        {
-
-            Producto? producto = await _context.Productos
-                .Include(p => p.Imagenes)
-                .Include(p => p.Preguntas)!.ThenInclude(pr => pr.Respuesta)
-                .Include(p => p.Preguntas)!.ThenInclude(pr => pr.Usuario)
-                .Include(p => p.Categoria).ThenInclude(c => c!.Productos)
-                .Include(p => p.Marca)
-                .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-                .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .FirstOrDefaultAsync(p => p.NombreClave == nombreClave);
-
-            return producto;
-        }
-        /// <summary>
-        /// Retrona los productos que esten dentro de la categoria especificada
-        /// </summary>
-        /// <param name="nombreCategoria"></param>
-        /// <returns></returns>
-
-        [HttpGet]
-        [Route("/c/{nombreCategoria}")]
-        public async Task<IActionResult> BuscarProductoPorCategoria(string? nombreCategoria)
-        {
-            var categoria = await _context.Categorias
-                .Include(c => c.CategoriaPadre)
-                .Include(c => c.SubCategorias)
-                .FirstOrDefaultAsync(c => c.Nombre == nombreCategoria);
-
-            if (categoria is null)
-            {
-                return View("../Home/Index");
-            }
-
-            var productos = await _context.Productos
-                .Include(p => p.Imagenes)
-                .Include(p => p.Skus)
-                .Where(p => p.Categoria == categoria || p.Categoria!.CategoriaPadre!.Nombre == nombreCategoria)
-                .ToListAsync();
-
-            var categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
-                .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
-
-            BusquedaProductoVM result = new() { Categorias = categorias, Productos = productos, Categoria = categoria };
-
-            return View("BusquedaProductos", result);
-        }
-
         [HttpPost]
         public async Task<JsonResult> Autocomplete(string query)
         {
@@ -241,7 +177,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AgregarAFavoritos(string productoId)
+        public async Task<IActionResult> AgregarAFavoritos(string skuId)
         {
 
             if (User.Identity is null || User.Identity!.IsAuthenticated == false)
@@ -249,9 +185,9 @@ namespace UYCommerce.Controllers
                 return new BadRequestObjectResult("El usuario no esta autenticado");
             }
 
-            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.Id.ToString() == productoId);
+            var sku = await _context.Skus.FirstOrDefaultAsync(s => s.Id.ToString() == skuId);
 
-            if (producto is null)
+            if (sku is null)
             {
                 return new BadRequestObjectResult("El producto no fue encontrado");
             }
@@ -266,14 +202,14 @@ namespace UYCommerce.Controllers
             }
             else
             {
-                if (usuario.Favoritos!.Contains(producto))
+                if (usuario.Favoritos!.Contains(sku))
                 {
-                    usuario.Favoritos.Remove(producto);
+                    usuario.Favoritos.Remove(sku);
                     msj = "eliminado";
                 }
                 else
                 {
-                    usuario.Favoritos.Add(producto);
+                    usuario.Favoritos.Add(sku);
                     msj = "agregado";
 
                 }

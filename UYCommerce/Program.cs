@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using UYCommerce.Controllers;
 using UYCommerce.Data;
 using UYCommerce.Paypal;
 

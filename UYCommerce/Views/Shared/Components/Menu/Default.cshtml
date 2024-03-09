@@ -16,7 +16,7 @@
             {
                 <li class="dropend">
 
-                    <a class="dropdown-item" href="/search?categoria=@c.Nombre">@c.Nombre</a>
+                    <a class="dropdown-item" href="/c/@c.Nombre">@c.Nombre</a>
 
                     <ul class="dropdown-menu dropdown-submenu">
 
@@ -25,7 +25,7 @@
                             foreach (var subCategoria in c.SubCategorias)
                             {
                                 <li>
-                                    <a href="/search?categoria=@subCategoria.Nombre" class="dropdown-item">@subCategoria.Nombre</a>
+                                    <a href="/c/@subCategoria.Nombre" class="dropdown-item">@subCategoria.Nombre</a>
                                 </li>
                             }
                         }

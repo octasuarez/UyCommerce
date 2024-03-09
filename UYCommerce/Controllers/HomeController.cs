@@ -31,7 +31,7 @@ public class HomeController : Controller
 
             Categorias = await _context.Categorias.Where(c => c.MostrarEnInicio == true).ToListAsync(),
 
-            Favoritos = new List<Producto>()
+            Favoritos = new List<Sku>()
         };
 
         var usuario = new Usuario();

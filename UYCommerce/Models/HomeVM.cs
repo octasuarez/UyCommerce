@@ -6,7 +6,7 @@ namespace UYCommerce.Models
 		public ICollection<string>? ImagenesCarousel { get; set; }
         public ICollection<Categoria>? Categorias { get; set; }
         public ICollection<Producto>? Productos { get; set; }
-        public required ICollection<Producto> Favoritos { get; set; }
+        public required ICollection<Sku> Favoritos { get; set; }
     }
 }
 

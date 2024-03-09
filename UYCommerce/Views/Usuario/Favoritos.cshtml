@@ -1,4 +1,4 @@
-﻿@model ICollection<Producto>
+﻿@model ICollection<Sku>
 
 <body class="bg-body-tertiary">
 
@@ -12,7 +12,7 @@
                     <p>@Model.Count articulos</p>
                 </div>
                 <ul class="list-unstyled bg-white col-10 mx-auto">
-                    @foreach (var p in Model)
+                    @foreach (var s in Model)
                     {
                         <li class="border mx-auto p-2">
                             <div class="d-flex align-items-center ">
@@ -23,15 +23,15 @@
                                 </div>
 
                                 <div class="d-inline ms-5">
-                                    <img src="~/Imagenes/Productos/@p.Imagenes!.First().ImagenNombre"
+                                    <img src="~/Imagenes/Productos/@s.Imagenes!.First().ImagenNombre"
                                          style="height:200px;width:200px;"
                                          class="object-fit-contain " />
                                 </div>
 
                                 <div class="d-inline">
-                                    <a class="text-black fs-3" href="/@p.NombreClave"> @p.Nombre</a>
+                                    <a class="text-black fs-3" href="/@s.Nombre"> @s.Nombre</a>
                                     <p class="card-text text-center">
-                                        <strike class="card-text">$@(p.Skus!.First().Precio + 100)</strike><b class="card-text text-center"> $@p.Skus!.First().Precio</b>
+                                        <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
                                     </p>
                                 </div>
                             </div>
