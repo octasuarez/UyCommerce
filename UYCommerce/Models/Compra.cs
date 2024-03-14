@@ -11,5 +11,7 @@ namespace UYCommerce.Models
         public string? FechaDeCompra { get; set; }
         public List<ProductoCompra>? Productos { get; set; } = new List<ProductoCompra>();
     }
+
+    
 }
 

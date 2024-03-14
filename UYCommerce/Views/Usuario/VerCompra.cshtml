@@ -1,0 +1,18 @@
+﻿@model Orden
+
+
+
+<div class="container" style="min-height:500px;">
+
+    <h3 class="mt-5">Compra @Model.Id</h3>
+    <div class="col-2">
+        <h3>Direccion</h3>
+        <p>@Model.Direccion!.address_line_1</p>
+        <p>@Model.Direccion.address_line_2</p>
+        <p>@Model.Direccion.admin_area_1</p>
+        <p>@Model.Direccion.admin_area_2</p>
+        <p>@Model.Direccion.postal_code</p>
+        <p>@Model.Direccion.country_code</p>
+    </div>
+
+</div>

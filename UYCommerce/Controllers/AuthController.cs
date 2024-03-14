@@ -24,79 +24,81 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("Login")]
-        public IActionResult Login(string? returnUrl)
+        public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(string? email, string? pwd, bool rememberMe, string? returnUrl)
+        public async Task<IActionResult> Login(LoginModel loginModel)
         {
 
-            var usuario = await _context.Usuarios
-                .Include(u=>u.Rol)
-                .FirstOrDefaultAsync(u => u.Email == email!.ToLower());
-
-            if (usuario is not null && usuario.Password == pwd)
+            if (ModelState.IsValid)
             {
 
-                var claims = new List<Claim>
+                var usuario = await _context.Usuarios
+                    .Include(u => u.Rol)
+                    .Include(u => u.Carrito)
+                    .FirstOrDefaultAsync(u => u.Email == loginModel.Email!.ToLower());
+
+                if (usuario is not null && usuario.Password == loginModel.Password)
                 {
+
+                    var claims = new List<Claim>
+                    {
                     new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                     new Claim(ClaimTypes.Name, usuario.Email!),
                     new Claim("FullName", usuario.Nombre!),
-                    new Claim(ClaimTypes.Role, usuario.Rol!.Nombre!),   
-                };
+                    new Claim(ClaimTypes.Role, usuario.Rol!.Nombre!),
+                    new Claim("CarritoId", usuario.Carrito.Id.ToString()),
+                    };
 
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
 
-                var authProperties = new AuthenticationProperties
-                {
-                    //AllowRefresh = <bool>,
-                    // Refreshing the authentication session should be allowed.
+                    var authProperties = new AuthenticationProperties
+                    {
+                        //AllowRefresh = <bool>,
+                        // Refreshing the authentication session should be allowed.
 
-                    //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-                    // The time at which the authentication ticket expires. A 
-                    // value set here overrides the ExpireTimeSpan option of 
-                    // CookieAuthenticationOptions set with AddCookie.
+                        //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                        // The time at which the authentication ticket expires. A 
+                        // value set here overrides the ExpireTimeSpan option of 
+                        // CookieAuthenticationOptions set with AddCookie.
 
-                    //IsPersistent = true,
-                    // Whether the authentication session is persisted across 
-                    // multiple requests. When used with cookies, controls
-                    // whether the cookie's lifetime is absolute (matching the
-                    // lifetime of the authentication ticket) or session-based.
+                        //IsPersistent = true,
+                        // Whether the authentication session is persisted across 
+                        // multiple requests. When used with cookies, controls
+                        // whether the cookie's lifetime is absolute (matching the
+                        // lifetime of the authentication ticket) or session-based.
 
-                    //IssuedUtc = <DateTimeOffset>,
-                    // The time at which the authentication ticket was issued.
+                        //IssuedUtc = <DateTimeOffset>,
+                        // The time at which the authentication ticket was issued.
 
-                    //RedirectUri = <string>
-                    // The full path or absolute URI to be used as an http 
-                    // redirect response value.
-                };
+                        //RedirectUri = <string>
+                        // The full path or absolute URI to be used as an http 
+                        // redirect response value.
+                    };
 
-                if (rememberMe) {
-                    authProperties.IsPersistent = true;
+                    if (loginModel.RememberMe)
+                    {
+                        authProperties.IsPersistent = true;
+                    }
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+
+                    return RedirectToAction("Index", "Home");
                 }
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-
-                if (!string.IsNullOrEmpty(returnUrl)) {
-                    return Redirect(returnUrl);
-                }
-
-                return RedirectToAction("Index", "Home");   
             }
 
-
-            return View("Login");
+            return View("Login", loginModel);
         }
 
         [HttpGet]
@@ -128,7 +130,8 @@ namespace UYCommerce.Controllers
                 await _context.Usuarios.AddAsync(usuario);
                 await _context.SaveChangesAsync();
 
-                return await Login(usuario.Email, usuario.Password, false, null);
+                LoginModel loginModel = new() { Email = registerModel.Email, Password = registerModel.Password };
+                return await Login(loginModel);
 
                 //return RedirectToAction("Index", "Home");
             }

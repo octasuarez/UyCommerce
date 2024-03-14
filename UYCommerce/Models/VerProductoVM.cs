@@ -9,6 +9,14 @@ namespace UYCommerce.Models
         public ICollection<Pregunta> Preguntas { get; set; } = new List<Pregunta>();
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<Producto>? ProductosRelacionados { get; set; }
+        public Categoria? Categoria { get; set; }
+
+
+        public double GetPuntuacionPromedio() {
+
+            if(Reviews is null) { return 0; }
+            return Reviews.Average(r => r.Puntuacion);
+        }
     }
 
 }

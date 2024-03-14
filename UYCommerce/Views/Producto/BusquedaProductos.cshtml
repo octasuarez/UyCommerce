@@ -41,10 +41,25 @@
                 </ol>
             </nav>
 
-            //Categorias
-
+            //Categorias Y Filtros
             <div class="d-flex">
                 <div class="flex-shrink-0 border" style="padding:50px 200px 50px 50px;">
+
+                    @if (Model.Atributos != null && Model.Atributos.Any())
+                    {
+                        <h4 class="fw-bold mb-4">Filtros</h4>
+                        <div>
+                            <ul class="list-unstyled">
+
+                                @foreach (var a in Model.Atributos)
+                                {
+                                    <li class="filtro" data-value="@a.Key-@a.Value" onclick="QuitarFiltro(this)">
+                                        <a>@a.Key @a.Value</a><i class="bi bi-x"></i>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
                     <h4 class="fw-bold mb-4">Categorias</h4>
 
                     <ul class="list-unstyled">
@@ -89,19 +104,22 @@
                         <ul class="list-unstyled">
                             @foreach (var a in Model.Categoria.Atributos)
                             {
-                                <li class="mb-3">
-                                    <p class="fs-5 fw-semibold">@a.Nombre</p>
-                                    <ul class="list-unstyled">
+                                if (Model.Atributos == null || !Model.Atributos.Select(a => a.Key).Contains(a.Nombre.ToLower()))
+                                {
+                                    <li class="mb-3">
+                                        <p class="fs-5 fw-semibold">@a.Nombre</p>
+                                        <ul class="list-unstyled">
 
-                                        @foreach (var v in a.Valores)
-                                        {
-                                            <li>
-                                                <a href="@this.Context.Request.QueryString&filtros=@a.Nombre-@v.Valor" class="text-decoration-none text-body">@v.Valor</a>
-                                            </li>
+                                            @foreach (var v in a.Valores)
+                                            {
+                                                <li class="atributo">
+                                                    <a data-value="@a.Nombre-@v.Valor" onclick="AgregarFiltro(this)" class="text-decoration-none text-body">@v.Valor</a>
+                                                </li>
 
-                                        }
-                                    </ul>
-                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
                             }
                         </ul>
 
@@ -116,12 +134,11 @@
                     {
                         <div class="d-flex align-items-center col-3 mx-4">
                             <h5 class="text-nowrap me-2">Ordenar por</h5>
-                            <select class="form-select">
+                            <select class="form-select" onchange="OrdenarProductos(this.value)">
                                 <option value="">Posicion</option>
-                                <option value="">Precio: Mayor a Menor</option>
-                                <option value="">Precio: Menor a Mayor</option>
-                                <option value="">Rating: Alto a Bajo</option>
-                                <option value="">Rating: Bajo a Alto</option>
+                                <option value="1">Precio: Mayor a Menor</option>
+                                <option value="2">Precio: Menor a Mayor</option>
+                                <option value="3">Rating</option>
                             </select>
                         </div>
 
@@ -129,7 +146,7 @@
 
                             @foreach (var s in Model.Skus)
                             {
-                                <div id="@s.Id" class="card product-card m-3" style="height:500px;width: 300px;">
+                                <div id="@s.Id" class="card product-card m-3" style="height:600px;width: 400px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
                                         @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
                                         {
@@ -140,18 +157,25 @@
                                             <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
                                     </a>
-                                    <a href="/@s.Nombre" class="text-decoration-none text-reset">
-                                        <img class="card-img-top" style="height:300px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                    <a href="/@s.Key" class="text-decoration-none text-reset">
+                                        <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                                     </a>
                                     <div class="card-body">
-                                        <ul class="d-block row text-center p-0">
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-half"></i></li>
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                        <ul class="text-center p-0">
+
+                                            @for (int i = 0; i < 5; i++)
+                                            {
+                                                if (i < s.Producto.GetPuntuacionPromedio())
+                                                {
+                                                    <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                                }
+                                            }
                                         </ul>
-                                        <a href="/@s.Nombre" class="text-decoration-none text-reset">
+                                        <a href="/@s.Key" class="text-decoration-none text-reset">
                                             <h4 class="card-title text-center">@s.Nombre</h4>
                                             <p class="card-text text-center">
                                                 <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
@@ -171,5 +195,47 @@
 
 
     <script src="~/js/site.js"></script>
+    <script>function AgregarFiltro(e) {
 
+            var atr = e.getAttribute('data-value');
+            var query = window.location.href.indexOf("?") !== -1 ? window.location.href + `&filtros=${atr}` : window.location.href + `?filtros=${atr}`;
+
+            window.location.href = query;
+        }</script>
+    <script>function QuitarFiltro(e) {
+
+            var urlBase = window.location.href.split("?")[0],
+                param,
+                query = window.location.href.indexOf("?") !== -1 ? window.location.href.split("?")[1] : "",
+                atributos = [],
+                atributo = encodeURI(e.getAttribute('data-value'));
+
+            console.log(atributo);
+
+            if (query !== "") {
+                atributos = query.split("&");
+                for (i = atributos.length - 1; i >= 0; i -= 1) {
+                    param = atributos[i].split("=")[1];
+                    if (param.toLowerCase() === atributo) {
+                        atributos.splice(i, 1);
+                    }
+                }
+                if (atributos.length) urlBase = urlBase + "?" + atributos.join("&");
+            }
+            window.location.href = urlBase;
+            console.log(urlBase);
+
+
+        }</script>
+    <script>function OrdenarProductos(e) {
+
+            var url = window.location.href,
+                index = url.indexOf("orden");
+            if (index !== -1) {
+                var param = url.slice(index, index + 7);
+                window.location.href = url.replace(param, `orden=${e}`)
+            } else {
+                window.location.href += url.indexOf("filtros") !== -1 || url.indexOf("query") !== -1 ? `&orden=${e}` : `?orden=${e}`
+            }
+        }</script>
 </body>

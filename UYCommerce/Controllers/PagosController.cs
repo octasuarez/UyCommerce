@@ -36,11 +36,13 @@ namespace UYCommerce.Controllers
 
             if (usuarioID == null)
             {
-                return BadRequest();
+                return Redirect("Login");
             }
 
             var carrito = _context.Carritos
                 .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Imagenes)
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Producto).ThenInclude(pr => pr.Marca)
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
                 .FirstOrDefault(c => c.UsuarioId.ToString() == usuarioID.Value);
 
 

@@ -18,7 +18,7 @@ namespace UYCommerce.Data
                 serviceProvider.GetRequiredService<DbContextOptions<ShopContext>>()))
             {
 
-                context.Database.EnsureDeleted();
+                //context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
 
@@ -181,7 +181,8 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Nombre="iphone-11-azul-64gb",
+                                    Key="iphone-11-azul-64gb",
+                                    Nombre = "Iphone 11 Azul 64gb",
                                     Stock = 4,
                                     Precio = 759.99,
                                     Imagenes = new SkuImagen[]
@@ -197,7 +198,8 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="iphone-11-rojo-64gb",
+                                    Key="iphone-11-rojo-64gb",
+                                    Nombre = "Iphone 11 Rojo 64gb",
                                     Stock = 4,
                                     Precio = 800,
                                     Imagenes = new SkuImagen[]
@@ -212,7 +214,8 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="iphone-11-rojo-128gb",
+                                    Key="iphone-11-rojo-128gb",
+                                    Nombre = "Iphone 11 Rojo 128gb",
                                     Stock = 10,
                                     Precio = 999,
                                     Imagenes = new SkuImagen[]
@@ -244,7 +247,8 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Nombre="remera-vlone-violeta",
+                                    Key="remera-vlone-violeta",
+                                    Nombre = "Remera Vlone Violeta",
                                     Stock = 4,
                                     Precio = 135,
                                     Imagenes = new SkuImagen[]
@@ -257,7 +261,8 @@ namespace UYCommerce.Data
                                     },
                                 },
                                 new Sku{
-                                    Nombre="remera-vlone-azul",
+                                    Key="remera-vlone-azul",
+                                    Nombre = "Remera Vlone Azul",
                                     Stock = 4,
                                     Precio = 140,
                                     AtributosValores = new AtributoValor[]
@@ -270,7 +275,8 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="remera-vlone-rojo",
+                                    Key="remera-vlone-rojo",
+                                    Nombre = "Remera Vlone Rojo",
                                     Stock = 4,
                                     Precio = 300,
                                     AtributosValores = new AtributoValor[]
@@ -283,7 +289,8 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Nombre="remera-vlone-naranja",
+                                    Key="remera-vlone-naranja",
+                                    Nombre = "Remera Vlone Naranja",
                                     Stock = 4,
                                     Precio = 399.99,
                                     AtributosValores = new AtributoValor[]
@@ -315,7 +322,8 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Nombre="macbook-m2-8gb",
+                                    Key="macbook-m2-8gb",
+                                    Nombre = "Macbook m2 8gb",
                                     Stock = 1,
                                     Precio = 1250,
                                     AtributosValores = new AtributoValor[]
@@ -330,7 +338,8 @@ namespace UYCommerce.Data
                                     },
                                 },
                                 new Sku{
-                                    Nombre="macbook-m2-16gb",
+                                    Key="macbook-m2-16gb",
+                                    Nombre = "Macbook m2 16gb",
                                     Stock = 5,
                                     Precio = 1689,
                                     AtributosValores = new AtributoValor[]
@@ -368,8 +377,21 @@ namespace UYCommerce.Data
                         Password = "123",
                         Favoritos = new Sku[]
                         {
-                            productos[0].Skus.ElementAt(1),
-                            productos[1].Skus.ElementAt(1),
+                            productos[0].Skus!.ElementAt(1),
+                            productos[1].Skus!.ElementAt(1),
+                        },
+                    },
+                    new Usuario
+                    {
+                        Id = 2,
+                        Nombre = "Maria",
+                        Email = "maria@gmail.com",
+                        Rol = roles[0],
+                        Password = "123",
+                        Favoritos = new Sku[]
+                        {
+                            productos[1].Skus!.ElementAt(1),
+                            productos[2].Skus!.ElementAt(1),
                         }
                     }
                 };
@@ -383,9 +405,16 @@ namespace UYCommerce.Data
                         NombreComprador = "Juan",
                         UsuarioId = 1,
                         Estado = "Entregado",
-                        Direccion = "Calle 1 Esq 1",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
                         FechaDeCompra = DateTime.Now.AddDays(-7),
-                        FechaDeEntrega = DateTime.Now.AddDays(-1),
+                        FechaDeEntrega = DateTime.Now.AddDays(-1).AddHours(2),
                         Productos = new ProductoOrden[]
                         {
                             new ProductoOrden
@@ -393,15 +422,115 @@ namespace UYCommerce.Data
                                 OrdenId = "1",
                                 SkuId = 2,
                                 Sku = productos[0].Skus!.ElementAt(1),
-                                Nombre = "Iphone 11",
-                                Precio = 800,
+                                Nombre = "Iphone 11 Azul 64gb",
+                                Precio = 759.99,
                                 Cantidad = 1,
                             }
 
-                        }
+                        },
+                        Total = 800,
+                        MetodoDePago = "Tarjeta"
+                    },
+                    new Orden
+                    {
+                        Id = "2",
+                        NombreComprador = "Juan",
+                        UsuarioId = 1,
+                        Estado = "En camino",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
+                        FechaDeCompra = DateTime.Now.AddDays(-1).AddHours(5),
+                        Productos = new ProductoOrden[]
+                        {
+                            new ProductoOrden
+                            {
+                                OrdenId = "2",
+                                SkuId = 6,
+                                Sku = productos[1].Skus!.ElementAt(3),
+                                Nombre = "Remera Vlone Rojo",
+                                Precio = 300,
+                                Cantidad = 2,
+                            },
+                            new ProductoOrden
+                            {
+                                OrdenId = "2",
+                                SkuId = 8,
+                                Sku = productos[2].Skus!.ElementAt(1),
+                                Nombre = "Macbook m2 8gb",
+                                Precio = 1250,
+                                Cantidad = 1,
+                            }
+
+                        },
+                        Total = 1850,
+                        MetodoDePago = "Paypal"
                     }
                 };
 
+                //Reviews
+
+                Review[] reviews = new Review[] {
+
+                    new Review {
+                        ProductoId = 1,
+                        Puntuacion = 5,
+                        Texto = "Excelente!",
+                        UsuarioId = 1
+                    },
+                    new Review {
+                        ProductoId = 1,
+                        Puntuacion = 5,
+                        Texto = "Buenisimo",
+                        UsuarioId = 2
+                    },
+                    new Review {
+                        ProductoId = 2,
+                        Puntuacion = 4,
+                        Texto = "Bien",
+                        UsuarioId = 1
+                    },
+                    new Review {
+                        ProductoId = 2,
+                        Puntuacion = 3,
+                        Texto = "Talle equivocado",
+                        UsuarioId = 2
+                    },
+                    new Review {
+                        ProductoId = 3,
+                        Puntuacion = 4,
+                        Texto = "No tan rapida pero bien",
+                        UsuarioId = 1
+                    },
+                };
+
+
+                ProductoCarrito[] productosCarrito = new ProductoCarrito[]
+                {
+                    new ProductoCarrito{
+                        SkuId=1 ,
+                        CarritoId=1,
+                        Cantidad=1,
+                        Sku= productos[0].Skus!.ElementAt(0)
+                    },
+                    new ProductoCarrito{
+                        SkuId= productos[1].Skus!.ElementAt(2).Id ,
+                        CarritoId=1,
+                        Cantidad=3,
+                        Sku= productos[1].Skus!.ElementAt(2)
+                    },
+                    new ProductoCarrito{
+                        SkuId= productos[2].Skus!.ElementAt(1).Id ,
+                        CarritoId=2,
+                        Cantidad=1,
+                        Sku= productos[2].Skus!.ElementAt(1)
+                    }
+                };
 
 
                 context.AddRangeAsync(categorias);
@@ -413,6 +542,8 @@ namespace UYCommerce.Data
                 context.AddRangeAsync(roles);
                 context.AddRangeAsync(usuarios);
                 context.AddRangeAsync(ordenes);
+                context.AddRangeAsync(reviews);
+                context.AddRangeAsync(productosCarrito);
 
                 context.SaveChangesAsync();
 

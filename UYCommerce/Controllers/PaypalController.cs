@@ -80,7 +80,7 @@ namespace LoginAndRegister.Controllers
             {
                 var response = await _paypalAPI.CaptureOrder(orderID);
 
-                if (response is not null && User.Identity.IsAuthenticated)
+                if (response is not null && User.Identity!.IsAuthenticated)
                 {
 
                     var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
@@ -92,22 +92,16 @@ namespace LoginAndRegister.Controllers
                         FechaDeCompra = DateTime.Now,
                         Estado = "en camino",
                         NombreComprador = usuario != null ? usuario.Nombre : null,
+                        MetodoDePago = response.payment_source!.card != null ? "Tarjeta" : "Paypal",
+                        Total = double.Parse(response.purchase_units![0].amount!.value!),
+                        Direccion = JsonSerializer.Deserialize<OrdenDireccion>(JsonSerializer.Serialize(response.purchase_units[0].shipping.address))
                     };
-
-
-                    //Compra compra = new()
-                    //{
-                    //    CompraId = response.id!,
-                    //    UsuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-                    //    FechaDeCompra = DateTime.Now.ToShortDateString(),
-                    //};
 
                     foreach (var item in response.purchase_units![0].items!)
                     {
 
                         orden.Productos?.Add(new ProductoOrden
                         {
-
                             SkuId = int.Parse(item.sku!),
                             OrdenId = orden.Id,
                             Cantidad = int.Parse(item.quantity!),
@@ -116,9 +110,9 @@ namespace LoginAndRegister.Controllers
                         });
                     }
 
-                    //var carritoId = User.FindFirstValue("CarritoID");
+                    var carritoId = User.FindFirstValue("CarritoId");
 
-                    //await _context.ProductosCarritos.Where(p => p.CarritoId.ToString() == carritoId).ExecuteDeleteAsync();
+                    await _context.ProductosCarritos.Where(p => p.CarritoId.ToString() == carritoId).ExecuteDeleteAsync();
 
                     await _context.AddAsync(orden);
                     await _context.SaveChangesAsync();

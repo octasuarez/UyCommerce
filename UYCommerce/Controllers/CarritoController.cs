@@ -30,83 +30,92 @@ namespace UYCommerce.Controllers
             return View();
         }
 
-
+        /// <summary>
+        /// Agrega un producto al carrito si no existe. Aumenta o disminuye la cantidad del producto si ya existe.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async void AgregarProductoAlCarrito(AddToCartModel request)
+        public JsonResult AgregarProductoAlCarrito(AddToCartModel request)
         {
 
-            Carrito? carrito = GetCarrito();
-
-            var sku = _context.Skus.FirstOrDefault(s => s.Id == int.Parse(request.skuId));
-
-            var productoCarrito = carrito.Productos!.FirstOrDefault(p => p.SkuId == int.Parse(request.skuId));
-
-            if (productoCarrito is null)
+            if (User.Identity!.IsAuthenticated)
             {
-                ProductoCarrito nuevoProductoCarrito = new() { Cantidad = 1, SkuId = int.Parse(request.skuId) };
-                carrito.Productos.Add(nuevoProductoCarrito);
-            }
-            else
-            {
-                carrito.Productos.FirstOrDefault(p => p.SkuId == int.Parse(request.skuId))!.Cantidad++;
-            }
+                Carrito? carrito = GetCarrito();
 
-            if (User.Identity.IsAuthenticated)
-            {
-                _context.Update(carrito);
-                _context.SaveChanges();
-            }
-            else
-            {
+                if (carrito is not null)
+                {
+                    var sku = _context.Skus.FirstOrDefault(s => s.Id == int.Parse(request.skuId));
 
-                var sessionCarrito = JsonSerializer.Serialize(carrito);
+                    var productoCarrito = carrito.Productos!.FirstOrDefault(p => p.SkuId == int.Parse(request.skuId));
+                    int qty = 0;
 
-                HttpContext.Session.SetString("cart", sessionCarrito);
+                    if (productoCarrito is null)
+                    {
+                        ProductoCarrito nuevoProductoCarrito = new() { Cantidad = 1, SkuId = int.Parse(request.skuId) };
+                        carrito.Productos!.Add(nuevoProductoCarrito);
+                    }
+                    else
+                    {
+                        carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad += int.Parse(request.quantity);
+                        qty = carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad;
+                        if (qty == 0)
+                            carrito.Productos!.Remove(carrito.Productos!.FirstOrDefault(p => p.SkuId == productoCarrito.SkuId)!);
+                    }
+
+                    _context.Update(carrito);
+                    _context.SaveChanges();
+                    return new JsonResult(new { qty });
+                }
+
             }
+            return new JsonResult(new EmptyResult());
 
         }
 
         /// <summary>
-        /// Retorna el carrito del usuario sea que este logueado o no
+        /// Elimina un producto del carrito.
+        /// </summary>
+        /// <param name="skuId"></param>
+        [HttpPost]
+        public void EliminarProductoCarrito(string skuId)
+        {
+
+            if (User.Identity!.IsAuthenticated)
+            {
+                Carrito? carrito = GetCarrito();
+
+                if (carrito != null && carrito.Productos != null)
+                {
+                    var productoCarrito = carrito.Productos.FirstOrDefault(p => p.SkuId == int.Parse(skuId));
+
+                    if (productoCarrito != null) {
+                        carrito.Productos.Remove(productoCarrito);
+                        _context.Update(carrito);
+                        _context.SaveChanges();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Retorna el carrito del usuario sea que este logueado o no.
         /// </summary>
         /// <returns></returns>
         private Carrito? GetCarrito()
         {
-
-            var carrito = new Carrito() { Productos = new List<ProductoCarrito>()};
+            var carrito = new Carrito() { Productos = new List<ProductoCarrito>() };
 
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 carrito = _context.Carritos
-                    .Include(c => c.Productos)!.ThenInclude(p=> p.Sku).ThenInclude(s=>s.Imagenes)
-                    .FirstOrDefault(c => c.UsuarioId == int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value));
-            }
-            else
-            {
-                if (HttpContext.Session.GetString("cart") != null) 
-                {
-                    carrito = JsonSerializer.Deserialize<Carrito>(HttpContext.Session.GetString("cart"));
-                }
-                else
-                {
-                    var sessionCart = JsonSerializer.Serialize(carrito);
-
-                    HttpContext.Session.SetString("cart", sessionCart);
-                }
-
+                    .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Imagenes)
+                    .FirstOrDefault(c => c.UsuarioId == int.Parse(User.FindFirst("CarritoId")!.Value));
             }
 
             return carrito;
-
         }
 
-        [HttpGet]
-        public async Task<IActionResult> DetallesCarrito()
-        {
-
-
-            return View();
-        }
     }
 }
 

@@ -77,7 +77,7 @@ namespace UYCommerce.Paypal
                 {
                     items.Add(new Item
                     {
-                        name = pC.Sku!.Nombre,
+                        name = pC.Sku!.Key,
                         quantity = pC!.Cantidad.ToString(),
                         unit_amount = new Amount
                         {
@@ -161,14 +161,12 @@ namespace UYCommerce.Paypal
 
             if (!httpResponse.IsSuccessStatusCode || httpResponse is null)
             {
-
                 throw new Exception(jsonResponse);
             }
 
             var response = JsonSerializer.Deserialize<CaptureOrderResponse>(jsonResponse);
 
             return response;
-
 
         }
     }
@@ -199,6 +197,7 @@ public class PurchaseUnit
 {
     public List<Item>? items { get; set; }
     public Amount? amount { get; set; }
+    public Shipping? shipping { get; set; }
 }
 public class Item
 {
@@ -283,7 +282,6 @@ public class Name
 
 public class Address
 {
-
     public string? address_line_1 { get; set; }
     public string? address_line_2 { get; set; }
     public string? admin_area_2 { get; set; }
@@ -298,6 +296,12 @@ public class PhoneNumber
     public string? national_number { get; set; }
 }
 
+public class Phone
+{
+    public string? phone_type { get; set; }
+    public PhoneNumber? phone_number { get; set; }
+}
+
 public class CaptureOrderResponse
 {
 
@@ -308,5 +312,22 @@ public class CaptureOrderResponse
     public List<PurchaseUnit>? purchase_units { get; set; }
     public List<Link>? links { get; set; }
     public PaymentSource? payment_source { get; set; }
+    public Payer? payer { get; set; }
 
+}
+
+public class Payer
+{
+
+    public string? email_address { get; set; }
+    public string? payer_id { get; set; }
+    public Name? name { get; set; }
+    public Phone? phone { get; set; }
+    public string? birth_date { get; set; }
+    public Address? address { get; set; }
+}
+
+public class Shipping {
+
+    public Address? address { get; set; }
 }
