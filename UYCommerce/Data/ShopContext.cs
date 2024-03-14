@@ -19,10 +19,12 @@ namespace UYCommerce.Data
         public DbSet<Sku> Skus { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<OrdenDireccion> Direcciones { get; set; }
         public DbSet<Orden> Ordenes { get; set; }
         public DbSet<Carrito> Carritos { get; set; }
         public DbSet<ProductoCarrito> ProductosCarritos { get; set; }
         public DbSet<Pregunta> Preguntas { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

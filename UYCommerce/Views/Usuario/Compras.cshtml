@@ -3,35 +3,37 @@
 
 <div class="container">
 
-    <div class="mt-5">
+    <div class="" style="min-height:900px;">
 
-        <h3>Compras</h3>
-        <p>@Model.Count compras</p>
-
+        <h3 class="mt-5 mb-3">Mis compras</h3>
         @if (Model.Any())
         {
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#Orden</th>
+                        <th scope="col">Fecha de compra</th>
+                        <th scope="col">Fecha de entrega</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
 
-            foreach (var o in Model)
-            {
-
-                <div class="d-flex">
-
-                    <h5>@o.FechaDeCompra</h5>
-                    <p>Estado: @o.Estado</p>
-
-                    @if (o.Productos != null && o.Productos.Any())
+                    @foreach (var o in Model)
                     {
-                        foreach (var p in o.Productos)
-                        {
-                            <p>@p.Nombre</p>
-                            <p>@p.Cantidad</p>
-                            <p>@p.Precio</p>
-                        }
+                        <tr>
+                            <td>@o.Id</td>
+                            <td>@o.FechaDeCompra</td>
+                            <td>@o.FechaDeEntrega</td>
+                            <td>$@o.Total</td>
+                            <td>@o.Estado</td>
+                            <th class="text-center"><a href="/Compras/@o.Id" class="btn btn-primary">Ver Orden</a></th>
+                        </tr>
                     }
-                </div>
-
-            }
-
+                </tbody>
+            </table>
         }
     </div>
 

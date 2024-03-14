@@ -8,6 +8,7 @@ namespace UYCommerce.Models
         public ICollection<Sku>? Skus { get; set; }
         public Categoria? Categoria { get; set; }
 		public ICollection<Sku>? Favoritos { get; set; }
-	}
+		public List<KeyValuePair<string, string>>? Atributos { get; set; }
+    }
 }
 

@@ -14,8 +14,8 @@ namespace UYCommerce.Models
         public required string Email { get; set; }
 
         [Required(ErrorMessage = "Crea una contraseña")]
-        [Compare("ConfirmPassword",ErrorMessage = "Las contraseñas no coinciden")]
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,15}$", ErrorMessage = "Al menos 6 caracteres\nuna minuscula\nuna mayuscula\nun numero")]
+        [Compare("ConfirmPassword",ErrorMessage = "Las contraseñas no coinciden")]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
 

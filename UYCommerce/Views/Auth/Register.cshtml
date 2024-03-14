@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "BaseLayout";
+    Layout = "_Layout";
     @model RegisterModel
 }
 
@@ -13,25 +13,25 @@
 
                 <form method="post" asp-controller="Auth" asp-action="AgregarUsuario">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingName" placeholder="" name="Nombre">
+                        <input asp-for="Nombre" type="text" class="form-control" id="floatingName" placeholder="" name="Nombre">
                         <label for="floatingName">Nombre</label>
                         <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput" placeholder="" name="Email">
+                        <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="" name="Email">
                         <label for="floatingInput">Email</label>
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="" name="Password">
+                        <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="" name="Password">
                         <label for="floatingPassword">Contraseña</label>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="floatingPassword2" placeholder="" name="ConfirmPassword">
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" id="floatingPassword2" placeholder="" name="ConfirmPassword">
                         <label for="floatingPassword2">Confirmar contraseña</label>
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>

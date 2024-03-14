@@ -18,6 +18,14 @@ namespace UYCommerce.Models
         public ICollection<Sku>? Skus { get; set; }
         public ICollection<Review>? Reviews { get; set; }
 
+
+
+        public double GetPuntuacionPromedio()
+        {
+
+            if (Reviews is null) { return 0; }
+            return Reviews.Average(r => r.Puntuacion);
+        }
     }
 }
 

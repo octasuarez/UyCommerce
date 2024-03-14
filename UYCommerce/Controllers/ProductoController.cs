@@ -32,7 +32,7 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("/search")]
-        public async Task<IActionResult> BuscarProductosPorQuery(string query)
+        public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 0)
         {
             BusquedaProductoVM result = new();
 
@@ -41,6 +41,7 @@ namespace UYCommerce.Controllers
              .ThenInclude(c => c!.CategoriaPadre)
              .Include(p => p.Imagenes)
              .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+             .Include(p => p.Skus)!.ThenInclude(s => s.Producto).ThenInclude(p => p.Reviews)
              .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
 
             productos = productos.Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower()));
@@ -55,62 +56,97 @@ namespace UYCommerce.Controllers
                 result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
             }
 
+            if (orden > 0)
+                result.Skus = OrdenarSkus(result.Skus, orden);
+
             return View("BusquedaProductos", result);
         }
 
         [HttpGet]
         [Route("/c/{categoria}")]
-        public async Task<IActionResult> BuscarProductosPorCategoria(string categoria, string[]? filtros)
+        public async Task<IActionResult> BuscarProductosPorCategoria(string categoria, string[]? filtros, int orden = 0)
         {
-
-            BusquedaProductoVM result = new BusquedaProductoVM();
-
-            IQueryable<Producto> productos = _context.Productos
-             .Include(p => p.Categoria)
-             .ThenInclude(c => c!.CategoriaPadre)
-             .Include(p => p.Imagenes)
-             .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-             .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
-
-            result.Categoria = _context.Categorias
+            BusquedaProductoVM result = new()
+            {
+                Categoria = _context.Categorias
                 .Include(c => c.CategoriaPadre)
                 .Include(c => c.Atributos)!.ThenInclude(a => a.Valores)
-                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower());
+                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower())
+            };
 
             if (result.Categoria != null)
             {
+
+                IQueryable<Producto> productos = _context.Productos
+                 .Include(p => p.Categoria)
+                 .ThenInclude(c => c!.CategoriaPadre)
+                 .Include(p => p.Imagenes)
+                 .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+                 .Include(p => p.Skus)!.ThenInclude(s => s.Producto).ThenInclude(p => p.Reviews)
+                 .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
+
                 productos = productos.Where(p => p.Categoria!.Nombre!.ToLower() == categoria.ToLower()
                 || p.Categoria.CategoriaPadre!.Nombre!.Equals(categoria));
 
                 result.Skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
-            }
-            if (filtros is not null && filtros.Any())
-            {
-                var atributosValores = new List<KeyValuePair<string, string>>();
 
-                for (int i = 0; i < filtros.Count(); i++)
+                var atributosValores = filtros != null && filtros.Any() ? GetAtributosDeFiltros(filtros) : null;
+
+                if (atributosValores != null)
                 {
-                    if (filtros[i].Contains('-'))
-                    {
-                        var atributoValor = filtros[i].Split("-");
-                        atributosValores.Add(new KeyValuePair<string, string>(atributoValor[0].ToLower(), atributoValor[1].ToLower()));
-                    }
+                    result.Skus = result.Skus.Where(s => atributosValores.All(atr => s.AtributosValores!.Any(av => av.Atributo!.Nombre!.ToLower() == atr.Key && av.Valor!.ToLower() == atr.Value))).ToList();
+                    result.Atributos = atributosValores;
                 }
+                else { result.Skus = result.Skus.DistinctBy(s => s.ProductoId).ToList(); }
 
-                result.Skus = result.Skus.Where(s => atributosValores.All(atr => s.AtributosValores!.Any(av => av.Atributo!.Nombre!.ToLower() == atr.Key && av.Valor!.ToLower() == atr.Value))).ToList();
+                result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
+
+                if (User.Identity!.IsAuthenticated)
+                    result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+
+                if (orden > 0)
+                    result.Skus = OrdenarSkus(result.Skus, orden);
+
+                return View("BusquedaProductos", result);
             }
-
-            result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
-                .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
-
-            if (User.Identity!.IsAuthenticated)
-            {
-                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
-            }
-
-            return View("BusquedaProductos", result);
+            return View("NotFound");
         }
 
+        private static ICollection<Sku> OrdenarSkus(ICollection<Sku> skus, int orden)
+        {
+
+            switch (orden)
+            {
+                case 1:
+                    skus = skus.OrderByDescending(s => s.Precio).ToList();
+                    break;
+                case 2:
+                    skus = skus.OrderBy(s => s.Precio).ToList();
+                    break;
+                case 3:
+                    skus = skus.OrderByDescending(s => s.Producto!.GetPuntuacionPromedio()).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            return skus;
+        }
+
+        private static List<KeyValuePair<string, string>> GetAtributosDeFiltros(string[] filtros)
+        {
+            List<KeyValuePair<string, string>> atributosValores = new();
+
+            for (int i = 0; i < filtros.Length; i++)
+            {
+                if (filtros[i].Contains('-'))
+                {
+                    var atributoValor = filtros[i].Split("-");
+                    atributosValores.Add(new KeyValuePair<string, string>(atributoValor[0].ToLower(), atributoValor[1].ToLower()));
+                }
+            }
+            return atributosValores;
+        }
 
         /// <summary>
         /// Encuentra el producto segun su NombreClave (key) y segun las opciones seleccionadas del cliente.
@@ -120,16 +156,18 @@ namespace UYCommerce.Controllers
         /// <returns>verProductoViewModel</returns>
         [HttpGet]
         [Route("/{key}")]
-        public async Task<IActionResult> BuscarProductoPorKey(string key)
+        public async Task<IActionResult> GetProductoPorKey(string key)
         {
 
             var sku = await _context.Skus
                 .Include(s => s.AtributosValores)!.ThenInclude(av => av.Atributo)
-                .Include(s => s.Producto).ThenInclude(p => p.Preguntas)
-                .Include(s => s.Producto).ThenInclude(p => p.Reviews)
-                .Include(s => s.Producto).ThenInclude(p => p.Marca)
+                .Include(s => s.Producto).ThenInclude(p => p!.Reviews)!.ThenInclude(r => r.Usuario)
+                .Include(s => s.Producto).ThenInclude(p => p!.Preguntas)
+                .Include(s => s.Producto).ThenInclude(p => p!.Reviews)
+                .Include(s => s.Producto).ThenInclude(p => p!.Marca)
+                .Include(s => s.Producto).ThenInclude(p => p!.Categoria).ThenInclude(c => c!.CategoriaPadre)
                 .Include(s => s.Imagenes)
-                .FirstOrDefaultAsync(s => s.Nombre.Contains(key));
+                .FirstOrDefaultAsync(s => s.Key.Contains(key));
 
             if (sku is not null)
             {
@@ -148,7 +186,8 @@ namespace UYCommerce.Controllers
                 {
                     Sku = sku,
                     Opciones = opcionesPorAtributo,
-
+                    Reviews = sku.Producto.Reviews,
+                    Categoria = sku.Producto.Categoria
                 };
 
                 return View("VerProducto", result);

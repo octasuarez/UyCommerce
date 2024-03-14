@@ -2,30 +2,66 @@
 
 <body>
 
-    <div class="container">
+    <div class="container-fluid" style="width:1800px;">
+
+        @*Breadcrumb*@
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb p-3 bg-white rounded-3 fs-5">
+                <li class="breadcrumb-item">
+                    <a class="link-body-emphasis" href="/">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                        </svg>
+                        <span class="visually-hidden">Home</span>
+                    </a>
+                </li>
+                @if (Model.Categoria != null && Model.Categoria.CategoriaPadre != null)
+                {
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Model.Categoria.CategoriaPadre.Nombre</a>
+                    </li>
+                    <li class="breadcrumb-item" aria-current="page">
+                        <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.Nombre">@Model.Categoria.Nombre</a>
+                    </li>
+                }
+                else if (Model.Categoria != null)
+                {
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Categoria!.Nombre</li>
+
+                }
+                <li class="breadcrumb-item active" aria-current="page">@Model.Sku.Nombre</li>
+
+
+            </ol>
+        </nav>
+
         @*Imagenes del producto*@
 
-        <div class="d-flex row col-12 mt-5">
+        <div class="d-flex row col-12 ">
+
             <div class="col-6">
-                <img id="imgmain" class="magniflier object-fit-contain" style="height:500px;width:500px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                <div class="ms-auto">
 
-                <ul class="list-unstyled d-flex">
-                    <li class="me-2">
-                        <img onmouseover="cambiarImagen(this)"
-                             class="object-fit-contain active-img" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
-                    </li>
-                    @if (Model.Sku.Imagenes!.Count > 1)
-                    {
-                        for (int i = 1; i < Model.Sku.Imagenes!.Count; i++)
+                    <img id="imgmain" class="magniflier object-fit-contain d-flex mx-auto" style="height:600px;width:600px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+
+                    <ul class="list-unstyled d-flex">
+                        <li class="me-2">
+                            <img onmouseover="cambiarImagen(this)"
+                                 class="object-fit-contain active-img" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                        </li>
+                        @if (Model.Sku.Imagenes!.Count > 1)
                         {
-                            <li class="me-2">
-                                <img onmouseover="cambiarImagen(this)"
-                                     class="object-fit-contain" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i).ImagenNombre" />
-                            </li>
+                            for (int i = 1; i < Model.Sku.Imagenes!.Count; i++)
+                            {
+                                <li class="me-2">
+                                    <img onmouseover="cambiarImagen(this)"
+                                         class="object-fit-contain" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i).ImagenNombre" />
+                                </li>
 
+                            }
                         }
-                    }
-                </ul>
+                    </ul>
+                </div>
 
                 <div class="d-flex">
 
@@ -36,26 +72,61 @@
 
             @*Detalles del producto y sus atributos*@
 
-            <div class="col-6 border p-3 ">
-                <h1>@Model.Sku.Producto.Nombre</h1>
-                @if (Model.Sku != null)
-                {
-                    <h3>Precio $@Model.Sku.Precio</h3>
-                }
-                else
-                {
-                    <h3>Precio $@Model.Sku!.Precio</h3>
-                }
-                <p>In vel eros ornare, ultrices justo sit amet, condimentum tortor. Cras quis arcu libero. Integer dictum sapien ac faucibus gravida. Vivamus in nisl malesuada dui volutpat dignissim sit amet a nisl. Fusce molestie lorem ac elit sagittis, non scelerisque augue tempus. Suspendisse eu augue rutrum, convallis mi sit amet</p>
+            <div class="col-6 border p-3" style="height:fit-content;">
+                <h1 class="mb-4">@Model.Sku.Nombre</h1>
 
-                <div class="mb-5">
-                    @for (int i = 0; i < Model.Opciones.Count(); i++ )
+                @if (Model.Sku.Producto.Reviews != null)
+                {
+                    <ul class="p-0 mb-2">
+                        <li class="d-inline">
+                            <p class="d-inline">@Model.Sku.Producto!.GetPuntuacionPromedio()</p>
+                        </li>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            if (i < Model.Sku.Producto!.GetPuntuacionPromedio())
+                            {
+
+
+                                <li class="d-inline text-warning p-0"><i class="bi bi-star-fill "></i></li>
+                            }
+                            else
+                            {
+                                <li class="d-inline text-warning p-0"><i class="bi bi-star "></i></li>
+                            }
+                        }
+                        <li class="d-inline">
+                            <a href="#reviews">@Model.Sku.Producto!.Reviews!.Count reviews</a>
+                        </li>
+                    </ul>
+                }
+
+                @if (Model.Sku != null)
+                {<h3 class="fw-bold">$@Model.Sku.Precio</h3>}
+
+                <div style="max-height:150px">
+                    @if (Model.Sku.Producto.Descripcion != null)
+                    {
+
+                        if (Model.Sku.Producto.Descripcion.Length > 600)
+                        {
+                            <p style="max-height:150px;">@Model.Sku.Producto.Descripcion.Substring(0, 600)</p>
+                        }
+                        else
+                        {
+                            <p style="max-height:150px;">@Model.Sku.Producto.Descripcion</p>
+                        }
+                    }
+                </div>
+
+                @*Selects*@
+                <div class="my-5">
+                    @for (int i = 0; i < Model.Opciones!.Count(); i++)
                     {
                         <select class="form-select" name="@Model.Opciones.ElementAt(i).Key.Nombre" id="@i" onchange="cambioAtributo(this)">
 
                             @foreach (var atributo in Model.Opciones.ElementAt(i))
                             {
-                                if (Model.Sku.AtributosValores!.Contains(atributo))
+                                if (Model.Sku!.AtributosValores!.Contains(atributo))
                                 {
                                     <option value="@atributo.Valor" selected>@atributo.Valor</option>
                                 }
@@ -73,15 +144,15 @@
                     <div class="form-row ">
 
                         <div class="form-row input-group">
-                            <div class="input-grpup-prepend col-2">
+                            <div class="input-grpup-prepend" style="width:60px;">
                                 <input class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" />
                             </div>
-                            <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary py-2 fw-semibold mb-2">Agregar al Carrito</button>
+                            <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2  mb-2">Agregar al carrito</button>
                         </div>
 
                         <form method="post" action="@Url.Action("ComprarProducto","PagosController")">
                             <input name="skuId" type="number" hidden value="@Model.Sku.Id" />
-                            <button type="submit" class="form-control btn btn-primary py-2 fw-semibold fs-5">Comprar</button>
+                            <button type="submit" class="form-control btn btn-primary bg-gradient py-2 fs-5">Comprar</button>
                         </form>
                     </div>
                 }
@@ -103,7 +174,7 @@
 
         @* Descripcion del producto *@
 
-        <div class="mt-5 mb-5">
+        <div class=" mb-5">
             <h3 class="text-center">Descripcion</h3>
             <span>@Model.Sku.Producto.Descripcion</span>
         </div>
@@ -129,7 +200,7 @@
                 }
             </div>
 
-            <div id="Preguntas">
+            <div class="my-5" id="Preguntas">
 
                 @if (Model.Sku.Producto.Preguntas != null && Model.Sku.Producto.Preguntas.Any())
                 {
@@ -154,10 +225,57 @@
 
         </div>
 
+
+        @*Reviews*@
+
+        <div id="reviews" class="w-100">
+            @if (Model.Reviews != null && Model.Reviews.Any())
+            {
+                <h3 class="text-center mb-3">@Model.Reviews.Count() Reviews</h3>
+
+                <h5 class="text-center">Puntuacion promedio @Model.GetPuntuacionPromedio()</h5>
+
+                <ul class="list-unstyled">
+                    @foreach (var r in Model.Reviews)
+                    {
+                        <li class="py-2">
+
+                            <div class="d-flex align-items-center">
+
+                                <i class="bi bi-person-circle fs-2 me-2" style="color:slategray;"></i>
+                                <p class="fs-5 me-4 mb-0">@r.Usuario!.Nombre</p>
+                                <ul class="d-block row text-center p-0 align-items-center">
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        if (i < r.Puntuacion)
+                                        {
+                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+
+                            <p>@r.Texto</p>
+                        </li>
+                    }
+                </ul>
+
+            }
+            else
+            {
+                <h3 class="No hay reviews todavia"></h3>
+            }
+        </div>
+
+
         @* La lista de productos relacionados *@
         <!--<div>
-                <h3 class="text-center">Productos Relacionados</h3>
-                <div class="d-flex mt-5">-->
+            <h3 class="text-center">Productos Relacionados</h3>
+            <div class="d-flex mt-5">-->
         @*@foreach (var p in Model.ProductosRelacionados!)
             {
                 <div class="card me-3" style="width: 300px;">
@@ -209,7 +327,7 @@
                 data: formData,
                 success: function (response) {
                     alert("Se agrego el producto al Carrito de manera exitosa");
-                }
+                }  
 
             })
         }
