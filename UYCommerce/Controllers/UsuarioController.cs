@@ -4,24 +4,30 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
 using UYCommerce.DTOs;
 using UYCommerce.Models;
+using UYCommerce.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace UYCommerce.Controllers
 {
+    [Authorize(Policy = "User")]
     public class UsuarioController : Controller
     {
         private readonly ShopContext _context;
+        private readonly IEmailService _emailService;
 
-        public UsuarioController(ShopContext context)
+        public UsuarioController(ShopContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
 
@@ -29,15 +35,7 @@ namespace UYCommerce.Controllers
         [Route("Compras")]
         public async Task<IActionResult> GetCompras()
         {
-
             List<Orden>? compras = null;
-
-            if (User.Identity is null || !User.Identity.IsAuthenticated)
-            {
-
-                return Redirect("/Login");
-
-            }
 
             var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             compras = await _context.Ordenes.Where(o => o.UsuarioId == usuarioId)
@@ -51,11 +49,11 @@ namespace UYCommerce.Controllers
         [Route("Compras/{compraId}")]
         public async Task<IActionResult> BuscarCompraPorId(string compraId)
         {
-
-            if (User.Identity is null || !User.Identity.IsAuthenticated)
-                return Redirect("/Login");
-
-            var compra = await _context.Ordenes.Include(o => o.Direccion).FirstOrDefaultAsync(o => o.Id == compraId);
+            var compra = await _context.Ordenes
+                .Include(o => o.Direccion)
+                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
+                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.AtributosValores)!.ThenInclude(a => a.Atributo)
+                .FirstOrDefaultAsync(o => o.Id == compraId);
 
             if (compra is not null) { return View("VerCompra", compra); }
 
@@ -104,10 +102,13 @@ namespace UYCommerce.Controllers
             _context.SaveChanges();
 
             pregunta.NombreUsuario = usuario!.Nombre;
-            pregunta.Fecha = DateTime.Now;
+            pregunta.Fecha = DateTime.Now.ToString();
 
-            return Json(pregunta);
+            return new JsonResult(new { pregunta, count = producto.Preguntas.Count });
         }
+
+
+        
     }
 }
 

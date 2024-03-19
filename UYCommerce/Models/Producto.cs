@@ -9,7 +9,6 @@ namespace UYCommerce.Models
         public string? Nombre { get; set; }
         public string? NombreClave { get; set; }
         public string? Descripcion { get; set; }
-        public double Puntaje { get; set; }
         public int VecesComprado { get; set; }
         public virtual Categoria? Categoria { get; set; }
         public virtual Marca? Marca { get; set; }
@@ -23,7 +22,7 @@ namespace UYCommerce.Models
         public double GetPuntuacionPromedio()
         {
 
-            if (Reviews is null) { return 0; }
+            if (Reviews is null || !Reviews.Any()) { return 0; }
             return Reviews.Average(r => r.Puntuacion);
         }
     }

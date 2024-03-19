@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
@@ -11,6 +12,7 @@ using UYCommerce.Models;
 
 namespace UYCommerce.Controllers
 {
+    [Authorize(Policy = "Admin")]
     public class AdminController : Controller
     {
         private readonly ShopContext _context;
@@ -21,14 +23,11 @@ namespace UYCommerce.Controllers
             _context = context;
         }
 
-
         // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
         }
-
-
 
         public async Task<IActionResult> Dashboard()
         {

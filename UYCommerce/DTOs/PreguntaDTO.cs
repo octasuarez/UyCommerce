@@ -8,7 +8,7 @@ namespace UYCommerce.DTOs
         public int ProductoId { get; set; }
         public required string Contenido { get; set; }
         public string? NombreUsuario { get; set; }
-        public DateTime Fecha { get; set; }
+        public string? Fecha { get; set; }
     }
 }
 

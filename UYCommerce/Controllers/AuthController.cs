@@ -9,22 +9,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
 using UYCommerce.Models;
+using UYCommerce.Services;
 
 namespace UYCommerce.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly IEmailService _emailService;
         private readonly ShopContext _context;
 
-        public AuthController(ShopContext context)
+        public AuthController(ShopContext context, IEmailService emailService)
         {
-
+            _emailService = emailService;
             _context = context;
         }
 
         [HttpGet]
         [Route("Login")]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl)
         {
             return View();
         }
@@ -39,10 +41,10 @@ namespace UYCommerce.Controllers
 
                 var usuario = await _context.Usuarios
                     .Include(u => u.Rol)
-                    .Include(u => u.Carrito)
+                    .Include(u => u.Carrito).ThenInclude(c=> c.Productos)
                     .FirstOrDefaultAsync(u => u.Email == loginModel.Email!.ToLower());
 
-                if (usuario is not null && usuario.Password == loginModel.Password)
+                if (usuario is not null && usuario.Password == loginModel.Password && usuario.Activo == true)
                 {
 
                     var claims = new List<Claim>
@@ -93,6 +95,7 @@ namespace UYCommerce.Controllers
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
 
+                    HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos!.Count.ToString());
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -146,7 +149,107 @@ namespace UYCommerce.Controllers
             await HttpContext.SignOutAsync(
        CookieAuthenticationDefaults.AuthenticationScheme);
 
+            HttpContext.Session.SetString("cartItems", "");
+
             return RedirectToAction("Login", "Auth");
+        }
+
+        [HttpGet]
+        [Route("RecuperarPwd")]
+        public IActionResult RecuperarPassword()
+        {
+
+            return View("RecuperarPwd");
+        }
+
+        [HttpPost]
+        [Route("RecuperarPassword")]
+        public async Task<IActionResult> RecuperarPassword(string email)
+        {
+
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (usuario != null)
+            {
+                var codigoExiste = await _context.Codigos.FirstOrDefaultAsync(c => c.UsuarioId == usuario.Id);
+                if (usuario.Activo == true)
+                {
+                    usuario.Activo = false;
+                    _context.Usuarios.Update(usuario);
+                }
+
+                Codigo? codigo = new();
+
+                if (codigoExiste is not null)
+                {
+                    if (codigoExiste.FechaExpiracion > DateTime.Now)
+                    {
+                        codigo = codigoExiste;
+                    }
+                    else
+                    {
+                        codigoExiste = new Codigo(Guid.NewGuid().ToString()[..5], usuario.Id);
+                        _context.Codigos.Update(codigoExiste);
+                    }
+                }
+                else
+                {
+                    codigo = new Codigo(Guid.NewGuid().ToString()[..6], usuario.Id);
+                    await _context.Codigos.AddAsync(codigo);
+                }
+
+                var content = "Tu codigo es: " + codigo.CodigoRecuperacion;
+                Message message = new("octasuarezp@gmail.com", "UyCommerce Recuperacion Contrasenia", content);
+
+                _emailService.SendEmail(message);
+
+                await _context.SaveChangesAsync();
+
+                return View("CodigoRecuperacion", usuario.Id);
+            }
+
+            return View("RecuperarPwd");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerificarCodigoRecuperacion(string codigo, int usrId)
+        {
+
+            var codigoDB = await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == codigo);
+
+            if (codigoDB is null || codigoDB.UsuarioId != usrId)
+                return View("NotFound");
+
+            return View("CambiarPwd", new PasswordRecuperacionModel { Codigo = codigoDB.CodigoRecuperacion });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CambiarPasswordRecuperacion(PasswordRecuperacionModel request)
+        {
+            if (ModelState.IsValid)
+            {
+                var codigoDB = await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == request.Codigo);
+
+                if (codigoDB is null)
+                {
+                    ViewBag.msg = "No existe ese codigo";
+                    return View("CambiarPwd");
+                }
+
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == codigoDB.UsuarioId);
+
+                if (usuario is not null)
+                {
+                    usuario.Password = request.Password;
+                    usuario.Activo = true;
+                    _context.Update(usuario);
+                    _context.Remove(codigoDB);
+                    await _context.SaveChangesAsync();
+                    return Redirect("/Login");
+                }
+                return View("NotFound");
+            }
+            return View("CambiarPwd", request);
         }
     }
 }

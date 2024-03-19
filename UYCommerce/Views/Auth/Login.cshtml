@@ -1,66 +1,70 @@
 ﻿@{
-//Layout = "_Layout";
+    //Layout = "_Layout";
     @model LoginModel
 }
 
-<div class="container d-flex flex-column" style="height:70vh;">
+<body class="">
 
-    <div class="row">
-        <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-2 pt-3 pb-3 border-0 shadow">
-            <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
-            <h1 class="mx-auto">Iniciar Sesion</h1>
-            <div class="card-body">
+    <div class="container d-flex flex-column" style="height:70vh;">
 
-                <form method="post" asp-controller="Auth" asp-action="Login">
-                    <div class="form-floating mb-3">
-                        <input asp-for="Email" type="email" class="form-control" id="email" name="Email" placeholder="">
-                        <label for="email">Email</label>
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-floating mb-3 d-flex">
-                        <input asp-for="Password" type="password" class="form-control" id="password" name="Password" placeholder="" style="border-radius:5px 0px 0px 5px;">
-                        <label for="password">Contraseña</label>
-                        <div class="input-group-append">
-                            <span class="input-group-text h-100" id="basic-addon2" style="border-radius:0px 5px 5px 0px;">
-                                <i onclick="ViewPassword(this)" class="bi bi-eye-slash my-auto input-group-append" style="cursor:pointer;"></i>
-                            </span>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+        <div class="row mt-5">
+            <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-2 pt-3 pb-3 border-0" style="box-shadow:0px 0px 20px 5px lightgray;">
+                <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
+                <h1 class="mx-auto fw-semibold">Iniciar Sesion</h1>
+                <div class="card-body">
+
+                    <form method="post" asp-controller="Auth" asp-action="Login">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" type="email" class="form-control" id="email" name="Email" placeholder="" value="juan@gmail.com" style="box-shadow:none;">
+                            <label for="email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
-                    </div>
-
-                    <div class="d-flex mb-3">
-
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="form2Example31" name="RememberMe" />
-                            <label class="form-check-label" for="form2Example31">Mantenerme iniciado en sesion</label>
+                        <div class="form-floating mb-3 d-flex">
+                            <input value="123" asp-for="Password" type="password" class="form-control" id="password" name="Password" placeholder="" style="border-radius:5px 0px 0px 5px;box-shadow:none;">
+                            <label for="password">Contraseña</label>
+                            <div class="input-group-append">
+                                <span class="input-group-text h-100" id="basic-addon2" style="border-radius:0px 5px 5px 0px;">
+                                    <i onclick="ViewPassword(this)" class="bi bi-eye-slash my-auto input-group-append" style="cursor:pointer;"></i>
+                                </span>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
                         </div>
 
-                        <a href="#" class="ms-auto">Recuperar contraseña</a>
-                    </div>
+                        <div class="d-flex mb-3">
 
-                    <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">Ingresar</button>
-                </form>
-            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="form2Example31" name="RememberMe" />
+                                <label class="form-check-label" for="form2Example31">Mantenerme iniciado en sesion</label>
+                            </div>
 
-            <div class="d-flex">
-                <a href="/register" class="d-flex mx-auto mt-5">No tienes cuenta? Registrate</a>
+                            <a href="/RecuperarPwd" class="ms-auto">Recuperar contraseña</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">Ingresar</button>
+                    </form>
+                </div>
+
+                <div class="d-flex">
+                    <a href="/register" class="d-flex mx-auto mt-5">No tienes cuenta? Registrate</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>function ViewPassword(e) {
+    <script>function ViewPassword(e) {
 
-        var input = document.getElementById("password");
-        if (input.getAttribute("type") === "password") {
-            input.setAttribute("type", "text");
-            e.classList.remove("bi-eye-slash")
-            e.classList.add("bi-eye");
-        } else {
-            input.setAttribute("type", "password");
-            e.classList.remove("bi-eye");
-            e.classList.add("bi-eye-slash");
-        }
+            var input = document.getElementById("password");
+            if (input.getAttribute("type") === "password") {
+                input.setAttribute("type", "text");
+                e.classList.remove("bi-eye-slash")
+                e.classList.add("bi-eye");
+            } else {
+                input.setAttribute("type", "password");
+                e.classList.remove("bi-eye");
+                e.classList.add("bi-eye-slash");
+            }
 
 
-    }</script>
+        }</script>
+
+</body>

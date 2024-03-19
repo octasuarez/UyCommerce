@@ -3,47 +3,50 @@
     @model RegisterModel
 }
 
-<div class="container d-flex flex-column" style="height:70vh;">
+<body>
 
-    <div class="row">
-        <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-2 pt-3 pb-3 border-0 shadow">
-            <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
-            <h1 class="mx-auto">Crea una cuenta</h1>
-            <div class="card-body">
+    <div class="container d-flex flex-column" style="height:70vh;">
 
-                <form method="post" asp-controller="Auth" asp-action="AgregarUsuario">
-                    <div class="form-floating mb-3">
-                        <input asp-for="Nombre" type="text" class="form-control" id="floatingName" placeholder="" name="Nombre">
-                        <label for="floatingName">Nombre</label>
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
+        <div class="row">
+            <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-5 pt-3 pb-3 border-0" style="box-shadow:0px 0px 20px 5px lightgray;">
+                <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
+                <h1 class="mx-auto">Crea una cuenta</h1>
+                <div class="card-body">
 
-                    <div class="form-floating mb-3">
-                        <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="" name="Email">
-                        <label for="floatingInput">Email</label>
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
+                    <form method="post" asp-controller="Auth" asp-action="AgregarUsuario">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Nombre" type="text" class="form-control" id="floatingName" placeholder="" name="Nombre" style="box-shadow:none;">
+                            <label for="floatingName">Nombre</label>
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
 
-                    <div class="form-floating mb-3">
-                        <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="" name="Password">
-                        <label for="floatingPassword">Contraseña</label>
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" type="email" class="form-control" id="floatingInput" placeholder="" name="Email" style="box-shadow:none;">
+                            <label for="floatingInput">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
 
-                    <div class="form-floating mb-3">
-                        <input asp-for="ConfirmPassword" type="password" class="form-control" id="floatingPassword2" placeholder="" name="ConfirmPassword">
-                        <label for="floatingPassword2">Confirmar contraseña</label>
-                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                    </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="" name="Password" style="box-shadow:none;">
+                            <label for="floatingPassword">Contraseña</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">Crear cuenta</button>
+                        <div class="form-floating mb-3">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" id="floatingPassword2" placeholder="" name="ConfirmPassword" style="box-shadow:none;">
+                            <label for="floatingPassword2">Confirmar contraseña</label>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
 
-                </form>
-            </div>
+                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">Crear cuenta</button>
 
-            <div class="d-flex">
-                <a href="/login" class="d-flex mx-auto mt-5">Ya tienes una Cuenta? Inicia Sesion</a>
+                    </form>
+                </div>
+
+                <div class="d-flex">
+                    <a href="/login" class="d-flex mx-auto mt-5">Ya tienes una Cuenta? Inicia Sesion</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</body>

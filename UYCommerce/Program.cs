@@ -1,9 +1,11 @@
 ﻿
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Controllers;
 using UYCommerce.Data;
 using UYCommerce.Paypal;
+using UYCommerce.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,12 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+//email config
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+
+builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton<IEmailService, EmailService>();
 
 //paypal settings
 builder.Services.AddSingleton(x =>
@@ -37,6 +45,8 @@ builder.Services.AddDbContext<ShopContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -44,8 +54,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
         options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/Forbidden/";
+        options.AccessDeniedPath = "/Login";
+        options.LoginPath = "/Login";
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy =>
+                      policy.RequireClaim(ClaimTypes.Role, "Admin"));
+    options.AddPolicy("User", policy =>
+                      policy.RequireClaim(ClaimTypes.Role, "User"));
+});
 
 var app = builder.Build();
 

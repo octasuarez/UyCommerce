@@ -182,3 +182,26 @@ button.accept-policy {
     background-color: white;
     height: 100%;
 }
+
+.categorias{
+    justify-content:center;
+}
+.categoria{
+    margin-right:20px;
+    width:400px;
+    height:300px;
+    border:solid 1px lightgray;
+    border-radius:10px;
+}
+
+.categoria img {
+    height: 80%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease 0s, opacity 0.5s;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.categoria img:hover{
+    opacity:60%;
+}
