@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,7 +27,6 @@
                 <div class="collapse navbar-collapse d-flex mx-auto col-10" id="navbarSupportedContent">
 
                     <a class="navbar-brand text-nowrap me-4" href="/">
-                        @*<img height="80" src="~/Imagenes/Logos/navlogo.png" />*@
                         <h1 class="text-light" style="font-family:Impact;">UyCommerce</h1>
                     </a>
 
@@ -41,7 +41,7 @@
                         </form>
                     </div>
 
-                    <div class="d-flex ms-auto me-5">
+                    <div class="d-flex ms-5 me-5">
 
                         @if (User.Identity != null && !User.Identity.IsAuthenticated)
                         {
@@ -58,22 +58,9 @@
                                         <i class="bi bi-person-circle text-white fs-4 m-2"></i>Mi Cuenta
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="text-decoration-none" href="/Compras">Mis Compras</a></li>
-                                        <li><a class="text-decoration-none" href="/Favoritos">Favoritos</a></li>
-                                        <li>Preguntas</li>
-                                        <li>Perfil</li>
-                                        <li><a class="my-auto text-nowrap ms-auto" asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            @* Notificaciones *@
-                            <ul class="navbar-nav d-flex">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-bell-fill text-white fs-4 m-2"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="p-2">Bienvenido a nuestra tienda!</li>
+                                        <li ><a class="dropdown-item" href="/Compras">Mis Compras</a></li>
+                                        <li ><a class="dropdown-item " href="/Favoritos">Favoritos</a></li>
+                                        <li ><a class="dropdown-item " asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -85,12 +72,8 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link " role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-cart-fill text-white fs-4 m-2" style="color:white;"></i>
+                                    <p class="d-inline fw-bold text-white">@Context.Session.GetString("cartItems")</p>
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li>Producto 1 - $234</li>
-                                    <li>Producto 2 - $574</li>
-                                    <li>Producto 3 - $84</li>
-                                </ul>
                             </li>
                         </ul>
                     </div>
@@ -100,7 +83,7 @@
                 <div class="d-flex mx-auto">
 
                     <ul class="list-unstyled navbar-nav">
-                            @await Component.InvokeAsync("Menu")
+                        @await Component.InvokeAsync("Menu")
                         <li class="me-4">
                             <a class="text-light text-decoration-none" href="#">Contacto</a>
                         </li>
@@ -124,58 +107,22 @@
         </main>
     </div>
 
-    <footer id="footer" class="pt-5 border-top bg-white pb-0">
-        <div class="container">
-            <div class="row">
-                <div class="col-6 col-md-2 mb-3">
-                    <h5>Acerca de</h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Lugares</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Contacto</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Quienes somos</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-6 col-md-2 mb-3">
-                    <h5>Ayuda</h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Como comprar</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Preguntas frecuentes</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-6 col-md-2 mb-3">
-                    <h5>Mi Cuenta</h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Compras</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Favoritos</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Carrito</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-md-5 offset-md-1 mb-3">
-                    <form>
-                        <h5>Recibí las ultimas noticias del sitio!</h5>
-                        <p>Registrate y recibí las ultimas promociones en el sitio</p>
-                        <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-                            <label for="newsletter1" class="visually-hidden">Email address</label>
-                            <input id="newsletter1" type="text" class="form-control" placeholder="Correo electronico">
-                            <button class="btn btn-primary" type="button">Registrate</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+                <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+                <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
             </div>
 
-            <div class="d-flex flex-column flex-sm-row justify-content-between pt-4 mt-4 border-top">
-                <p>© 2023 UYCommerce, Inc. Derechos de Autores reservados.</p>
-                <ul class="list-unstyled d-flex">
-                    <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
-                    <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
-                    <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                <li class="ms-3"><a class="text-body-secondary" target=”_blank” href="https://www.linkedin.com/in/octavio-su%C3%A1rez-pamparatto/"><i class="bi bi-linkedin fs-4"></i></a></li>
+                <li class="ms-3"><a class="text-body-secondary" target=”_blank” href="https://github.com/octasuarez/UyCommerce"><i class="bi bi-github fs-4"></i></a></li>
+                <li class="ms-3"><a class="text-body-secondary" target=”_blank” href="https://instagram.com/octasuarez22"><i class="bi bi-instagram fs-4"></i></a></li>
+            </ul>
+        </footer>
+    </div>
 
 
 

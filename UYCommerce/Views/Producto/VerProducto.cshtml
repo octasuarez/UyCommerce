@@ -119,41 +119,46 @@
                 </div>
 
                 @*Selects*@
-                <div class="my-5">
-                    @for (int i = 0; i < Model.Opciones!.Count(); i++)
-                    {
-                        <select class="form-select" name="@Model.Opciones.ElementAt(i).Key.Nombre" id="@i" onchange="cambioAtributo(this)">
+                @if (Model.Opciones != null && Model.Opciones.Any())
+                {
+                    <div class="my-5">
+                        @for (int i = 0; i < Model.Opciones!.Count(); i++)
+                        {
+                            <h6 style="font-weight:bold;margin-top:1em;">@Model.Opciones.ElementAt(i).Key.Nombre:</h6>
 
-                            @foreach (var atributo in Model.Opciones.ElementAt(i))
-                            {
-                                if (Model.Sku!.AtributosValores!.Contains(atributo))
+                            <select class="form-select" name="@Model.Opciones.ElementAt(i).Key.Nombre" id="@i" onchange="cambioAtributo(this)">
+
+                                @foreach (var atributo in Model.Opciones.ElementAt(i))
                                 {
-                                    <option value="@atributo.Valor" selected>@atributo.Valor</option>
+                                    if (Model.Sku!.AtributosValores!.Contains(atributo))
+                                    {
+                                        <option value="@atributo.Valor" selected>@atributo.Valor</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@atributo.Valor">@atributo.Valor</option>
+                                    }
                                 }
-                                else
-                                {
-                                    <option value="@atributo.Valor">@atributo.Valor</option>
-                                }
-                            }
-                        </select>
-                    }
-                </div>
+                            </select>
+                        }
+                    </div>
+                }
 
                 @if (Model.Sku != null)
                 {
-                    <div class="form-row ">
 
-                        <div class="form-row input-group">
+
+                    <div class="form-row  mt-5">
+                        <div class="form-row input-group mx-auto" style="width:70%;">
                             <div class="input-grpup-prepend" style="width:60px;">
-                                <input class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" />
+                                <input id="qty" class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" />
                             </div>
-                            <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2  mb-2">Agregar al carrito</button>
+                            @if (!User.Identity.IsAuthenticated)
+                            {<a style="" value="@Model.Sku.Id" href="/Login" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></a> }
+                            else
+                            { <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></button>}
                         </div>
 
-                        <form method="post" action="@Url.Action("ComprarProducto","PagosController")">
-                            <input name="skuId" type="number" hidden value="@Model.Sku.Id" />
-                            <button type="submit" class="form-control btn btn-primary bg-gradient py-2 fs-5">Comprar</button>
-                        </form>
                     </div>
                 }
                 else
@@ -173,8 +178,7 @@
         </div>
 
         @* Descripcion del producto *@
-
-        <div class=" mb-5">
+        <div class=" my-3">
             <h3 class="text-center">Descripcion</h3>
             <span>@Model.Sku.Producto.Descripcion</span>
         </div>
@@ -184,7 +188,7 @@
 
             <h3 class="text-center">Preguntas</h3>
 
-            <h5>@Model.Sku.Producto.Preguntas.Count preguntas</h5>
+            <h5 id="pcount" data-count=@Model.Sku.Producto.Preguntas!.Count>@Model.Sku.Producto.Preguntas.Count preguntas</h5>
 
             <div class="row mb-4 mt-3">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -273,37 +277,71 @@
 
 
         @* La lista de productos relacionados *@
-        <!--<div>
-            <h3 class="text-center">Productos Relacionados</h3>
-            <div class="d-flex mt-5">-->
-        @*@foreach (var p in Model.ProductosRelacionados!)
-            {
-                <div class="card me-3" style="width: 300px;">
+        <div class="d-flex flex-column">
 
-                    <img class="card-img-top object-fit-contain" style="height:300px;" src="~/Imagenes/Productos/@p.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
-                    <div class="card-body">
-                        <a href="/@p.NombreClave" class="text-decoration-none text-reset">
-                            <h3 class="card-title">@p.Nombre</h3>
-                            <h5 class="card-text">$@p.Skus!.First().Precio</h5>
-                        </a>
-                        <button class="btn btn-primary">Add to cart</button>
-                    </div>
-                </div>
-            }*@
-        <!--</div>
-        </div>-->
+            <h3 class="text-center">Productos Relacionados</h3>
+            <div class="d-flex" style="overflow:scroll;">
+                @if (Model.ProductosRelacionados != null && Model.ProductosRelacionados.Any())
+                {
+                    foreach (var s in Model.ProductosRelacionados)
+                    {
+                        <div id="@s.Id" class="card product-card m-3" style="height:600px;min-width: 400px;max-width:400px;">
+                            <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
+                                @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
+                                {
+                                    <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
+                                }
+                            </a>
+                            <a href="/@s.Key" class="text-decoration-none text-reset">
+                                <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                            </a>
+                            <div class="card-body">
+                                <ul class="text-center p-0">
+
+                                    @for (int i = 0; i < 5; i++)
+                                    {
+                                        if (i < s.Producto.GetPuntuacionPromedio())
+                                        {
+                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                        }
+                                    }
+                                </ul>
+                                <a href="/@s.Key" class="text-decoration-none text-reset">
+                                    <h4 class="card-title text-center">@s.Nombre</h4>
+                                    <p class="card-text text-center">
+                                        @if (s.PrecioAnterior > 0)
+                                        {<strike class="card-text">$@(s.PrecioAnterior)</strike>}
+                                        <b class="card-text text-center"> $@s.Precio</b>
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
 
     </div>
 
 
     <script>function cambioAtributo(e) {
-                    var url = "/@Model.Sku.Producto.NombreClave";
-                    if (e.id == 0) {
+    var url = "/@Model.Sku.Producto.NombreClave";
+                     if (e.id == 0) {
+
                         window.location.href = (url + `-${e.value}`).toLowerCase();
 
                     } else {
-                    let selects = e.parentElement.children;
 
+                         let selects = e.parentElement.querySelectorAll('select');
                     for (i = 0; i < selects.length; i++) {
                         url = url + "-" + selects[i].value;
                     }
@@ -315,10 +353,11 @@
     function AgregarProductoAlCarrito(e) {
 
 
+
         if ("@Model.Sku" != null) {
             let formData = {
                 skuId: e.value,
-                quantity: 1
+                quantity: document.getElementById('qty').value
             }
             console.log(formData)
             $.ajax({
@@ -327,7 +366,8 @@
                 data: formData,
                 success: function (response) {
                     alert("Se agrego el producto al Carrito de manera exitosa");
-                }  
+                    location.reload();
+                }
 
             })
         }
@@ -344,7 +384,7 @@
 
         var formData =
         {
-            Contenido: preguntaTxt.value, ProductoId: @Model.Producto.Id
+            Contenido: preguntaTxt.value, ProductoId: @Model.Sku.Producto.Id
         };
 
         console.log(formData)
@@ -358,11 +398,18 @@
                 console.log(response)
 
                 preguntas = document.getElementById('Preguntas');
-
+                var preg_existentes = response.count > 1 ? preguntas.innerHTML : "";
                 preguntas.innerHTML =
+                    `<h5>${response.pregunta.nombreUsuario}</h5>
+                 <p>${response.pregunta.contenido}</p>
+                 <p class="fs-6 fw-lighter"> Publicado el ${response.pregunta.fecha}</p>
+                 ${preg_existentes}
+                 `
 
-                    `<h5>${response.nombreUsuario}</h5>
-                 <p>${response.contenido}</p>` + preguntas.innerHTML;
+                document.getElementById('txtPregunta').value = "";
+
+                document.getElementById('pcount').innerHTML = `${response.count} preguntas`
+
             },
             error: function (response) {
 

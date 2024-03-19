@@ -71,7 +71,7 @@ namespace UYCommerce.Controllers
                 Categoria = _context.Categorias
                 .Include(c => c.CategoriaPadre)
                 .Include(c => c.Atributos)!.ThenInclude(a => a.Valores)
-                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower())
+                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower()),
             };
 
             if (result.Categoria != null)
@@ -101,7 +101,7 @@ namespace UYCommerce.Controllers
 
                 result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
 
-                if (User.Identity!.IsAuthenticated)
+                //if (User.Identity!.IsAuthenticated)
                     result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
 
                 if (orden > 0)
@@ -167,28 +167,37 @@ namespace UYCommerce.Controllers
                 .Include(s => s.Producto).ThenInclude(p => p!.Marca)
                 .Include(s => s.Producto).ThenInclude(p => p!.Categoria).ThenInclude(c => c!.CategoriaPadre)
                 .Include(s => s.Imagenes)
-                .FirstOrDefaultAsync(s => s.Key.Contains(key));
+                .FirstOrDefaultAsync(s => s.Key.ToLower().Contains(key.ToLower()));
 
             if (sku is not null)
             {
                 var skus = _context.Skus
                     .Where(s => s.ProductoId == sku.ProductoId)
-                    .Include(s => s.AtributosValores)!.ThenInclude(a => a.Atributo).ToList();
-
-                List<AtributoValor> opciones = skus.SelectMany(s => s.AtributosValores!.Where(a => a.Atributo!.Id == sku.AtributosValores!.First().Atributo!.Id)).ToList();
-
-                opciones.AddRange(skus.Where(s => s.AtributosValores!.Contains(sku.AtributosValores!.First())).SelectMany(s => s.AtributosValores!).ToList());
-
-                opciones = opciones.Distinct().ToList();
-                var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo);
+                    .Include(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
+                    .Include(s => s.Producto.Categoria.Productos)!.ThenInclude(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+                    .ToList();
 
                 VerProductoVM result = new()
                 {
                     Sku = sku,
-                    Opciones = opcionesPorAtributo,
-                    Reviews = sku.Producto.Reviews,
-                    Categoria = sku.Producto.Categoria
+                    Reviews = sku.Producto!.Reviews,
+                    Categoria = sku.Producto.Categoria,
+                    ProductosRelacionados = sku.Producto.Categoria!.Productos!.SelectMany(p => p.Skus!).ToList(),
                 };
+
+                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+
+                if (sku.AtributosValores != null && sku.AtributosValores.Any())
+                {
+                    List<AtributoValor> opciones = skus.SelectMany(s => s.AtributosValores!.Where(a => a.Atributo!.Id == sku.AtributosValores!.First().Atributo!.Id)).ToList();
+
+                    opciones.AddRange(skus.Where(s => s.AtributosValores!.Contains(sku.AtributosValores!.First())).SelectMany(s => s.AtributosValores!).ToList());
+
+                    opciones = opciones.Distinct().ToList();
+                    var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo);
+
+                    result.Opciones = opcionesPorAtributo;
+                }
 
                 return View("VerProducto", result);
             }

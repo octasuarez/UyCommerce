@@ -146,7 +146,7 @@
                             JSON.stringify(orderData, null, 2),
                         );
 
-                        window.location.href = `/Compras/${response.id}`;
+                        window.location.href = `/Compras/${orderData.id}`;
                     }
                 } catch (error) {
                     console.error(error);

@@ -37,7 +37,6 @@ namespace LoginAndRegister.Controllers
         {
             try
             {
-
                 Carrito? carrito = new();
 
                 if (User.Identity is not null && User.Identity.IsAuthenticated)
@@ -50,11 +49,6 @@ namespace LoginAndRegister.Controllers
                         .ThenInclude(pC => pC.Sku)
                         .FirstOrDefault(c => c.UsuarioId.ToString() == usuarioID);
                 }
-
-                //Pasamos los productos y el total de la compra para poder crear la orden
-                //El total en double lo dividimos en 40 para pasarlo a USD y lo formateamos para tener solo 2 digitos despues de la coma.
-
-                //var total = String.Format("{0:0.00}", (carrito!.GetTotal() / 40));
 
                 var total = carrito!.GetTotal();
 
@@ -88,13 +82,14 @@ namespace LoginAndRegister.Controllers
                     Orden orden = new()
                     {
                         Id = response.id!,
-                        UsuarioId = usuario != null ? usuario.Id : null,
+                        UsuarioId = usuario?.Id,
                         FechaDeCompra = DateTime.Now,
                         Estado = "en camino",
-                        NombreComprador = usuario != null ? usuario.Nombre : null,
+                        NombreComprador = usuario?.Nombre,
                         MetodoDePago = response.payment_source!.card != null ? "Tarjeta" : "Paypal",
                         Total = double.Parse(response.purchase_units![0].amount!.value!),
-                        Direccion = JsonSerializer.Deserialize<OrdenDireccion>(JsonSerializer.Serialize(response.purchase_units[0].shipping.address))
+                        Direccion = JsonSerializer.Deserialize<OrdenDireccion>(JsonSerializer.Serialize(response.purchase_units[0].shipping.address)),
+                        Productos = new List<ProductoOrden>()
                     };
 
                     foreach (var item in response.purchase_units![0].items!)
@@ -105,7 +100,7 @@ namespace LoginAndRegister.Controllers
                             SkuId = int.Parse(item.sku!),
                             OrdenId = orden.Id,
                             Cantidad = int.Parse(item.quantity!),
-                            Precio = double.Parse(item.unit_amount!.value!) * 40, //a dolares
+                            Precio = double.Parse(item.unit_amount!.value!),
                             Nombre = item.name,
                         });
                     }
@@ -114,8 +109,10 @@ namespace LoginAndRegister.Controllers
 
                     await _context.ProductosCarritos.Where(p => p.CarritoId.ToString() == carritoId).ExecuteDeleteAsync();
 
-                    await _context.AddAsync(orden);
+                     _context.Add(orden);
                     await _context.SaveChangesAsync();
+
+                    HttpContext.Session.SetString("cartItems", "0");
                 }
 
                 return Ok(response);

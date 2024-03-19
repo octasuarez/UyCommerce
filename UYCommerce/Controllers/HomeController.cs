@@ -21,13 +21,16 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
 
+        var productos = await _context.Productos.Include(p => p.Reviews)
+            .Include(p=> p.Skus)!.ThenInclude(s => s.Imagenes)
+            .ToListAsync();
+
+        var skus = productos.OrderByDescending(p => p.GetPuntuacionPromedio())
+            .Take(4).Select(p => p.Skus!.First()).ToList();
+
         HomeVM homeVM = new()
         {
-            Productos = await _context.Productos
-            .Include(p => p.Imagenes)
-            .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-            .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)
-            .ToListAsync(),
+            Skus = skus,
 
             Categorias = await _context.Categorias.Where(c => c.MostrarEnInicio == true).ToListAsync(),
 
@@ -39,10 +42,7 @@ public class HomeController : Controller
         if (User.Identity is not null && User.Identity.IsAuthenticated)
         {
             usuario = _context.Usuarios.FirstOrDefault(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-        }
-
-        if(usuario is not null && usuario.Favoritos != null) {
-            homeVM.Favoritos = usuario.Favoritos;
+            homeVM.Favoritos = usuario!.Favoritos != null ? usuario.Favoritos : null!;
         }
 
         return View(homeVM);
@@ -63,7 +63,6 @@ public class HomeController : Controller
     [Route("NotFound")]
     public IActionResult NotFoundPage()
     {
-
         return View("NotFound");
     }
 

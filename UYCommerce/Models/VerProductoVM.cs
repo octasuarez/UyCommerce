@@ -8,8 +8,9 @@ namespace UYCommerce.Models
         public IEnumerable<IGrouping<Atributo,AtributoValor>>? Opciones { get; set; }
         public ICollection<Pregunta> Preguntas { get; set; } = new List<Pregunta>();
         public ICollection<Review>? Reviews { get; set; }
-        public ICollection<Producto>? ProductosRelacionados { get; set; }
+        public ICollection<Sku>? ProductosRelacionados { get; set; }
         public Categoria? Categoria { get; set; }
+        public ICollection<Sku>? Favoritos { get; set; }
 
 
         public double GetPuntuacionPromedio() {

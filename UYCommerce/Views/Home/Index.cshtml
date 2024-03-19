@@ -12,27 +12,26 @@
     @*Carousel*@
     <div id="carouselExampleAutoplaying" class="carousel slide mx-auto col-12" data-bs-ride="carousel">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="~/Imagenes/Carousel/carousel_1.jpg" class="d-block w-100 object-fit-cover" style="height:500px;" alt="...">
-                <div class="carousel-caption text-left">
-                    <p><a class="btn btn-lg btn-primary" href="#" role="button">SHOP NOW</a></p>
+            <div class="carousel-item" style="max-height:500px";>
+                <img src="~/Imagenes/Carousel/carousel_1.png" class="d-block object-fit-contain mx-auto" style="" alt="...">
+                <div class="carousel-caption text-dark" style="position:absolute;transform:translate(-450px, -70px)">
+                    <p><a class="btn btn-lg btn-dark" href="/search?query=bicicleta" role="button">Comprar</a></p>
                 </div>
             </div>
-            <div class="carousel-item">
-                <img src="~/Imagenes/Carousel/carousel_2.jpg" class="d-block w-100 object-fit-cover" style="height:500px;" alt="...">
-                <div class="carousel-caption text-left">
-                    <h1>Macbook m2</h1>
+            <div class="carousel-item active" style="max-height:500px;">
+                <img src="~/Imagenes/Carousel/carousel_2.png" class="d-block" style="object-fit:contain" alt="...">
+                <div class="carousel-caption text-dark col-4" style="position:absolute;transform:translate(900px, -70px)">
                     <p>With M2 Pro and M2 Max, MacBook Pro is capable of transforming pro workflows across a wide range of disciplines, from art to science to app development. Users looking to upgrade from Intel-based Mac models will experience even more dramatic improvements in performance, battery life, connectivity, and overall productivity. MacBook Pro also maintains performance whether users are plugged in or on battery.</p>
-                    <p><a class="btn btn-lg btn-primary" href="#" role="button">SHOP NOW</a></p>
+                    <p><a class="btn btn-lg btn-dark" href="/search?query=macbook" role="button">Comprar</a></p>
                 </div>
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="carousel-control-prev-icon" style="filter:invert()" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="carousel-control-next-icon" style="filter:invert()" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
@@ -45,36 +44,34 @@
 
     @*Categorias en display*@
     <div class="container mb-5 pb-5">
-        <div class="d-flex">
-
+        <div class="d-flex categorias">
             @foreach (var c in Model.Categorias!)
             {
-                <div class="me-3 border-0" style="width: 20rem;">
-
-                    <a class="text-decoration-none text-reset h-100" href="/c/@c.Nombre">
-                        <img class="card-img-top h-100 object-fit-cover" src="~/Imagenes/Categorias/@c.ImagenNombre" alt="categoria">
+                <div class="categoria">
+                    <a href="/c/@c.Nombre">
+                        <img class="img-categoria" src="~/Imagenes/Categorias/@c.ImagenNombre" alt="@c.ImagenNombre">
                     </a>
-                    <div class="card-body">
-                        <h3 class="card-title text-center">@c.Nombre</h3>
+                    <div class="categoria-text">
+                        <h3 class="text-center" style="font-size:30px;height:100%;">@c.Nombre</h3>
                     </div>
                 </div>
             }
         </div>
     </div>
 
-    @*Productos Featured*@
+    @*Productos Destacados*@
 
     <div class="mb-5">
         <div class="container">
-            <h1 class="text-center mb-5">Destacados</h1>
+            <h1 class="text-center">Destacados</h1>
             <div class="d-flex">
 
-                @foreach (var p in Model.Productos!)
+                @foreach (var s in Model.Skus!)
                 {
 
-                    <div id="@p.Id" class="card product-card me-3" style="width: 400px;">
-                        @*<a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Agregar a Favoritos">
-                            @if (Model.Favoritos.Contains(p))
+                    <div id="@s.Id" class="card product-card m-3" style="height:600px;width: 400px;">
+                        <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
+                            @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
                             {
                                 <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                             }
@@ -82,22 +79,29 @@
                             {
                                 <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
                             }
-                        </a>*@
-                        <a href="/@p.NombreClave" class="text-decoration-none text-reset">
-                            <img class="card-img-top object-fit-contain w-100" style="height:400px;" src="~/Imagenes/Productos/@p.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                        </a>
+                        <a href="/@s.Key" class="text-decoration-none text-reset">
+                            <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                         </a>
                         <div class="card-body">
-                            <ul class="d-block row text-center p-0">
-                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-half"></i></li>
-                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                            <ul class="text-center p-0">
+
+                                @for (int i = 0; i < 5; i++)
+                                {
+                                    if (i < s.Producto.GetPuntuacionPromedio())
+                                    {
+                                        <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                    }
+                                }
                             </ul>
-                            <a href="/@p.NombreClave" class="text-decoration-none text-reset">
-                                <h4 class="card-title text-center">@p.Nombre</h4>
+                            <a href="/@s.Key" class="text-decoration-none text-reset">
+                                <h4 class="card-title text-center">@s.Nombre</h4>
                                 <p class="card-text text-center">
-                                    <strike class="card-text">$@(p.Skus!.First().Precio + 100)</strike><b class="card-text text-center"> $@p.Skus!.First().Precio</b>
+                                    <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
                                 </p>
                             </a>
                         </div>
@@ -107,40 +111,6 @@
         </div>
     </div>
 
-    <script>function AgregarAFavoritos(e) {
-
-            var element = e.firstElementChild.classList;
-
-            var productoId = e.parentElement.getAttribute('id');
-
-            console.log(productoId);
-
-            var data = { "productoId": productoId }
-
-            $.ajax({
-                type: 'POST',
-                url: '/Producto/AgregarAFavoritos',
-                dataType: 'json',
-                data: { productoId: productoId },
-                success: function (response) {
-                    alert(response.msj);
-
-                    if (response.msj === "agregado") {
-
-                        element.replace('bi-heart', 'bi-heart-fill');
-                        element.add('text-secondary', 'text-danger')
-
-                    } else {
-
-                        element.replace('bi-heart-fill', 'bi-heart')
-                        element.replace('text-danger', 'text-secondary')
-                    }
-                },
-                error: function () {
-                    window.location.href = '/Login';
-                }
-            })
-
-        }</script>
+    <script src="~/js/site.js"></script>
 </body>
 </html>

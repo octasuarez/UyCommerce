@@ -1,18 +1,99 @@
 ﻿@model Orden
 
+<body class="bg-body-tertiary">
 
+    <section class="container" style="min-height:500px;background-color:white;padding-top:10px;">
 
-<div class="container" style="min-height:500px;">
+        <a style="position:absolute;transform:translate(-300px, 10px)" href="/Compras"><i class="bi bi-arrow-left"></i> Volver a mis compras</a>
+        <div class="d-flex mt-5 align-items-center">
+            <h3 class="fw-bold">Compra @Model.Id</h3>
+            <h5 class="ms-auto text-secondary">@Model.FechaDeCompra</h5>
+        </div>
+        <div class="border my-3"></div>
+        <div class="d-flex">
 
-    <h3 class="mt-5">Compra @Model.Id</h3>
-    <div class="col-2">
-        <h3>Direccion</h3>
-        <p>@Model.Direccion!.address_line_1</p>
-        <p>@Model.Direccion.address_line_2</p>
-        <p>@Model.Direccion.admin_area_1</p>
-        <p>@Model.Direccion.admin_area_2</p>
-        <p>@Model.Direccion.postal_code</p>
-        <p>@Model.Direccion.country_code</p>
+            <div class="col-auto me-5">
+                <h6 class="fw-bold" style="">DIRECCION DE ENVÍO</h6>
+                <p class="my-0">@Model.Direccion!.address_line_1</p>
+                <p class="my-0">@Model.Direccion.address_line_2</p>
+                <p class="my-0"></p>
+                <p class="my-0">@Model.Direccion.admin_area_2,@Model.Direccion.admin_area_1,@Model.Direccion.postal_code</p>
+                <p class="my-0"></p>
+                <p class="my-0">@Model.Direccion.country_code</p>
+            </div>
+            <div class="col-auto me-5">
+                <h6 class="fw-bold" style="">METODO DE PAGO</h6>
+                <p class="my-0">@Model.MetodoDePago</p>
+            </div>
+            <div class="col-auto me-5">
+                <h6 class="fw-bold" style="">ESTADO</h6>
+                <p class="my-0">@Model.Estado</p>
+                <p class="my-0">@if (Model.FechaDeEntrega != null)
+                {@Model.FechaDeEntrega;
+            }</p>
+            </div>
+
+        </div>
+        <h6 class="mt-5 fw-semibold">Productos</h6>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>SKU</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Productos)
+                {
+
+                    <tr>
+                        <td>
+                            <div class="d-flex">
+                                <img src="~/Imagenes/Productos/@p.Sku.Imagenes.First().ImagenNombre" style="height:150px;width:150px;object-fit:contain" />
+                                <div class="d-flex flex-column ms-3">
+
+                                    <a href="/@p.Sku.Key" class="text-dark fw-semibold mb-3">@p.Nombre</a>
+                                    @if (p.Sku.AtributosValores != null && p.Sku.AtributosValores.Any())
+                                    {
+                                        foreach (var a in p.Sku.AtributosValores)
+                                        {
+                                            <p class="m-0" style="font-size:15px;"><strong>@a.Atributo.Nombre:</strong> @a.Valor</p>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td>@p.Sku.Key</td>
+                        <td>$@p.Precio</td>
+                        <td>@p.Cantidad</td>
+                        <td>$@(p.Cantidad * p.Precio)</td>
+                    </tr>
+                }
+            <tr>
+                <th style="border:none;"></th>
+                <th style="border:none;"></th>
+                <th style="border:none;"></th>
+                <th style="border:none;"></th>
+                <th>
+                    Total
+                </th>
+
+            </tr>
+                <tr>
+                    <td style="border:none;"></td>
+                    <td style="border:none;"></td>
+                    <td style="border:none;"></td>
+                    <td style="border:none;"></td>
+                    <td>
+                        <p> $@Model.Total</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
     </div>
 
-</div>
+</body>

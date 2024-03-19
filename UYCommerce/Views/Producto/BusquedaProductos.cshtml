@@ -178,7 +178,8 @@
                                         <a href="/@s.Key" class="text-decoration-none text-reset">
                                             <h4 class="card-title text-center">@s.Nombre</h4>
                                             <p class="card-text text-center">
-                                                <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
+                                                @if (s.PrecioAnterior > 0)
+                                                {<strike class="card-text text-secondary">$@(s.PrecioAnterior)</strike>}<b class="card-text text-center fs-5"> $@s.Precio</b>
                                             </p>
                                         </a>
                                     </div>

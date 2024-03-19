@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
@@ -13,6 +14,7 @@ using UYCommerce.Models;
 
 namespace UYCommerce.Controllers
 {
+    [Authorize(Policy = "User")]
     public class CarritoController : Controller
     {
 
@@ -38,37 +40,35 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public JsonResult AgregarProductoAlCarrito(AddToCartModel request)
         {
+            Carrito? carrito = GetCarrito();
 
-            if (User.Identity!.IsAuthenticated)
+            if (carrito is not null)
             {
-                Carrito? carrito = GetCarrito();
+                var sku = _context.Skus.FirstOrDefault(s => s.Id == int.Parse(request.skuId));
 
-                if (carrito is not null)
+                var productoCarrito = carrito.Productos!.FirstOrDefault(p => p.SkuId == int.Parse(request.skuId));
+                int qty = 0;
+
+                if (productoCarrito is null && int.Parse(request.quantity) > 0)
                 {
-                    var sku = _context.Skus.FirstOrDefault(s => s.Id == int.Parse(request.skuId));
-
-                    var productoCarrito = carrito.Productos!.FirstOrDefault(p => p.SkuId == int.Parse(request.skuId));
-                    int qty = 0;
-
-                    if (productoCarrito is null)
-                    {
-                        ProductoCarrito nuevoProductoCarrito = new() { Cantidad = 1, SkuId = int.Parse(request.skuId) };
-                        carrito.Productos!.Add(nuevoProductoCarrito);
-                    }
-                    else
-                    {
-                        carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad += int.Parse(request.quantity);
-                        qty = carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad;
-                        if (qty == 0)
-                            carrito.Productos!.Remove(carrito.Productos!.FirstOrDefault(p => p.SkuId == productoCarrito.SkuId)!);
-                    }
-
-                    _context.Update(carrito);
-                    _context.SaveChanges();
-                    return new JsonResult(new { qty });
+                    ProductoCarrito nuevoProductoCarrito = new() { Cantidad = int.Parse(request.quantity), SkuId = int.Parse(request.skuId) };
+                    carrito.Productos!.Add(nuevoProductoCarrito);
+                }
+                else
+                {
+                    carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad += int.Parse(request.quantity);
+                    qty = carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad;
+                    if (qty == 0)
+                        carrito.Productos!.Remove(carrito.Productos!.FirstOrDefault(p => p.SkuId == productoCarrito.SkuId)!);
                 }
 
+                _context.Update(carrito);
+                _context.SaveChanges();
+                HttpContext.Session.SetString("cartItems", carrito.Productos!.Count.ToString());
+
+                return new JsonResult(new { qty });
             }
+
             return new JsonResult(new EmptyResult());
 
         }
@@ -89,10 +89,13 @@ namespace UYCommerce.Controllers
                 {
                     var productoCarrito = carrito.Productos.FirstOrDefault(p => p.SkuId == int.Parse(skuId));
 
-                    if (productoCarrito != null) {
+                    if (productoCarrito != null)
+                    {
                         carrito.Productos.Remove(productoCarrito);
                         _context.Update(carrito);
                         _context.SaveChanges();
+                        HttpContext.Session.SetString("cartItems", carrito.Productos!.Count.ToString());
+
                     }
                 }
             }
