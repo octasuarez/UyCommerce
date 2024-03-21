@@ -8,18 +8,18 @@
     <title>Home Page</title>
 
 </head>
-<body>
+<body class="">
     @*Carousel*@
     <div id="carouselExampleAutoplaying" class="carousel slide mx-auto col-12" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item" style="max-height:500px";>
-                <img src="~/Imagenes/Carousel/carousel_1.png" class="d-block object-fit-contain mx-auto" style="" alt="...">
+                <img src="~/Imagenes/Carousel/carousel_1.png" class="d-block object-fit-contain mx-auto col-12 col-lg-auto" style="" alt="...">
                 <div class="carousel-caption text-dark" style="position:absolute;transform:translate(-450px, -70px)">
                     <p><a class="btn btn-lg btn-dark" href="/search?query=bicicleta" role="button">Comprar</a></p>
                 </div>
             </div>
             <div class="carousel-item active" style="max-height:500px;">
-                <img src="~/Imagenes/Carousel/carousel_2.png" class="d-block" style="object-fit:contain" alt="...">
+                <img src="~/Imagenes/Carousel/carousel_2.png" class="d-block col-12 col-lg-auto" style="object-fit:contain" alt="...">
                 <div class="carousel-caption text-dark col-4" style="position:absolute;transform:translate(900px, -70px)">
                     <p>With M2 Pro and M2 Max, MacBook Pro is capable of transforming pro workflows across a wide range of disciplines, from art to science to app development. Users looking to upgrade from Intel-based Mac models will experience even more dramatic improvements in performance, battery life, connectivity, and overall productivity. MacBook Pro also maintains performance whether users are plugged in or on battery.</p>
                     <p><a class="btn btn-lg btn-dark" href="/search?query=macbook" role="button">Comprar</a></p>
@@ -44,7 +44,7 @@
 
     @*Categorias en display*@
     <div class="container mb-5 pb-5">
-        <div class="d-flex categorias">
+        <div class="d-lg-flex categorias">
             @foreach (var c in Model.Categorias!)
             {
                 <div class="categoria">
@@ -64,12 +64,12 @@
     <div class="mb-5">
         <div class="container">
             <h1 class="text-center">Destacados</h1>
-            <div class="d-flex">
+            <div class="d-lg-flex">
 
                 @foreach (var s in Model.Skus!)
                 {
 
-                    <div id="@s.Id" class="card product-card m-3" style="height:600px;width: 400px;">
+                    <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0" style="height:600px;width: 400px;">
                         <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
                             @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
                             {

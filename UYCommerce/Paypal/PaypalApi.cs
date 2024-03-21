@@ -1,5 +1,4 @@
 ﻿using System;
-using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;

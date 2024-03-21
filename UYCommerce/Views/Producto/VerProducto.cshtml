@@ -2,7 +2,7 @@
 
 <body>
 
-    <div class="container-fluid" style="width:1800px;">
+    <div class="container-lg-fluid p-3 col-lg-10 mx-lg-auto">
 
         @*Breadcrumb*@
         <nav aria-label="breadcrumb">
@@ -37,12 +37,12 @@
 
         @*Imagenes del producto*@
 
-        <div class="d-flex row col-12 ">
+        <div class=" d-lg-flex lg-row col-lg-12 ">
 
-            <div class="col-6">
-                <div class="ms-auto">
+            <div class="col-lg-6">
+                <div class="ms-lg-auto">
 
-                    <img id="imgmain" class="magniflier object-fit-contain d-flex mx-auto" style="height:600px;width:600px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                    <img id="imgmain" class="magniflier object-fit-contain d-flex mx-auto img-fluid" style="height:600px;width:600px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
 
                     <ul class="list-unstyled d-flex">
                         <li class="me-2">
@@ -72,7 +72,7 @@
 
             @*Detalles del producto y sus atributos*@
 
-            <div class="col-6 border p-3" style="height:fit-content;">
+            <div class="col-auto col-lg-6 border p-3" style="height:fit-content;">
                 <h1 class="mb-4">@Model.Sku.Nombre</h1>
 
                 @if (Model.Sku.Producto.Reviews != null)
@@ -103,13 +103,13 @@
                 @if (Model.Sku != null)
                 {<h3 class="fw-bold">$@Model.Sku.Precio</h3>}
 
-                <div style="max-height:150px">
+                <div class="overflow-scroll" style="max-height:150px">
                     @if (Model.Sku.Producto.Descripcion != null)
                     {
 
                         if (Model.Sku.Producto.Descripcion.Length > 600)
                         {
-                            <p style="max-height:150px;">@Model.Sku.Producto.Descripcion.Substring(0, 600)</p>
+                            <p class="m-0" style="max-height:150px;">@Model.Sku.Producto.Descripcion.Substring(0, 600)</p>
                         }
                         else
                         {
@@ -180,7 +180,7 @@
         @* Descripcion del producto *@
         <div class=" my-3">
             <h3 class="text-center">Descripcion</h3>
-            <span>@Model.Sku.Producto.Descripcion</span>
+            <span class="text-wrap">@Model.Sku.Producto.Descripcion</span>
         </div>
 
         @* Preguntas *@
@@ -280,7 +280,7 @@
         <div class="d-flex flex-column">
 
             <h3 class="text-center">Productos Relacionados</h3>
-            <div class="d-flex" style="overflow:scroll;">
+            <div class="d-lg-flex" style="overflow:scroll;">
                 @if (Model.ProductosRelacionados != null && Model.ProductosRelacionados.Any())
                 {
                     foreach (var s in Model.ProductosRelacionados)
@@ -365,7 +365,6 @@
                 url: '@Url.Action("AgregarProductoAlCarrito", "Carrito")',
                 data: formData,
                 success: function (response) {
-                    alert("Se agrego el producto al Carrito de manera exitosa");
                     location.reload();
                 }
 

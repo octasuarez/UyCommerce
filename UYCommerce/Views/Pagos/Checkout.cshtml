@@ -20,47 +20,48 @@
                 <h2>Mi Carrito (@Model.Productos.Count items)</h2>
             </div>
 
-            <div class="mt-2 w-100 h-100 d-flex">
+            <div class="mt-2 w-100 h-100 d-lg-flex">
 
-                <div class="col-8 h-100 p-3 me-2" style="border-radius:10px 10px 10px 10px;background-color:white;">
+                <div class=" col-lg-8 h-100 p-3 me-2" style="border-radius:10px 10px 10px 10px;background-color:white;">
 
                     <h4 class="fw-semibold">Productos</h4>
                     <div class="border my-4"></div>
                     <div>
                         @foreach (var p in Model.Productos)
                         {
-                            <div class="p-2 d-flex">
-                                <img class="object-fit-contain" src="~/Imagenes/Productos/@p.Sku.Imagenes!.First().ImagenNombre" style="height:150px;width:150px;" />
+                            <div class="p-2 d-lg-flex">
 
-                                <div class="d-flex flex-column col-8 ps-3">
-                                    <a href="/@p.Sku.Key" class="text-dark fs-4">@p.Sku.Nombre</a>
-                                    <div class="d-flex">
+                                    <img class="object-fit-contain" src="~/Imagenes/Productos/@p.Sku.Imagenes!.First().ImagenNombre" style="height:150px;width:150px;" />
 
-                                        @foreach (var a in p.Sku.AtributosValores!)
-                                        {
-                                            <p class="me-2"><strong>@a.Atributo!.Nombre:</strong> @a.Valor</p>
-                                        }
-                                    </div>
+                                    <div class="d-flex flex-column col-8 ps-3">
+                                        <a href="/@p.Sku.Key" class="text-dark fs-4">@p.Sku.Nombre</a>
+                                        <div class="d-flex">
 
-                                    <div class="d-flex align-items-center">
-                                        <div class="qty-btn me-2" style="">
-                                            <button data-value="@p.SkuId" data-qty=-1 onclick="ModificarQty(this)" style="color:red;">-</button>
-                                            <input id="@p.SkuId" disabled type="number" value="@p.Cantidad" readonly="readonly">
-                                            <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)" style="color: green;">+</button>
+                                            @foreach (var a in p.Sku.AtributosValores!)
+                                            {
+                                                <p class="me-2"><strong>@a.Atributo!.Nombre:</strong> @a.Valor</p>
+                                            }
                                         </div>
-                                        <button data-value="@p.SkuId" onclick="EliminarProductoCarrito(this)" class="btn"><i class="bi bi-trash3 fs-5" style="color:gray;"></i></button>
-                                    </div>
-                                </div>
 
-                                <div class="col-2">
-                                    <h4 class="text-center fw-semibold">$@p.Sku.Precio</h4>
-                                </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="qty-btn me-2 d-flex flex-nowrap" style="">
+                                                <button data-value="@p.SkuId" data-qty=-1 onclick="ModificarQty(this)" style="color:red;">-</button>
+                                                <input id="@p.SkuId" disabled type="number" value="@p.Cantidad" readonly="readonly">
+                                                <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)" style="color: green;">+</button>
+                                            </div>
+                                            <button data-value="@p.SkuId" onclick="EliminarProductoCarrito(this)" class="btn"><i class="bi bi-trash3 fs-5" style="color:gray;"></i></button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 position-relative position-lg-static me-5 me-lg-0">
+                                        <h4 class="text-center fw-semibold">$@p.Sku.Precio</h4>
+                                    </div>
                             </div>
                         }
                     </div>
                 </div>
 
-                <div class="w-100 pt-3" style="border-radius:10px 10px 10px 10px;background-color:white;">
+                <div class="mt-5 mt-lg-0 w-100 pt-3" style="border-radius:10px 10px 10px 10px;background-color:white;">
                     <div>
                         <h3 class="text-center mb-4 fw-bold">Resumen</h3>
                         <ul class="list-unstyled w-100">
@@ -68,7 +69,7 @@
                             @foreach (var p in Model.Productos)
                             {
                                 <li class="px-3 py-1 fs-5 d-flex">
-                                    <p> @p.Sku.Nombre x @p.Cantidad</p>
+                                    <p> @p.Sku!.Nombre x @p.Cantidad</p>
                                     <p class="ms-auto fw-bold">$@(p.Sku.Precio * p.Cantidad)</p>
                                 </li>
                             }

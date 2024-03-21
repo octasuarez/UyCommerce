@@ -42,7 +42,7 @@
             </nav>
 
             //Categorias Y Filtros
-            <div class="d-flex">
+            <div class="d-lg-flex">
                 <div class="flex-shrink-0 border" style="padding:50px 200px 50px 50px;">
 
                     @if (Model.Atributos != null && Model.Atributos.Any())
@@ -132,7 +132,7 @@
 
                     @if (Model.Skus != null && Model.Skus!.Any())
                     {
-                        <div class="d-flex align-items-center col-3 mx-4">
+                        <div class="d-flex align-items-center col-lg-3 mx-4">
                             <h5 class="text-nowrap me-2">Ordenar por</h5>
                             <select class="form-select" onchange="OrdenarProductos(this.value)">
                                 <option value="">Posicion</option>

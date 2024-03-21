@@ -17,10 +17,7 @@ namespace UYCommerce.Data
             using (var context = new ShopContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ShopContext>>()))
             {
-
-                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
-
 
                 Atributo[] atributos = new Atributo[] {
 
