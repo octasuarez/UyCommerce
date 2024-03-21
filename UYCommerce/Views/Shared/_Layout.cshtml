@@ -12,19 +12,15 @@
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 
 </head>
-<body style="min-height:100%;">
+<body style="min-height:100%;padding:0;">
     <header class="">
 
         <nav class="navbar navbar-expand-lg navbar-light bg-primary bg-gradient pt-0 pb-2 shadow-sm border-bottom border-dark-subtle text-light">
 
 
-            <div class="mx-auto col-9 d-flex flex-column">
+            <div class="mx-auto col-12 col-lg-9 d-flex flex-column">
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse d-flex mx-auto col-10" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse d-block mx-auto col-10" id="navbarSupportedContent">
 
                     <a class="navbar-brand text-nowrap me-4" href="/">
                         <h1 class="text-light" style="font-family:Impact;">UyCommerce</h1>
@@ -32,7 +28,7 @@
 
                     @*Este es el Search input*@
 
-                    <div class="d-flex col-5 ms-4 me-5">
+                    <div class="d-flex col-lg-5 ms-lg-4 me-lg-5">
                         <form class="w-100" role="search" asp-controller="Producto" asp-action="BuscarProductosPorQuery" method="get">
                             <div class="input-group shadow">
                                 <input name="query" id="search" class="form-control d-flex py-2" type="search" placeholder="Buscar productos" aria-label="Search">
@@ -41,36 +37,39 @@
                         </form>
                     </div>
 
-                    <div class="d-flex ms-5 me-5">
+                    <div class="d-flex ms-lg-5 me-lg-5">
 
-                        @if (User.Identity != null && !User.Identity.IsAuthenticated)
-                        {
-                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" href="/Register">Crea una cuenta</a>
-
-                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" asp-controller="Auth" asp-action="Login">Iniciar Sesion</a>
-                        }
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        @if (Context.Request.HttpContext.User.Identity.IsAuthenticated)
                         {
                             @* Cuenta *@
                             <ul class="navbar-nav d-flex">
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-person-circle text-white fs-4 m-2"></i>Mi Cuenta
+                                    <a class="nav-link text-light d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-person-circle text-white fs-4 m-2"></i> <p class="d-inline m-0 text-nowrap">Mi Cuenta</p>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li ><a class="dropdown-item" href="/Compras">Mis Compras</a></li>
-                                        <li ><a class="dropdown-item " href="/Favoritos">Favoritos</a></li>
-                                        <li ><a class="dropdown-item " asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
+                                        <li><a class="dropdown-item" href="/Compras">Mis Compras</a></li>
+                                        <li><a class="dropdown-item " href="/Favoritos">Favoritos</a></li>
+                                        <li><a class="dropdown-item " asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
                                     </ul>
                                 </li>
                             </ul>
 
                         }
+                        else
+                        {
+                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" href="/Register">Crea una cuenta</a>
+
+                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" asp-controller="Auth" asp-action="Login">Iniciar Sesion</a>
+
+                        }
 
                         @* Carrito *@
-                        <ul class="navbar-nav d-flex" onclick="window.location.href='/checkout'">
+
+                        <ul class="ms-auto ms-lg-0 navbar-nav d-flex" onclick="window.location.href='/checkout'">
                             <li class="nav-item dropdown">
-                                <a class="nav-link " role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link d-flex flex-nowrap" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <p class="d-inline text-white my-auto d-lg-none">Carrito</p>
                                     <i class="bi bi-cart-fill text-white fs-4 m-2" style="color:white;"></i>
                                     <p class="d-inline fw-bold text-white">@Context.Session.GetString("cartItems")</p>
                                 </a>
@@ -80,23 +79,28 @@
 
                 </div>
 
-                <div class="d-flex mx-auto">
-
-                    <ul class="list-unstyled navbar-nav">
+                <div class="flex-column flex-lg-auto d-flex mx-auto">
+                    <button class="navbar-toggler d-block d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#barra" aria-controls="barra" aria-expanded="true" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <ul class="list-unstyled navbar-nav d-lg-flex">
                         @await Component.InvokeAsync("Menu")
-                        <li class="me-4">
-                            <a class="text-light text-decoration-none" href="#">Contacto</a>
+                        <li>
+                            <ul id="barra" class="list-unstyled navbar-nav collapse d-lg-flex">
+                                <li class="me-4">
+                                    <a class="text-light text-decoration-none" href="#">Contacto</a>
+                                </li>
+                                <li class="me-4">
+                                    <a class="text-light text-decoration-none" href="#">Nosotros</a>
+                                </li>
+                                <li class="me-4">
+                                    <a class="text-light text-decoration-none" href="#">FAQ</a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="me-4">
-                            <a class="text-light text-decoration-none" href="#">Nosotros</a>
-                        </li>
-                        <li class="me-4">
-                            <a class="text-light text-decoration-none" href="#">FAQ</a>
-                        </li>
+                        
                     </ul>
-
                 </div>
-            </div>
         </nav>
 
     </header>
@@ -134,6 +138,7 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
     <script type="text/javascript">$(document).ready(function () {
             $("#search").autocomplete({
                 source: function (request, response) {

@@ -41,21 +41,20 @@ new PaypalAPI(
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 
-builder.Services.AddDbContext<ShopContext>(options => options.UseSqlite(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
-
-
+builder.Services.AddDbContext<ShopContext>(options => options.UseMySql(
+    builder.Configuration.GetConnectionString("Default"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default")))
+    );
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
         options.SlidingExpiration = true;
         options.AccessDeniedPath = "/Login";
         options.LoginPath = "/Login";
+        options.Cookie.IsEssential = true;
     });
 
 builder.Services.AddAuthorization(options =>
@@ -91,12 +90,12 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
 
-    DbInitializer.Initialize(services);
-}
+//    DbInitializer.Initialize(services);
+//}
 
 
 app.MapRazorPages();

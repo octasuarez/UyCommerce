@@ -205,3 +205,38 @@ button.accept-policy {
 .categoria img:hover{
     opacity:60%;
 }
+
+/* Tooltip text */
+.tooltiptext {
+    width: 200px;
+    background-color: dodgerblue;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#pwdRegister .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: dodgerblue transparent transparent transparent;
+}
+
+#pwdRegister:focus-within .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

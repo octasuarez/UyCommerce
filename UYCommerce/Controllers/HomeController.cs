@@ -31,19 +31,11 @@ public class HomeController : Controller
         HomeVM homeVM = new()
         {
             Skus = skus,
-
             Categorias = await _context.Categorias.Where(c => c.MostrarEnInicio == true).ToListAsync(),
-
-            Favoritos = new List<Sku>()
         };
 
-        var usuario = new Usuario();
-
-        if (User.Identity is not null && User.Identity.IsAuthenticated)
-        {
-            usuario = _context.Usuarios.FirstOrDefault(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-            homeVM.Favoritos = usuario!.Favoritos != null ? usuario.Favoritos : null!;
-        }
+        var usuario = _context.Usuarios.Include(u => u.Favoritos).FirstOrDefault(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
+        homeVM.Favoritos = usuario?.Favoritos;
 
         return View(homeVM);
     }

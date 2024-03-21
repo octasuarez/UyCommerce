@@ -5,12 +5,12 @@
     <section class="container" style="min-height:500px;background-color:white;padding-top:10px;">
 
         <a style="position:absolute;transform:translate(-300px, 10px)" href="/Compras"><i class="bi bi-arrow-left"></i> Volver a mis compras</a>
-        <div class="d-flex mt-5 align-items-center">
+        <div class="d-lg-flex mt-5 align-items-center">
             <h3 class="fw-bold">Compra @Model.Id</h3>
             <h5 class="ms-auto text-secondary">@Model.FechaDeCompra</h5>
         </div>
         <div class="border my-3"></div>
-        <div class="d-flex">
+        <div class="d-lg-flex">
 
             <div class="col-auto me-5">
                 <h6 class="fw-bold" style="">DIRECCION DE ENVÍO</h6>
@@ -28,13 +28,17 @@
             <div class="col-auto me-5">
                 <h6 class="fw-bold" style="">ESTADO</h6>
                 <p class="my-0">@Model.Estado</p>
-                <p class="my-0">@if (Model.FechaDeEntrega != null)
-                {@Model.FechaDeEntrega;
-            }</p>
-            </div>
-
+                <p class="my-0">
+                    @if (Model.FechaDeEntrega != null)
+                    {@Model.FechaDeEntrega;
+                }
+            </p>
         </div>
-        <h6 class="mt-5 fw-semibold">Productos</h6>
+
+    </div>
+    <h6 class="mt-5 fw-semibold">Productos</h6>
+    <div class="table-responsive">
+
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -72,16 +76,16 @@
                         <td>$@(p.Cantidad * p.Precio)</td>
                     </tr>
                 }
-            <tr>
-                <th style="border:none;"></th>
-                <th style="border:none;"></th>
-                <th style="border:none;"></th>
-                <th style="border:none;"></th>
-                <th>
-                    Total
-                </th>
+                <tr>
+                    <th style="border:none;"></th>
+                    <th style="border:none;"></th>
+                    <th style="border:none;"></th>
+                    <th style="border:none;"></th>
+                    <th>
+                        Total
+                    </th>
 
-            </tr>
+                </tr>
                 <tr>
                     <td style="border:none;"></td>
                     <td style="border:none;"></td>
@@ -92,7 +96,8 @@
                     </td>
                 </tr>
             </tbody>
-        </table>
+    </table>
+    </div>
     </section>
     </div>
 

@@ -8,32 +8,35 @@
         <h3 class="mt-5 mb-3">Mis compras</h3>
         @if (Model.Any())
         {
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">#Orden</th>
-                        <th scope="col">Fecha de compra</th>
-                        <th scope="col">Fecha de entrega</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-responsive">
 
-                    @foreach (var o in Model)
-                    {
+                <table class="table table-striped table-bordered">
+                    <thead>
                         <tr>
-                            <td>@o.Id</td>
-                            <td>@o.FechaDeCompra</td>
-                            <td>@o.FechaDeEntrega</td>
-                            <td>$@o.Total</td>
-                            <td>@o.Estado</td>
-                            <th class="text-center"><a href="/Compras/@o.Id" class="btn btn-primary">Ver Orden</a></th>
+                            <th scope="col">#Orden</th>
+                            <th scope="col">Fecha de compra</th>
+                            <th scope="col">Fecha de entrega</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col"></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var o in Model)
+                        {
+                            <tr>
+                                <td>@o.Id</td>
+                                <td>@o.FechaDeCompra</td>
+                                <td>@o.FechaDeEntrega</td>
+                                <td>$@o.Total</td>
+                                <td>@o.Estado</td>
+                                <th class="text-center"><a href="/Compras/@o.Id" class="btn btn-primary">Ver Orden</a></th>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         }
     </div>
 

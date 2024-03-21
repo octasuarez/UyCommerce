@@ -19,7 +19,6 @@ function AgregarAFavoritos(e) {
         dataType: 'json',
         data: { skuId: skuId },
         success: function (response) {
-            alert(response.msj);
 
             if (response.msj === "agregado") {
 

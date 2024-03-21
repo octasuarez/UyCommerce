@@ -41,13 +41,28 @@ namespace UYCommerce.Controllers
 
                 var usuario = await _context.Usuarios
                     .Include(u => u.Rol)
-                    .Include(u => u.Carrito).ThenInclude(c=> c.Productos)
-                    .FirstOrDefaultAsync(u => u.Email == loginModel.Email!.ToLower());
+                    .Include(u => u.Carrito).ThenInclude(c => c.Productos)
+                    .FirstOrDefaultAsync(u => u.Email!.ToLower() == loginModel.Email!.ToLower());
 
-                if (usuario is not null && usuario.Password == loginModel.Password && usuario.Activo == true)
+
+                if (usuario is null)
                 {
+                    ViewBag.msjLogin = "No existe ese usuario";
+                    return View("Login", loginModel);
+                }
+                if (usuario.Password != loginModel.Password)
+                {
+                    ViewBag.msjLogin = "Contraseña incorrecta";
+                    return View("Login", loginModel);
+                }
+                if (usuario.Activo == false)
+                {
+                    ViewBag.msjLogin = "Usuario inactivo";
+                    return View("Login", loginModel);
+                }
 
-                    var claims = new List<Claim>
+
+                var claims = new List<Claim>
                     {
                     new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                     new Claim(ClaimTypes.Name, usuario.Email!),
@@ -56,49 +71,42 @@ namespace UYCommerce.Controllers
                     new Claim("CarritoId", usuario.Carrito.Id.ToString()),
                     };
 
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                    var claimsIdentity = new ClaimsIdentity(
-                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    // Refreshing the authentication session should be allowed.
 
-                    var authProperties = new AuthenticationProperties
-                    {
-                        //AllowRefresh = <bool>,
-                        // Refreshing the authentication session should be allowed.
+                    //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                    // The time at which the authentication ticket expires. A 
+                    // value set here overrides the ExpireTimeSpan option of 
+                    // CookieAuthenticationOptions set with AddCookie.
 
-                        //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-                        // The time at which the authentication ticket expires. A 
-                        // value set here overrides the ExpireTimeSpan option of 
-                        // CookieAuthenticationOptions set with AddCookie.
+                    IsPersistent = loginModel.RememberMe,
+                    // Whether the authentication session is persisted across 
+                    // multiple requests. When used with cookies, controls
+                    // whether the cookie's lifetime is absolute (matching the
+                    // lifetime of the authentication ticket) or session-based.
 
-                        //IsPersistent = true,
-                        // Whether the authentication session is persisted across 
-                        // multiple requests. When used with cookies, controls
-                        // whether the cookie's lifetime is absolute (matching the
-                        // lifetime of the authentication ticket) or session-based.
+                    //IssuedUtc = <DateTimeOffset>,
+                    // The time at which the authentication ticket was issued.
 
-                        //IssuedUtc = <DateTimeOffset>,
-                        // The time at which the authentication ticket was issued.
+                    //RedirectUri = <string>
+                    // The full path or absolute URI to be used as an http 
+                    // redirect response value.
+                };
 
-                        //RedirectUri = <string>
-                        // The full path or absolute URI to be used as an http 
-                        // redirect response value.
-                    };
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
 
-                    if (loginModel.RememberMe)
-                    {
-                        authProperties.IsPersistent = true;
-                    }
+                HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos!.Count.ToString());
 
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos!.Count.ToString());
-
-                    return RedirectToAction("Index", "Home");
-                }
+                return RedirectToAction("Index", "Home");
             }
 
             return View("Login", loginModel);
@@ -119,8 +127,11 @@ namespace UYCommerce.Controllers
 
             if (ModelState.IsValid)
             {
+                var usuarioExiste = _context.Usuarios.FirstOrDefault(u => u.Email == registerModel.Email);
+                if (usuarioExiste is not null)
+                    return View("Register");
 
-                var rol = await _context.Roles.FirstOrDefaultAsync(r => r.Nombre == "Cliente");
+                var rol = await _context.Roles.FirstOrDefaultAsync(r => r.Nombre == "User");
 
                 Usuario usuario = new()
                 {
@@ -199,7 +210,7 @@ namespace UYCommerce.Controllers
                 }
 
                 var content = "Tu codigo es: " + codigo.CodigoRecuperacion;
-                Message message = new("octasuarezp@gmail.com", "UyCommerce Recuperacion Contrasenia", content);
+                Message message = new(email, "UyCommerce Recuperacion Contraseña", content);
 
                 _emailService.SendEmail(message);
 
