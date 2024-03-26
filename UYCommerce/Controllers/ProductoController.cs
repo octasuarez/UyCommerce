@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection.Emit;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,72 @@ namespace UYCommerce.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult CrearProducto()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearProducto(ProductoModel producto)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                var productoDb = await _context.Productos.FirstOrDefaultAsync(p => p.Nombre.ToLower() == producto.Nombre.ToLower());
+
+                if (productoDb is not null)
+                {
+                    ViewBag.msj = "Ese producto ya existe";
+                    return View(producto);
+                }
+
+                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == producto.CategoriaId);
+                var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.Id == producto.MarcaId);
+
+                if(categoria is null ) {
+                    ViewBag.msj = "Error";
+                    return View(producto);
+                }
+
+                Producto productoNuevo = new()
+                {
+                    Nombre = producto.Nombre,
+                    NombreClave = producto.Nombre.ToLower().Replace(" ", "-"),
+                    Descripcion = producto.Descripcion,
+                    Imagenes = producto.Imagenes.Select(i => new ProductoImagen { ImagenNombre = i.FileName }).ToList(),
+                    Categoria = categoria,
+                    Marca = marca
+                };
+
+                await _context.Productos.AddAsync(productoNuevo);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("GetProductos");
+            }
+
+            return View(producto);
+        }
+
+        [HttpGet]
+        [Route("/productos")]
+        public async Task<IActionResult> GetProductos() {
+
+            var result = await _context.Productos
+                .Include(p=> p.Imagenes)
+                .Include(p=> p.Categoria)
+                .Include(p=> p.Marca)
+                .Include(p=> p.Preguntas)
+                .Include(p=> p.Reviews)
+                .Include(p=> p.Skus)!.ThenInclude(s=> s.Imagenes)
+                .Include(p=> p.Skus)!.ThenInclude(s=> s.AtributosValores)!.ThenInclude(a=> a.Atributo)
+                .ToListAsync();
+            return View("GetProductos",result);
         }
 
 
@@ -102,7 +169,7 @@ namespace UYCommerce.Controllers
                 result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
 
                 //if (User.Identity!.IsAuthenticated)
-                    result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
 
                 if (orden > 0)
                     result.Skus = OrdenarSkus(result.Skus, orden);
