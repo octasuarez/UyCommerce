@@ -1,0 +1,68 @@
+﻿@model ProductoModel
+
+
+
+<body>
+    <div class="container">
+        <div class="my-5">
+            <h3 class="text-center">Crear Producto</h3>
+            <form id="formProducto" class="col-5 mx-auto" runat="server" method="post" asp-action="CrearProducto" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input class="form-control" type="text" asp-for="Nombre" name="Nombre" />
+                    <span class="text-danger" asp-validation-for="Nombre"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripcion</label>
+                    <input class="form-control" type="text" asp-for="Descripcion" name="Descripcion" />
+                    <span asp-validation-for="Descripcion"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Imagenes</label>
+                    <input class="form-control" asp-for="Imagenes" type="file" multiple name="Imagenes" accept="image/*"/>
+                    <span class="text-danger" asp-validation-for="Imagenes"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Categoria</label>
+                    <select id="Categorias" class="form-select" asp-for="CategoriaId" name="CategoriaId">
+                        <option value="-1">Selecciona una categoria</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="CategoriaId"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Marca</label>
+                    <select id="Marcas" class="form-select" asp-for="MarcaId" name="MarcaId">
+                        <option value="-1">Selecciona una marca</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="MarcaId"></span>
+                </div>
+
+                <button type="submit"  class=" btn btn-primary mx-auto d-flex">Crear</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+            $(document).ready(async function () {
+
+                var categoriasSelect = document.getElementById('Categorias');
+                var marcasSelect = document.getElementById('Marcas');
+
+                const response = await fetch("/Categoria/GetCategorias");
+                const response2 = await fetch("/Marca/GetMarcas");
+
+                const categorias = await response.json();
+                const marcas = await response2.json();
+
+                categorias.forEach((c) => {
+                    categoriasSelect.innerHTML += "<option value="+ c.id + ">" + c.nombre + "</option>"
+                });
+
+                marcas.forEach((m) => {
+                    marcasSelect.innerHTML += "<option value=" + m.id + ">" + m.nombre + "</option>"
+                });
+
+            })
+        </script>
+</body>

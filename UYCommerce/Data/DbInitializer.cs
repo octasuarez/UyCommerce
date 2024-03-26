@@ -17,6 +17,7 @@ namespace UYCommerce.Data
             using (var context = new ShopContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ShopContext>>()))
             {
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
                 Atributo[] atributos = new Atributo[] {
@@ -140,9 +141,9 @@ namespace UYCommerce.Data
                             VecesComprado = 5,
                             Imagenes = new ProductoImagen[]
                             {
-                                new ProductoImagen{ImagenNombre = "iphone11_1.png",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "iphone11_2.png",Orden = 2},
-                                new ProductoImagen{ImagenNombre = "iphone11_3.png",Orden = 3},
+                                new ProductoImagen{ImagenNombre = "iphone11_1.png"},
+                                new ProductoImagen{ImagenNombre = "iphone11_2.png"},
+                                new ProductoImagen{ImagenNombre = "iphone11_3.png"},
                             },
                             Skus = new Sku[]
                             {
@@ -154,9 +155,9 @@ namespace UYCommerce.Data
                                     PrecioAnterior= 800,
                                     Imagenes = new SkuImagen[]
                                     {
-                                       new SkuImagen{ImagenNombre = "iphone11_1.png",Orden = 1},
-                                       new SkuImagen{ImagenNombre = "iphone11_2.png",Orden = 2},
-                                       new SkuImagen{ImagenNombre = "iphone11_3.png",Orden = 3},
+                                       new SkuImagen{ImagenNombre = "iphone11_1.png"},
+                                       new SkuImagen{ImagenNombre = "iphone11_2.png"},
+                                       new SkuImagen{ImagenNombre = "iphone11_3.png"},
                                     },
                                     AtributosValores = new AtributoValor[]
                                     {
@@ -171,8 +172,8 @@ namespace UYCommerce.Data
                                     Precio = 800,
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre="iphonerojo1.png",Orden=1},
-                                        new SkuImagen{ImagenNombre="iphonerojo2.png",Orden=2},
+                                        new SkuImagen{ImagenNombre="iphonerojo1.png"},
+                                        new SkuImagen{ImagenNombre="iphonerojo2.png"},
                                     },
                                     AtributosValores = new AtributoValor[]
                                     {
@@ -188,8 +189,8 @@ namespace UYCommerce.Data
                                     PrecioAnterior= 1020,
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre="iphonerojo1.png",Orden=1},
-                                        new SkuImagen{ImagenNombre="iphonerojo2.png",Orden=2},
+                                        new SkuImagen{ImagenNombre="iphonerojo1.png"},
+                                        new SkuImagen{ImagenNombre="iphonerojo2.png"},
                                     },
                                     AtributosValores = new AtributoValor[]
                                     {
@@ -209,7 +210,7 @@ namespace UYCommerce.Data
                             VecesComprado = 100,
                             Imagenes = new ProductoImagen[]
                             {
-                                new ProductoImagen{ImagenNombre = "remera-vlone1.jpg",Orden = 1},
+                                new ProductoImagen{ImagenNombre = "remera-vlone1.jpg"},
                             },
                             Skus = new Sku[]
                             {
@@ -221,7 +222,7 @@ namespace UYCommerce.Data
                                     PrecioAnterior= 200,
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre = "remera-vlone1.jpg",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "remera-vlone1.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]
                                     {
@@ -239,7 +240,7 @@ namespace UYCommerce.Data
                                     },
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre = "remera-vlone2.jpg",Orden = 1}
+                                        new SkuImagen{ImagenNombre = "remera-vlone2.jpg"}
                                     }
                                 },
                                 new Sku{
@@ -253,7 +254,7 @@ namespace UYCommerce.Data
                                     },
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre = "remera-vlone3.jpg",Orden = 1}
+                                        new SkuImagen{ImagenNombre = "remera-vlone3.jpg"}
                                     }
                                 },
                                 new Sku{
@@ -267,7 +268,7 @@ namespace UYCommerce.Data
                                     },
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre = "remera-vlone4.jpg",Orden = 1}
+                                        new SkuImagen{ImagenNombre = "remera-vlone4.jpg"}
                                     }
                                 },
                             }
@@ -282,9 +283,9 @@ namespace UYCommerce.Data
                             VecesComprado = 1000,
                             Imagenes = new ProductoImagen[]
                             {
-                                new ProductoImagen{ImagenNombre = "macbook-1.jpg",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "macbook-2.jpg",Orden = 2},
-                                new ProductoImagen{ImagenNombre = "macbook-3.jpg",Orden = 3},
+                                new ProductoImagen{ImagenNombre = "macbook-1.jpg"},
+                                new ProductoImagen{ImagenNombre = "macbook-2.jpg"},
+                                new ProductoImagen{ImagenNombre = "macbook-3.jpg"},
                             },
                             Skus = new Sku[]
                             {
@@ -300,9 +301,9 @@ namespace UYCommerce.Data
                                     },
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre = "macbook-1.jpg",Orden = 1},
-                                        new SkuImagen{ImagenNombre = "macbook-2.jpg",Orden = 2},
-                                        new SkuImagen{ImagenNombre = "macbook-3.jpg",Orden = 3},
+                                        new SkuImagen{ImagenNombre = "macbook-1.jpg"},
+                                        new SkuImagen{ImagenNombre = "macbook-2.jpg"},
+                                        new SkuImagen{ImagenNombre = "macbook-3.jpg"},
                                     },
                                 },
                                 new Sku{
@@ -317,9 +318,9 @@ namespace UYCommerce.Data
                                     },
                                     Imagenes = new SkuImagen[]
                                     {
-                                        new SkuImagen{ImagenNombre = "macbook-1.jpg",Orden = 1},
-                                        new SkuImagen{ImagenNombre = "macbook-2.jpg",Orden = 2},
-                                        new SkuImagen{ImagenNombre = "macbook-3.jpg",Orden = 3},
+                                        new SkuImagen{ImagenNombre = "macbook-1.jpg"},
+                                        new SkuImagen{ImagenNombre = "macbook-2.jpg"},
+                                        new SkuImagen{ImagenNombre = "macbook-3.jpg"},
                                     },
                                 },
                             }
@@ -333,9 +334,9 @@ namespace UYCommerce.Data
                             VecesComprado = 3,
                             Imagenes = new ProductoImagen[]
                             {
-                                new ProductoImagen{ImagenNombre = "bici-scott-negra-1.jpg",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "bici-scott-negra-2.jpg",Orden = 2},
-                                new ProductoImagen{ImagenNombre = "bici-scott-negra-3.jpg",Orden = 3},
+                                new ProductoImagen{ImagenNombre = "bici-scott-negra-1.jpg"},
+                                new ProductoImagen{ImagenNombre = "bici-scott-negra-2.jpg"},
+                                new ProductoImagen{ImagenNombre = "bici-scott-negra-3.jpg"},
                             },
                             Skus= new Sku[]{
 
@@ -346,9 +347,9 @@ namespace UYCommerce.Data
                                     Precio=839,
                                     PrecioAnterior=939,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "bici-scott-negra-1.jpg",Orden = 1},
-                                        new SkuImagen{ImagenNombre = "bici-scott-negra-2.jpg",Orden = 2},
-                                        new SkuImagen{ImagenNombre = "bici-scott-negra-3.jpg",Orden = 3},
+                                        new SkuImagen{ImagenNombre = "bici-scott-negra-1.jpg"},
+                                        new SkuImagen{ImagenNombre = "bici-scott-negra-2.jpg"},
+                                        new SkuImagen{ImagenNombre = "bici-scott-negra-3.jpg"},
                                     },
                                     AtributosValores= new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "R26")!,
@@ -361,9 +362,9 @@ namespace UYCommerce.Data
                                     Stock = 5,
                                     Precio=949,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "bici-scott-negra-1.jpg",Orden = 1},
-                                        new SkuImagen{ImagenNombre = "bici-scott-negra-2.jpg",Orden = 2},
-                                        new SkuImagen{ImagenNombre = "bici-scott-negra-3.jpg",Orden = 3},
+                                        new SkuImagen{ImagenNombre = "bici-scott-negra-1.jpg"},
+                                        new SkuImagen{ImagenNombre = "bici-scott-negra-2.jpg"},
+                                        new SkuImagen{ImagenNombre = "bici-scott-negra-3.jpg"},
                                     },
                                     AtributosValores= new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "R29")!,
@@ -380,8 +381,8 @@ namespace UYCommerce.Data
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Samsung"),
                             VecesComprado = 102,
                             Imagenes = new ProductoImagen[]{
-                                new ProductoImagen{ImagenNombre = "galaxyflip1.png",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "galaxyflip2.png",Orden = 2},
+                                new ProductoImagen{ImagenNombre = "galaxyflip1.png"},
+                                new ProductoImagen{ImagenNombre = "galaxyflip2.png"},
                             },
                             Skus= new Sku[]{
 
@@ -391,8 +392,8 @@ namespace UYCommerce.Data
                                     Stock = 1,
                                     Precio=399,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "galaxyflip1.png",Orden = 1},
-                                        new SkuImagen{ImagenNombre = "galaxyflip2.png",Orden = 2},
+                                        new SkuImagen{ImagenNombre = "galaxyflip1.png"},
+                                        new SkuImagen{ImagenNombre = "galaxyflip2.png"},
                                     },
                                 }
                             }
@@ -405,8 +406,8 @@ namespace UYCommerce.Data
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Iphone"),
                             VecesComprado = 12,
                             Imagenes = new ProductoImagen[]{
-                                new ProductoImagen{ImagenNombre = "iphone13-1.png",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "iphone13-2.png",Orden = 2},
+                                new ProductoImagen{ImagenNombre = "iphone13-1.png"},
+                                new ProductoImagen{ImagenNombre = "iphone13-2.png"},
                             },
                             Skus= new Sku[]{
 
@@ -416,8 +417,8 @@ namespace UYCommerce.Data
                                     Stock = 3,
                                     Precio=969,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "iphone13-1.png",Orden = 1},
-                                        new SkuImagen{ImagenNombre = "iphone13-2.png",Orden = 2},
+                                        new SkuImagen{ImagenNombre = "iphone13-1.png"},
+                                        new SkuImagen{ImagenNombre = "iphone13-2.png"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Azul")!,
@@ -429,7 +430,7 @@ namespace UYCommerce.Data
                                     Stock = 3,
                                     Precio=969,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "iphone13negro-1.webp",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "iphone13negro-1.webp"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Negro")!,
@@ -445,8 +446,8 @@ namespace UYCommerce.Data
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Adidas"),
                             VecesComprado = 200,
                             Imagenes = new ProductoImagen[]{
-                                new ProductoImagen{ImagenNombre = "joggings-adidas-blanco.jpg",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "joggings-adidas-negro.jpg",Orden = 2},
+                                new ProductoImagen{ImagenNombre = "joggings-adidas-blanco.jpg"},
+                                new ProductoImagen{ImagenNombre = "joggings-adidas-negro.jpg"},
                             },
                             Skus= new Sku[]{
 
@@ -456,7 +457,7 @@ namespace UYCommerce.Data
                                     Stock = 10,
                                     Precio=46,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "joggings-adidas-blanco.jpg",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "joggings-adidas-blanco.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Blanco")!,
@@ -468,7 +469,7 @@ namespace UYCommerce.Data
                                     Stock = 3,
                                     Precio=52,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "joggings-adidas-negro.jpg",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "joggings-adidas-negro.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Negro")!,
@@ -484,8 +485,8 @@ namespace UYCommerce.Data
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Nike"),
                             VecesComprado = 200,
                             Imagenes = new ProductoImagen[]{
-                                new ProductoImagen{ImagenNombre = "remera-nike-comun-blanca.jpg",Orden = 1},
-                                new ProductoImagen{ImagenNombre = "remera-nike-comun-negra.jpg",Orden = 2},
+                                new ProductoImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
+                                new ProductoImagen{ImagenNombre = "remera-nike-comun-negra.jpg"},
                             },
                             Skus= new Sku[]{
 
@@ -495,7 +496,7 @@ namespace UYCommerce.Data
                                     Stock = 3,
                                     Precio=43,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "remera-nike-comun-blanca.jpg",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Blanco")!,
@@ -508,7 +509,7 @@ namespace UYCommerce.Data
                                     Stock = 3,
                                     Precio=43,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "remera-nike-comun-blanca.jpg",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Blanco")!,
@@ -521,7 +522,7 @@ namespace UYCommerce.Data
                                     Stock = 3,
                                     Precio=46,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "remera-nike-comun-negra.jpg",Orden = 1},
+                                        new SkuImagen{ImagenNombre = "remera-nike-comun-negra.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Negro")!,

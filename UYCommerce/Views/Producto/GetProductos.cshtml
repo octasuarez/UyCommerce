@@ -1,0 +1,98 @@
+﻿@model List<Producto>
+
+<body class="bg-light" style="min-height:500px;">
+
+    <div class="container p-0">
+
+        <h3 class="py-5">Productos @Model.Count</h3>
+        <ul class="list-unstyled bg-white">
+            @if (Model.Any())
+            {
+                foreach (var p in Model)
+                {
+                    <li class="border mx-auto">
+                        <div class="d-lg-flex align-items-center py-3">
+                            <div class=" ms-5">
+                                <img src="~/Imagenes/Productos/@p.Imagenes!.First().ImagenNombre"
+                                     style="height:200px;width:200px;"
+                                     class="object-fit-contain " />
+                            </div>
+                            <div class="ms-4 d-flex flex-column">
+                                <div class="mb-3">
+                                    <h4>Nombre: @p.Nombre</h4>
+
+                                </div>
+                                <div class="d-flex">
+                                    <div class="me-4">
+                                        <h6><b>Clave:</b> @p.NombreClave</h6>
+                                        <h6><b>Id:</b> @p.Id</h6>
+                                        <h6><b>Vendido</b> @p.VecesComprado</h6>
+                                        <h6><b>Categoria:</b> @p.Categoria?.Nombre</h6>
+                                    </div>
+                                    <div class="me-4">
+                                        <h6><b>Marca:</b> @p.Marca?.Nombre</h6>
+                                        <h6><b>Rating:</b> @p.GetPuntuacionPromedio()</h6>
+                                        <h6><b>Reviews:</b> @p.Reviews?.Count</h6>
+                                        <h6><b>Preguntas:</b> @p.Preguntas?.Count</h6>
+                                    </div>
+                                    
+                                    
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column ms-auto me-5">
+                                <button class="btn btn-danger mb-2 "><i class="bi bi-trash3"></i> Eliminar</button>
+                                <button class="btn btn-primary mb-2 ">+ Agregar Skus</button>
+                                <button class="btn bg-info-subtle  mb-2"><i class="bi bi-pencil"></i> Modificar</button>
+                                <a target="”_blank”" href="/@p.NombreClave" class="btn bg-body-tertiary  mb-2"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
+                            </div>
+                        </div>
+                        @if (p.Skus != null && p.Skus.Any())
+                        {
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(p.Id)" aria-expanded="true" aria-controls="collapseOne">
+                                            <p class="my-0 w-100 text-center fw-semibold">Skus @p.Skus.Count</p>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse@(p.Id)" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body p-0">
+                                            <ul class="list-unstyled">
+                                                @foreach (var s in p.Skus)
+                                                {
+                                                    <li class="d-flex border p-3">
+                                                        @if (s.Imagenes != null && s.Imagenes.Any())
+                                                        {
+                                                            <div class="d-inline">
+                                                                <img src="~/Imagenes/Productos/@s.Imagenes.First().ImagenNombre" class="object-fit-contain" style="height:150px;width:150px;" />
+                                                            </div>
+                                                        }
+                                                        <div class="d-inline">
+                                                            <h6>@s.Nombre</h6>
+
+                                                        </div>
+                                                        @if (s.AtributosValores!.Any())
+                                                        {
+                                                            <div class="">
+                                                                @foreach (var a in s.AtributosValores)
+                                                                {
+                                                                    <p><strong>@a.Atributo.Nombre:</strong>@a.Valor</p>
+                                                                }
+                                                            </div>
+                                                        }
+
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+</body>
