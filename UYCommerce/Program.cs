@@ -27,6 +27,7 @@ var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<Ema
 
 builder.Services.AddSingleton(emailConfig);
 builder.Services.AddSingleton<IEmailService, EmailService>();
+builder.Services.AddSingleton<IFileService, FileService>();
 
 //paypal settings
 builder.Services.AddSingleton(x =>

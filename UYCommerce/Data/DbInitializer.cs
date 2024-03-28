@@ -17,7 +17,7 @@ namespace UYCommerce.Data
             using (var context = new ShopContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ShopContext>>()))
             {
-                context.Database.EnsureDeleted();
+                //context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
                 Atributo[] atributos = new Atributo[] {
@@ -145,6 +145,11 @@ namespace UYCommerce.Data
                                 new ProductoImagen{ImagenNombre = "iphone11_2.png"},
                                 new ProductoImagen{ImagenNombre = "iphone11_3.png"},
                             },
+                            Atributos= new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Color")!,
+                                atributos.First(a => a.Nombre == "Almacenamiento")!,
+                            },
                             Skus = new Sku[]
                             {
                                 new Sku{
@@ -211,6 +216,10 @@ namespace UYCommerce.Data
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "remera-vlone1.jpg"},
+                            },
+                            Atributos= new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Color")!,
                             },
                             Skus = new Sku[]
                             {
@@ -287,6 +296,10 @@ namespace UYCommerce.Data
                                 new ProductoImagen{ImagenNombre = "macbook-2.jpg"},
                                 new ProductoImagen{ImagenNombre = "macbook-3.jpg"},
                             },
+                            Atributos= new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Memoria RAM")!,
+                            },
                             Skus = new Sku[]
                             {
                                 new Sku{
@@ -337,6 +350,10 @@ namespace UYCommerce.Data
                                 new ProductoImagen{ImagenNombre = "bici-scott-negra-1.jpg"},
                                 new ProductoImagen{ImagenNombre = "bici-scott-negra-2.jpg"},
                                 new ProductoImagen{ImagenNombre = "bici-scott-negra-3.jpg"},
+                            },
+                            Atributos= new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Rodado")!,
                             },
                             Skus= new Sku[]{
 
@@ -409,6 +426,10 @@ namespace UYCommerce.Data
                                 new ProductoImagen{ImagenNombre = "iphone13-1.png"},
                                 new ProductoImagen{ImagenNombre = "iphone13-2.png"},
                             },
+                            Atributos = new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Color")
+                            },
                             Skus= new Sku[]{
 
                                 new Sku{
@@ -449,6 +470,10 @@ namespace UYCommerce.Data
                                 new ProductoImagen{ImagenNombre = "joggings-adidas-blanco.jpg"},
                                 new ProductoImagen{ImagenNombre = "joggings-adidas-negro.jpg"},
                             },
+                            Atributos= new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Color")!,
+                            },
                             Skus= new Sku[]{
 
                                 new Sku{
@@ -487,6 +512,11 @@ namespace UYCommerce.Data
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
                                 new ProductoImagen{ImagenNombre = "remera-nike-comun-negra.jpg"},
+                            },
+                            Atributos= new Atributo[]{
+
+                                atributos.First(a => a.Nombre == "Color")!,
+                                atributos.First(a => a.Nombre == "Talle")!,
                             },
                             Skus= new Sku[]{
 

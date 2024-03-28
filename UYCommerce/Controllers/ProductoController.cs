@@ -13,16 +13,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using UYCommerce.Data;
 using UYCommerce.Models;
+using UYCommerce.Services;
 
 namespace UYCommerce.Controllers
 {
     public class ProductoController : Controller
     {
         private readonly ShopContext _context;
+        private readonly IFileService _fileService;
 
-        public ProductoController(ShopContext context)
+        public ProductoController(ShopContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
         public IActionResult Index()
@@ -56,7 +59,8 @@ namespace UYCommerce.Controllers
                 var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == producto.CategoriaId);
                 var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.Id == producto.MarcaId);
 
-                if(categoria is null ) {
+                if (categoria is null)
+                {
                     ViewBag.msj = "Error";
                     return View(producto);
                 }
@@ -82,18 +86,105 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("/productos")]
-        public async Task<IActionResult> GetProductos() {
+        public async Task<IActionResult> GetProductos()
+        {
 
             var result = await _context.Productos
-                .Include(p=> p.Imagenes)
-                .Include(p=> p.Categoria)
-                .Include(p=> p.Marca)
-                .Include(p=> p.Preguntas)
-                .Include(p=> p.Reviews)
-                .Include(p=> p.Skus)!.ThenInclude(s=> s.Imagenes)
-                .Include(p=> p.Skus)!.ThenInclude(s=> s.AtributosValores)!.ThenInclude(a=> a.Atributo)
+                .Include(p => p.Imagenes)
+                .Include(p => p.Categoria)
+                .Include(p => p.Marca)
+                .Include(p => p.Preguntas)
+                .Include(p => p.Reviews)
+                .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+                .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
                 .ToListAsync();
-            return View("GetProductos",result);
+            return View("GetProductos", result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AgregarSku(int productoId)
+        {
+
+            var producto = await GetProductoById(productoId);
+
+            if (producto is null)
+            {
+                return Redirect("/productos");
+            }
+
+            AgregarSkuModel skuModel = new()
+            {
+                ProductoId = producto.Id,
+                Atributos = producto.Atributos,
+                Producto = producto,
+            };
+
+            return View(skuModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AgregarSku(AgregarSkuModel skuModel)
+        {
+
+            Producto? producto = null;
+
+            if (ModelState.IsValid)
+            {
+                producto = await GetProductoById(skuModel.ProductoId);
+
+                if (producto is null || producto.Atributos!.Any() && skuModel.AtributoValores is null)
+                {
+                    ViewBag.error = "Algo salio mal";
+                    return View(skuModel);
+                }
+
+                List<AtributoValor> atributos = new();
+
+                string key = producto.NombreClave!;
+
+                if (skuModel.AtributoValores is not null && skuModel.AtributoValores!.Any() && producto.Atributos is not null)
+                {
+                    atributos = producto.Atributos.SelectMany(a => a.Valores!).Where(a => skuModel.AtributoValores.Any(av => av == a.Id)).ToList();
+
+                    if (atributos.Any()) atributos.ForEach(a => key += "-" + a.Valor);
+                }
+
+                Sku nuevoSku = new()
+                {
+                    ProductoId = producto.Id,
+                    Key = key.ToLower(),
+                    Nombre = skuModel.Nombre,
+                    Precio = skuModel.Precio,
+                    Imagenes = skuModel.Imagenes?.Select(i => new SkuImagen { ImagenNombre = i.FileName }).ToList(),
+                    AtributosValores = atributos
+                };
+
+                await _fileService.SaveFile(skuModel.Imagenes!.ToList(), "Imagenes/Productos");
+
+                await _context.AddAsync(nuevoSku);
+                await _context.SaveChangesAsync();
+
+                return Redirect("/productos");
+
+            }
+
+            skuModel.Atributos = producto?.Atributos;
+
+            return View(skuModel);
+
+        }
+
+        private async Task<Producto?> GetProductoById(int id)
+        {
+
+            var producto = await _context.Productos
+                .Include(p => p.Atributos)!.ThenInclude(a => a.Valores)
+                .Include(p => p.Reviews)
+                .Include(p => p.Skus)
+                .Include(p => p.Imagenes)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return producto;
         }
 
 
