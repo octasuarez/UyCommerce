@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UYCommerce.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,22 +29,17 @@ namespace UYCommerce.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "User")]
         [Route("Checkout")]
         public IActionResult Checkout()
         {
-
-            var usuarioID = User.FindFirst(ClaimTypes.NameIdentifier);
-
-            if (usuarioID == null)
-            {
-                return Redirect("Login");
-            }
+            var usuarioID = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var carrito = _context.Carritos
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Imagenes)
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Producto).ThenInclude(pr => pr.Marca)
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .FirstOrDefault(c => c.UsuarioId.ToString() == usuarioID.Value);
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto).ThenInclude(pr => pr!.Marca)
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.AtributosValores)!.ThenInclude(a => a.Atributo)
+                .FirstOrDefault(c => c.UsuarioId.ToString() == usuarioID);
 
 
             return View(carrito);

@@ -2,7 +2,7 @@
 
 <body>
 
-    <div class="container-fluid col-sm-10 d-flex flex-column" style="">
+    <div class="container-fluid col-sm-12 d-flex flex-column" style="">
 
 
         @if (Model.Categorias is null || !Model.Categorias.Any())
@@ -14,7 +14,6 @@
         }
         else
         {
-
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb p-3 bg-white rounded-3 fs-5">
                     <li class="breadcrumb-item">
@@ -132,7 +131,7 @@
 
                     @if (Model.Skus != null && Model.Skus!.Any())
                     {
-                        <div class="d-flex align-items-center col-lg-3 mx-4">
+                        <div class="d-flex align-items-center col-xl-4 mx-4">
                             <h5 class="text-nowrap me-2">Ordenar por</h5>
                             <select class="form-select" onchange="OrdenarProductos(this.value)">
                                 <option value="">Posicion</option>

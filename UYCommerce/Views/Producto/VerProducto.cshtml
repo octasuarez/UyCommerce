@@ -73,9 +73,9 @@
             @*Detalles del producto y sus atributos*@
 
             <div class="col-auto col-lg-6 border p-3" style="height:fit-content;">
-                <h1 class="mb-4">@Model.Sku.Nombre</h1>
-
-                @if (Model.Sku.Producto.Reviews != null)
+                <p class="text-secondary p-0 m-0">@Model.Sku.Producto.VecesComprado vendidos</p>
+                <h1 class="mb-2">@Model.Sku.Nombre</h1>
+                @if (Model.Sku.Producto?.Reviews is not null)
                 {
                     <ul class="p-0 mb-2">
                         <li class="d-inline">
@@ -101,13 +101,18 @@
                 }
 
                 @if (Model.Sku != null)
-                {<h3 class="fw-bold">$@Model.Sku.Precio</h3>}
+                {
+                    <div class="mb-3">
 
-                <div class="overflow-scroll" style="max-height:150px">
-                    @if (Model.Sku.Producto.Descripcion != null)
-                    {
+                        <h3 class="fw-bold d-inline">$@Model.Sku.Precio</h3>
+                    </div>
+                }
 
-                        if (Model.Sku.Producto.Descripcion.Length > 600)
+                @if (!string.IsNullOrEmpty(Model.Sku?.Producto?.Descripcion))
+                {
+                    <div class="overflow-scroll" style="max-height:150px">
+
+                        @if (Model.Sku.Producto?.Descripcion?.Length > 600)
                         {
                             <p class="m-0" style="max-height:150px;">@Model.Sku.Producto.Descripcion.Substring(0, 600)</p>
                         }
@@ -115,10 +120,12 @@
                         {
                             <p style="max-height:150px;">@Model.Sku.Producto.Descripcion</p>
                         }
-                    }
-                </div>
+                    </div>
+                }
 
                 @*Selects*@
+
+
                 @if (Model.Opciones != null && Model.Opciones.Any())
                 {
                     <div class="my-5">
@@ -146,20 +153,39 @@
 
                 @if (Model.Sku != null)
                 {
-
-
-                    <div class="form-row  mt-5">
-                        <div class="form-row input-group mx-auto" style="width:70%;">
-                            <div class="input-grpup-prepend" style="width:60px;">
-                                <input id="qty" class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" />
+                    if (Model.Sku.Stock == 0)
+                    {
+                            <div>
+                                <p class="text-danger fw-semibold">Sin stock disponible.</p>
                             </div>
-                            @if (!User.Identity.IsAuthenticated)
-                            {<a style="" value="@Model.Sku.Id" href="/Login" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></a> }
-                            else
-                            { <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></button>}
-                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-row mt-5">
 
-                    </div>
+                            <div class="mb-3 mx-auto">
+                                <p class="text-success mb-0">En Stock</p>
+                                <p class="d-inline">Cantidad:</p>
+                                <select id="qty" class="d-inline">
+                                    @for (int i = 1; i < Model.Sku.Stock + 1; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-row input-group mx-auto" style="width:70%;">
+                                <!--<div class="input-grpup-prepend" style="width:60px;">-->
+                                @*<input id="qty" class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" max="@Model.Sku.Stock" />*@
+
+                                <!--</div>-->
+                                @if (!User.Identity.IsAuthenticated)
+                                {<a style="" value="@Model.Sku.Id" href="/Login" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></a> }
+                                else
+                                { <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></button>}
+                            </div>
+
+                        </div>
+                    }
                 }
                 else
                 {
@@ -173,14 +199,14 @@
                         <button disabled type="submit" class="form-control btn btn-primary py-2 fw-semibold fs-5">Comprar</button>
                     </div>
                 }
-
             </div>
         </div>
 
         @* Descripcion del producto *@
+
         <div class=" my-3">
             <h3 class="text-center">Descripcion</h3>
-            <span class="text-wrap">@Model.Sku.Producto.Descripcion</span>
+            <span class="text-wrap">@Model.Sku?.Producto.Descripcion</span>
         </div>
 
         @* Preguntas *@
@@ -332,7 +358,7 @@
 
     </div>
 
-    
+
     <script>function cambioAtributo(e) {
     var url = "/@Model.Sku.Producto.NombreClave";
                      if (e.id == 0) {

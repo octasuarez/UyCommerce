@@ -170,6 +170,7 @@ button.accept-policy {
     border: none;
     outline: none;
     box-shadow: none;
+    width:30px;   
 }
 
 .qty-btn input {

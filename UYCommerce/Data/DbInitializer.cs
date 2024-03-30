@@ -138,7 +138,7 @@ namespace UYCommerce.Data
                             Descripcion = "Grabe videos en 4K, tome hermosos retratos y capture paisajes completos con el nuevo sistema de cámara dual. Toma fotos increíbles con poca luz utilizando el modo Noche. Vea colores reales en fotos, videos y juegos en la pantalla Liquid Retina de 6.1 pulgadas. Lleve el rendimiento sin precedentes del chip A13 Bionic a sus juegos, realidad aumentada y fotografías. Una batería para todo el día: haz mucho y recarga poco. Y cuente con una resistencia al agua de hasta dos metros por hasta 30 minutos. \n\nEl iPhone 11 tiene un nuevo sistema de cámara dual para capturar más de lo que ves y amas. Viene con el chip más rápido en un celular inteligente.También tiene la mejor calidad de video en un teléfono móvil. De esa forma, sus recuerdos serán verdaderamente inolvidables. \n\nLa cámara gran angular de 12 MP tiene Focus Pixeles 100% para un enfoque automático hasta tres veces más rápido en ambiente con poca luz. La cámara ultra angular de 12 MP captura cuatro veces más de la imagen que la cámara gran angular. Perfecto para paisajes, viajes, grupos grandes, grandes espacios y objetos en movimiento.\n \nAmbas cámaras del iPhone 11 graban videos 4K nítidos a 60 fps. La nueva cámara ultra angular captura 4 veces más de cualquier escena y es ideal para sujetos en movimiento. Y con el Zoom de audio, el sonido se acerca junto con la imagen. Además, editar videos es tan simple como editar fotos. El Modo Noche es una nueva función automática para capturar imágenes en ambientes con poca luz. Los colores se ven más naturales, las fotos se ven más brillantes y ni siquiera necesitas usar el flash. \n\nEl vidrio de la parte delantera y trasera del iPhone 11 se ha reforzado mediante un proceso de intercambio iónico. El iPhone 11 es resistente al agua hasta una profundidad de dos metros durante 30 minutos, el doble de la profundidad del iPhone XR. ",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Apple"),
-                            VecesComprado = 5,
+                            VecesComprado = 2,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "iphone11_1.png"},
@@ -212,7 +212,7 @@ namespace UYCommerce.Data
                             Descripcion = "",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Remeras"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Vlone"),
-                            VecesComprado = 100,
+                            VecesComprado = 1,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "remera-vlone1.jpg"},
@@ -289,7 +289,7 @@ namespace UYCommerce.Data
                             Descripcion = "En su interior, el chip M2 llama a ser un sucesor más bien lineal del M1 añadiendo más núcleos gráficos (9 o hasta 10) con un poco más de eficiencia en los núcleos de la CPU. El rendimiento final es un 20% más que en el chip M1 y seguimos sin ventilador. Por lo tanto, el silencio del MacBook Air va a ser total.A nivel de almacenamiento partimos de 256 GB y podemos llegar a los 2 TB de almacenamiento, incluyendo una memoria RAM de hasta 24 GB. El mínimo en ese aspecto sigue siendo de 8 GB.La pantalla es de 13.6 pulgadas y tiene 500 nits de brillo, capaces de plasmar más de mil millones de colores. Hay una cámara FaceTime (sí, con notch) de 1080p capaz de detectar mucho mejor los ambientes de luminosidad baja. Cuatro altavoces repartidos por la carcasa se encargan de aportar audio espacial.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Computadoras"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Apple"),
-                            VecesComprado = 1000,
+                            VecesComprado = 1,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "macbook-1.jpg"},
@@ -344,7 +344,7 @@ namespace UYCommerce.Data
                             Descripcion = "Desde hace 60 años, la filosofía de Scott es \"sin atajos\". Esta compañía internacional se destaca por la pasión, la tecnología, la innovación y el diseño en cada uno de sus productos.\n\nDesafiá tus capacidades\nLas mountain bikes, o bicicletas de montaña son el medio de transporte perfecto para tus aventuras y alcanzar aquellos lugares recónditos que querés conocer. Sus materiales y diseños están pensados para la acción, son resistentes y cuentan con mejor maniobrabilidad que otros modelos brindándote mayor tracción. Además, sus llantas con dibujos marcados favorecen el agarre en terrenos difíciles.\n\nDiseñada para vos\nSu sistema de suspensión delantera la hace más liviana que aquellas que tienen doble suspensión. Esto se traduce en más velocidad, mejor nivel y mantenimiento sencillo.\n\nSeguridad y calidad\nGracias a sus frenos de disco hidráulico podés detener la bicicleta con total precisión cuando lo necesites, ya que tiene una gran potencia; además, su funcionamiento no se ve afectado por cuestiones como la corrosión, las condiciones climáticas o del suelo, ni el estado del aro.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Bicicletas"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Scott"),
-                            VecesComprado = 3,
+                            VecesComprado = 0,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "bici-scott-negra-1.jpg"},
@@ -396,7 +396,7 @@ namespace UYCommerce.Data
                             Descripcion = "Doble cámara y más detalles\nSus 2 cámaras traseras de 12 Mpx/12 Mpx te permitirán tomar imágenes con más detalles y lograr efectos únicos como el famoso modo retrato de poca profundidad de campo.\n\nAdemás, el dispositivo cuenta con cámara frontal de 10 Mpx para que puedas sacarte divertidas selfies o hacer videollamadas.\n\nDescubrí la pantalla plegable\nAl plegarse, adopta un tamaño pequeño y compacto que te resultará muy cómodo para transportar. Cuando quieras disfrutar de tus contenidos favoritos se transforma desplegando su pantalla de 6.7\".\n\nDesbloqueo veloz con tu huella dactilar\nCon el sensor de huella dactilar, el acceso es seguro y podrás desbloquearlo automáticamente con un toque.\n\nBatería para todo el día\nSu batería de 3300 mAh se adapta a tu ritmo de vida y te garantiza energía para toda una jornada con una sola carga.\n\nGran capacidad de almacenamiento\nCon su memoria interna de 128 GB podrás almacenar archivos y aplicaciones de gran tamaño sin necesidad de subirlos a la nube y aprovechar tus momentos sin conexión para darles el máximo uso.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Samsung"),
-                            VecesComprado = 102,
+                            VecesComprado = 0,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "galaxyflip1.png"},
                                 new ProductoImagen{ImagenNombre = "galaxyflip2.png"},
@@ -421,7 +421,7 @@ namespace UYCommerce.Data
                             Descripcion = "iPhone 13. El sistema de dos cámaras más avanzado en un iPhone. El superrápido chip A15 Bionic. Un gran\nsalto en duración de batería. Un diseño resistente. Y una pantalla Super Retina XDR más brillante.\n\nAvisos Legales\n1La pantalla tiene esquinas redondeadas que siguen el elegante diseño curvo del teléfono, y las esquinas se encuentran dentro de un rectángulo estándar. Si se mide en forma de rectángulo estándar, la pantalla tiene 6.06 pulgadas en diagonal. El área real de visualización es menor.\n2La duración de la batería varía según el uso y la configuración. Para obtener más información, visita apple.com/mx/batteries.\n3El iPhone 13 es resistente a los derrames, a las salpicaduras y al polvo, y fue probado en condiciones de laboratorio controladas, con una clasificación IP68 según la norma IEC 60529. La resistencia a los derrames, a las salpicaduras y al polvo no es una condición permanente, y podría disminuir como consecuencia del uso normal. No intentes cargar un iPhone mojado; consulta el manual del usuario para ver las instrucciones de limpieza y secado. La garantía no cubre daños producidos por líquidos.\n4Algunas funcionalidades podrían no estar disponibles en todos los países o áreas.\n5Los accesorios se venden por separado.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Iphone"),
-                            VecesComprado = 12,
+                            VecesComprado = 0,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "iphone13-1.png"},
                                 new ProductoImagen{ImagenNombre = "iphone13-2.png"},
@@ -448,7 +448,7 @@ namespace UYCommerce.Data
                                 new Sku{
                                     Key = "iphone-13-negro",
                                     Nombre = "Iphone 13 Negro",
-                                    Stock = 3,
+                                    Stock = 0,
                                     Precio=969,
                                     Imagenes = new SkuImagen[]{
                                         new SkuImagen{ImagenNombre = "iphone13negro-1.webp"},
@@ -465,7 +465,7 @@ namespace UYCommerce.Data
                             Descripcion = "These loose-fitting adidas joggers are made for comfort and retro style. The open hem and relaxed silhouette channel vintage track pant inspiration, while 3-Stripes down the sides keep you connected to adidas history. Paired with a crop hoodie, they're ready for adventures in the city or cozy nights in.\n\nThe cotton in this product has been sourced through Better Cotton. Better Cotton is sourced via a chain of custody model called mass balance. This means that Better Cotton is not physically traceable to end products.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Joggers"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Adidas"),
-                            VecesComprado = 200,
+                            VecesComprado = 0,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "joggings-adidas-blanco.jpg"},
                                 new ProductoImagen{ImagenNombre = "joggings-adidas-negro.jpg"},
@@ -508,7 +508,7 @@ namespace UYCommerce.Data
                             Descripcion = "La remera Nike Sportswear Club es un clásico. Está hecha de 100% algodón y se siente suave. Con solo el logotipo de Nike bordado en el pecho, es un diseño básico pero moderno.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Remeras"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Nike"),
-                            VecesComprado = 200,
+                            VecesComprado = 0,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
                                 new ProductoImagen{ImagenNombre = "remera-nike-comun-negra.jpg"},

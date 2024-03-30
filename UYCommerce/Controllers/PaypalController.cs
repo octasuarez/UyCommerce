@@ -105,11 +105,18 @@ namespace LoginAndRegister.Controllers
                         });
                     }
 
-                    var carritoId = User.FindFirstValue("CarritoId");
+                    var carrito = await _context.Carritos
+                        .Include(c => c.Productos)!
+                        .ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto)
+                        .FirstOrDefaultAsync(c => c.Id.ToString() == User.FindFirstValue("CarritoId"));
 
-                    await _context.ProductosCarritos.Where(p => p.CarritoId.ToString() == carritoId).ExecuteDeleteAsync();
+                    carrito?.Productos?.Select(p => p.Sku).Select(s => s!.Producto).ToList().ForEach(p => p!.VecesComprado += 1);
+                    carrito?.Productos?.ToList().ForEach(p => p.Sku!.Stock -= p.Cantidad);
 
-                     _context.Add(orden);
+                    await _context.ProductosCarritos.Where(p => p.CarritoId == carrito!.Id).ExecuteDeleteAsync();
+
+                    await _context.AddAsync(orden);
+                    _context.Carritos.Update(carrito!);
                     await _context.SaveChangesAsync();
 
                     HttpContext.Session.SetString("cartItems", "0");
