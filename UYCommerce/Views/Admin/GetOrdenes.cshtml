@@ -1,0 +1,131 @@
+﻿@model List<OrdenVM>
+@{
+    Layout = "AdminLayout";
+}
+
+<div class="container-fluid">
+
+    <div>
+        <h5 class="my-5">Ordenes</h5>
+        @if (Model.Any())
+        {
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#Orden</th>
+                        <th scope="col">Comprador</th>
+                        <th scope="col">Fecha de compra</th>
+                        <th scope="col">Fecha de entrega</th>
+                        <th scope="col">Productos</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>@o.Orden.Id</td>
+                            <td>@o.Usuario.Email</td>
+                            <td>@o.Orden.FechaDeCompra</td>
+                            <td>@o.Orden.FechaDeEntrega</td>
+                            <td>@o.Orden.Productos?.Count</td>
+                            <td>$@o.Orden.Total</td>
+                            <td>@o.Orden.Estado</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalOrden@(o.Orden.Id)">Ver Orden</a>
+                                <!-- Modal Orden-->
+                                <div class="modal fade" id="modalOrden@(o.Orden.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Orden @o.Orden.Id @o.Orden.FechaDeCompra</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+
+                                                    <div class="mb-5" style="border-bottom:solid 1px lightgray;">
+                                                        <h5 class="fw-bold">Direccion</h5>
+                                                        <span>
+                                                            @o.Orden.Direccion?.Id
+                                                            @o.Orden.Direccion?.address_line_1
+                                                            @o.Orden.Direccion?.address_line_2
+                                                            @o.Orden.Direccion?.admin_area_1
+                                                            @o.Orden.Direccion?.admin_area_2
+                                                            @o.Orden.Direccion?.country_code
+                                                            @o.Orden.Direccion?.postal_code
+                                                        </span>
+                                                    </div>
+
+                                                <div>
+                                                    <h5 class="fw-bold">Comprador</h5>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Id</th>
+                                                                <th>Nombre</th>
+                                                                <th>Email</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>@o.Usuario.Id</td>
+                                                                <td>@o.Usuario.Nombre</td>
+                                                                <td>@o.Usuario.Email</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+
+                                                <div class="mt-5">
+                                                    <h5 class="fw-bold">Productos</h5>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Sku</th>
+                                                                <th>Nombre</th>
+                                                                <th>Cantidad</th>
+                                                                <th>Precio</th>
+                                                                <th>SubTotal</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var p in o.Orden.Productos)
+                                                            {
+                                                                <tr>
+                                                                    <td>@p.Sku.Key</td>
+                                                                    <td>@p.Sku.Nombre</td>
+                                                                    <td>@p.Cantidad</td>
+                                                                    <td>@p.Precio</td>
+                                                                    <td>$@(p.Precio * p.Cantidad)</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div>
+                                                    <p class="fw-bold">Total: $@o.Orden.Total</p>
+                                                </div>
+
+                                                <div>
+                                                    <p><strong>Estado:</strong> @o.Orden.Estado</p>
+                                                    <p><strong>Fecha de Entrega:</strong> @o.Orden.FechaDeEntrega</p>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</div>

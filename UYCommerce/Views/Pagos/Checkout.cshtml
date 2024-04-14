@@ -9,15 +9,23 @@
 </head>
 
 <body>
-    <div class="container-fluid" style="background-color:whitesmoke;">
 
+    <div class="container-fluid" style="background-color: whitesmoke; position: relative;">
+
+        <div id="loading" class="overlay bg-white" style="opacity:50%;">
+            <div class="d-flex justify-content-center h-100 overlay">
+                <div class="spinner-border mx-auto my-auto" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
 
         <script src="https://www.paypal.com/sdk/js?client-id=Ab3oHLrxl1Go9442dLDXSZTUtPQC-HPiO5LAPZrDvSFxu2ONgG8pjKmpUcq7goOJRUVp7VaXPWJ_svGU"></script>
 
         <div class="container d-flex flex-column" style="min-height:900px;">
 
             <div class="my-4">
-                <h2>Mi Carrito (@Model.Productos.Count items)</h2>
+                <h2>Mi Carrito (@Model.Productos?.Count items)</h2>
             </div>
 
             <div class="mt-2 w-100 h-100 d-lg-flex">
@@ -27,35 +35,35 @@
                     <h4 class="fw-semibold">Productos</h4>
                     <div class="border my-4"></div>
                     <div>
-                        @foreach (var p in Model.Productos)
+                        @foreach (var p in Model.Productos!)
                         {
                             <div class="p-2 d-lg-flex">
 
-                                    <img class="object-fit-contain" src="~/Imagenes/Productos/@p.Sku.Imagenes!.First().ImagenNombre" style="height:150px;width:150px;" />
+                                <img class="object-fit-contain" src="~/Imagenes/Productos/@p.Sku.Imagenes!.First().ImagenNombre" style="height:150px;width:150px;" />
 
-                                    <div class="d-flex flex-column col-8 ps-3">
-                                        <a href="/@p.Sku.Key" class="text-dark fs-4">@p.Sku.Nombre</a>
-                                        <div class="d-flex">
+                                <div class="d-flex flex-column col-8 ps-3">
+                                    <a href="/@p.Sku.Key" class="text-dark fs-4">@p.Sku.Nombre</a>
+                                    <div class="d-flex">
 
-                                            @foreach (var a in p.Sku.AtributosValores!)
-                                            {
-                                                <p class="me-2"><strong>@a.Atributo!.Nombre:</strong> @a.Valor</p>
-                                            }
-                                        </div>
-
-                                        <div class="d-flex align-items-center">
-                                            <div class="qty-btn me-2 me-lg-0 d-flex flex-nowrap w-auto" style="">
-                                                <button data-value="@p.SkuId" data-qty=-1 onclick="ModificarQty(this)" style="color:red;">-</button>
-                                                <input id="@p.SkuId" disabled type="number" value="@p.Cantidad" readonly="readonly">
-                                                <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)" style="color: green;">+</button>
-                                            </div>
-                                            <button data-value="@p.SkuId" onclick="EliminarProductoCarrito(this)" class="btn"><i class="bi bi-trash3 fs-5" style="color:gray;"></i></button>
-                                        </div>
+                                        @foreach (var a in p.Sku.AtributosValores!)
+                                        {
+                                            <p class="me-2"><strong>@a.Atributo!.Nombre:</strong> @a.Valor</p>
+                                        }
                                     </div>
 
-                                    <div class="col-lg-2 position-relative position-lg-static me-5 me-lg-0">
-                                        <h4 class="text-center fw-semibold">$@p.Sku.Precio</h4>
+                                    <div class="d-flex align-items-center">
+                                        <div class="qty-btn me-2 me-lg-0 d-flex flex-nowrap w-auto" style="">
+                                            <button data-value="@p.SkuId" data-qty=-1 onclick="ModificarQty(this)" style="color:red;">-</button>
+                                            <input id="@p.SkuId" disabled type="number" value="@p.Cantidad" readonly="readonly">
+                                            <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)" style="color: green;">+</button>
+                                        </div>
+                                        <button data-value="@p.SkuId" onclick="EliminarProductoCarrito(this)" class="btn"><i class="bi bi-trash3 fs-5" style="color:gray;"></i></button>
                                     </div>
+                                </div>
+
+                                <div class="col-lg-2 position-relative position-lg-static me-5 me-lg-0">
+                                    <h4 class="text-center fw-semibold">$@p.Sku.Precio</h4>
+                                </div>
                             </div>
                         }
                     </div>
@@ -88,6 +96,10 @@
         </div>
 
     </div>
+
+    <script>$(window).load(function () {
+            $('#loading').hide();
+        });</script>
 
     <script>paypal.Buttons({
             async createOrder() {

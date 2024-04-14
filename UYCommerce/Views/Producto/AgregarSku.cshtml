@@ -28,6 +28,11 @@
                     <span class="text-danger" asp-validation-for="Precio"></span>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Stock</label>
+                    <input type="number" class="form-control" asp-for="Stock" name="Stock" placeholder="Stock" />
+                    <span class="text-danger" asp-validation-for="Stock"></span>
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Imagenes</label>
                     <input type="file" class="form-control" asp-for="Imagenes" name="Imagenes" accept="image/*" multiple />
                     <span class="text-danger" asp-validation-for="Imagenes"></span>

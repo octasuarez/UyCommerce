@@ -32,72 +32,79 @@
                     @if (Model.FechaDeEntrega != null)
                     {@Model.FechaDeEntrega;
                 }
-            </p>
+                </p>
+            </div>
+
         </div>
 
-    </div>
-    <h6 class="mt-5 fw-semibold">Productos</h6>
-    <div class="table-responsive">
+        <div class="my-4">
+            
+        </div>
+        <h6 class="mt-5 fw-semibold">Productos</h6>
+        <div class="table-responsive">
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>SKU</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var p in Model.Productos)
-                {
-
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td>
-                            <div class="d-flex">
-                                <img src="~/Imagenes/Productos/@p.Sku.Imagenes.First().ImagenNombre" style="height:150px;width:150px;object-fit:contain" />
-                                <div class="d-flex flex-column ms-3">
-
-                                    <a href="/@p.Sku.Key" class="text-dark fw-semibold mb-3">@p.Nombre</a>
-                                    @if (p.Sku.AtributosValores != null && p.Sku.AtributosValores.Any())
-                                    {
-                                        foreach (var a in p.Sku.AtributosValores)
-                                        {
-                                            <p class="m-0" style="font-size:15px;"><strong>@a.Atributo.Nombre:</strong> @a.Valor</p>
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        </td>
-                        <td>@p.Sku.Key</td>
-                        <td>$@p.Precio</td>
-                        <td>@p.Cantidad</td>
-                        <td>$@(p.Cantidad * p.Precio)</td>
+                        <th>Nombre</th>
+                        <th>SKU</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
                     </tr>
-                }
-                <tr>
-                    <th style="border:none;"></th>
-                    <th style="border:none;"></th>
-                    <th style="border:none;"></th>
-                    <th style="border:none;"></th>
-                    <th>
-                        Total
-                    </th>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Productos!)
+                    {
 
-                </tr>
-                <tr>
-                    <td style="border:none;"></td>
-                    <td style="border:none;"></td>
-                    <td style="border:none;"></td>
-                    <td style="border:none;"></td>
-                    <td>
-                        <p> $@Model.Total</p>
-                    </td>
-                </tr>
-            </tbody>
-    </table>
-    </div>
+                        <tr>
+                            <td>
+                                <div class="d-flex">
+                                    <img src="~/Imagenes/Productos/@p.Sku?.Imagenes?.First().ImagenNombre" style="height:150px;width:150px;object-fit:contain" />
+                                    <div class="d-flex flex-column ms-3">
+
+                                        <a href="/@p.Sku?.Key" class="text-dark fw-semibold mb-3">@p.Nombre</a>
+
+                                        @if (p.Sku.AtributosValores != null && p.Sku.AtributosValores.Any())
+                                        {
+                                            foreach (var a in p.Sku.AtributosValores)
+                                            {
+                                                <p class="m-0" style="font-size:15px;"><strong>@a.Atributo?.Nombre:</strong> @a.Valor</p>
+                                            }
+                                        }
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td>@p.Sku.Key</td>
+                            <td>$@p.Precio</td>
+                            <td>@p.Cantidad</td>
+                            <td>$@(p.Cantidad * p.Precio)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th style="border:none;"></th>
+                        <th style="border:none;"></th>
+                        <th style="border:none;"></th>
+                        <th style="border:none;"></th>
+                        <th>
+                            Total
+                        </th>
+
+                    </tr>
+                    <tr>
+                        <td style="border:none;"></td>
+                        <td style="border:none;"></td>
+                        <td style="border:none;"></td>
+                        <td style="border:none;"></td>
+                        <td>
+                            <p> $@Model.Total</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
+   
 </body>

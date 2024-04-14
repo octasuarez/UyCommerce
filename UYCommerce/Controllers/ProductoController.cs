@@ -11,9 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.Cms;
 using UYCommerce.Data;
+using UYCommerce.DTOs;
 using UYCommerce.Models;
 using UYCommerce.Services;
+using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers
 {
@@ -48,7 +51,7 @@ namespace UYCommerce.Controllers
             if (ModelState.IsValid)
             {
 
-                var productoDb = await _context.Productos.FirstOrDefaultAsync(p => p.Nombre.ToLower() == producto.Nombre.ToLower());
+                var productoDb = await _context.Productos.FirstOrDefaultAsync(p => p.Nombre!.ToLower() == producto.Nombre.ToLower());
 
                 if (productoDb is not null)
                 {
@@ -56,7 +59,7 @@ namespace UYCommerce.Controllers
                     return View(producto);
                 }
 
-                var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == producto.CategoriaId);
+                var categoria = await _context.Categorias.Include(c => c.Atributos).FirstOrDefaultAsync(c => c.Id == producto.CategoriaId);
                 var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.Id == producto.MarcaId);
 
                 if (categoria is null)
@@ -65,6 +68,9 @@ namespace UYCommerce.Controllers
                     return View(producto);
                 }
 
+                var atributos = producto.Atributos is not null ?
+                    categoria.Atributos?.Where(a => producto.Atributos.Any(x => a.Id == x)).ToList()! : null;
+
                 Producto productoNuevo = new()
                 {
                     Nombre = producto.Nombre,
@@ -72,34 +78,22 @@ namespace UYCommerce.Controllers
                     Descripcion = producto.Descripcion,
                     Imagenes = producto.Imagenes.Select(i => new ProductoImagen { ImagenNombre = i.FileName }).ToList(),
                     Categoria = categoria,
-                    Marca = marca
+                    Marca = marca,
+                    Atributos = atributos
                 };
 
                 await _context.Productos.AddAsync(productoNuevo);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("GetProductos");
+                await _fileService.SaveFile(producto.Imagenes!.ToList(), "Imagenes/Productos");
+
+                return Redirect("/admin/productos");
             }
 
             return View(producto);
         }
 
-        [HttpGet]
-        [Route("/productos")]
-        public async Task<IActionResult> GetProductos()
-        {
 
-            var result = await _context.Productos
-                .Include(p => p.Imagenes)
-                .Include(p => p.Categoria)
-                .Include(p => p.Marca)
-                .Include(p => p.Preguntas)
-                .Include(p => p.Reviews)
-                .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-                .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .ToListAsync();
-            return View("GetProductos", result);
-        }
 
         [HttpGet]
         public async Task<IActionResult> AgregarSku(int productoId)
@@ -107,7 +101,7 @@ namespace UYCommerce.Controllers
 
             var producto = await GetProductoById(productoId);
 
-            if (producto is null)
+            if (producto is null || !producto.Atributos!.Any() && producto.Skus!.Any())
             {
                 return Redirect("/productos");
             }
@@ -132,22 +126,25 @@ namespace UYCommerce.Controllers
             {
                 producto = await GetProductoById(skuModel.ProductoId);
 
-                if (producto is null || producto.Atributos!.Any() && skuModel.AtributoValores is null)
+                if (producto is null)
+                    return View(skuModel);
+
+                var puedeAgregarSku = ValidarAgregarSku(producto, skuModel);
+
+                if (!puedeAgregarSku)
                 {
                     ViewBag.error = "Algo salio mal";
                     return View(skuModel);
                 }
 
-                List<AtributoValor> atributos = new();
-
                 string key = producto.NombreClave!;
 
+                List<AtributoValor> atributos = new();
+
                 if (skuModel.AtributoValores is not null && skuModel.AtributoValores!.Any() && producto.Atributos is not null)
-                {
                     atributos = producto.Atributos.SelectMany(a => a.Valores!).Where(a => skuModel.AtributoValores.Any(av => av == a.Id)).ToList();
 
-                    if (atributos.Any()) atributos.ForEach(a => key += "-" + a.Valor);
-                }
+                if (atributos.Any()) atributos.ForEach(a => key += "-" + a.Valor);
 
                 Sku nuevoSku = new()
                 {
@@ -155,8 +152,11 @@ namespace UYCommerce.Controllers
                     Key = key.ToLower(),
                     Nombre = skuModel.Nombre,
                     Precio = skuModel.Precio,
-                    Imagenes = skuModel.Imagenes?.Select(i => new SkuImagen { ImagenNombre = i.FileName }).ToList(),
-                    AtributosValores = atributos
+                    Imagenes = skuModel.Imagenes is not null ?
+                    skuModel.Imagenes.Select(i => new SkuImagen { ImagenNombre = i.FileName }).ToList() :
+                    producto.Imagenes?.Select(i => new SkuImagen { ImagenNombre = i.ImagenNombre }).ToList(),
+                    AtributosValores = atributos,
+                    Stock = skuModel.Stock
                 };
 
                 await _fileService.SaveFile(skuModel.Imagenes!.ToList(), "Imagenes/Productos");
@@ -164,7 +164,7 @@ namespace UYCommerce.Controllers
                 await _context.AddAsync(nuevoSku);
                 await _context.SaveChangesAsync();
 
-                return Redirect("/productos");
+                return Redirect("/admin/productos");
 
             }
 
@@ -172,6 +172,29 @@ namespace UYCommerce.Controllers
 
             return View(skuModel);
 
+        }
+
+        private static bool ValidarAgregarSku(Producto producto, AgregarSkuModel sku)
+        {
+
+            if (producto.Atributos!.Any() && sku.AtributoValores is null)
+            {
+                return false;
+            }
+
+            bool skuAtributosExisten = producto.Skus!.Any(s => s.AtributosValores!.All(a => sku.AtributoValores!.Any(av => av == a.Id)));
+
+            if (skuAtributosExisten)
+            {
+                return false;
+            }
+
+            if (producto.Skus!.Any(s => s.Nombre.ToLower() == sku.Nombre.ToLower()))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private async Task<Producto?> GetProductoById(int id)
@@ -428,6 +451,8 @@ namespace UYCommerce.Controllers
             return Json(new { msj });
 
         }
+
+        
 
     }
 }

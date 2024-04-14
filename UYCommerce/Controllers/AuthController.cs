@@ -106,6 +106,8 @@ namespace UYCommerce.Controllers
 
                 HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos!.Count.ToString());
 
+                if (usuario.Rol!.Nombre! == "Admin") return RedirectToAction("Dashboard", "Admin");
+
                 return RedirectToAction("Index", "Home");
             }
 

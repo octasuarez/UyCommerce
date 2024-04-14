@@ -1,4 +1,6 @@
-﻿namespace UYCommerce.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UYCommerce.Models
 {
     public class Atributo
     {

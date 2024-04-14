@@ -20,29 +20,27 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-primary bg-gradient pt-0 pb-2 shadow-sm border-bottom border-dark-subtle text-light">
 
-
             <div class="mx-auto col-12 col-lg-9 d-flex flex-column">
 
                 <div class="collapse navbar-collapse d-block mx-auto col-10" id="navbarSupportedContent">
 
-                    <a class="navbar-brand text-nowrap me-4" href="/">
+                    <a class="navbar-brand text-nowrap ms-5 me-0" href="/">
                         <h1 class="text-light" style="font-family:Impact;">UyCommerce</h1>
                     </a>
 
                     @*Este es el Search input*@
 
-                    <div class="d-flex col-lg-5 ms-lg-4 me-lg-5">
+                    <div class="d-flex col-lg-5 mx-lg-5">
                         <form class="w-100" role="search" asp-controller="Producto" asp-action="BuscarProductosPorQuery" method="get">
                             <div class="input-group shadow">
                                 <input name="query" id="search" class="form-control d-flex py-2" type="search" placeholder="Buscar productos" aria-label="Search">
-                                <button class="btn btn-light d-flex border" type="submit"><i class="bi bi-search text-dark fs-5"></i></button>
+                                <button class="btn btn-light d-flex border" type="submit"><i class="bi bi-search text-dark "></i></button>
                             </div>
                         </form>
                     </div>
 
-                    <div class="d-flex ms-lg-5 me-lg-5">
-
-                        @if (Context.Request.HttpContext.User.Identity.IsAuthenticated)
+                    <div class="d-flex me-lg-5 ms-lg-5">
+                        @if (Context.Request.HttpContext.User.Identity!.IsAuthenticated)
                         {
                             @* Cuenta *@
                             <ul class="navbar-nav d-flex">
@@ -50,10 +48,11 @@
                                     <a class="nav-link text-light d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-person-circle text-white fs-4 m-2"></i> <p class="d-inline m-0 text-nowrap">Mi Cuenta</p>
                                     </a>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu fadein100">
                                         <li><a class="dropdown-item" href="/Compras">Mis Compras</a></li>
-                                        <li><a class="dropdown-item " href="/Favoritos">Favoritos</a></li>
-                                        <li><a class="dropdown-item " asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
+                                        <li><a class="dropdown-item" href="/Reviews">Mis Reviews</a></li>
+                                        <li><a class="dropdown-item" href="/Favoritos">Favoritos</a></li>
+                                        <li style="border-top:solid 1px lightgray;"><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -91,13 +90,13 @@
                         <li>
                             <ul id="barra" class="list-unstyled navbar-nav collapse d-lg-flex">
                                 <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="#">Contacto</a>
+                                    <a class="text-light text-decoration-none" href="/Contacto">Contacto</a>
                                 </li>
                                 <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="#">Nosotros</a>
+                                    <a class="text-light text-decoration-none" href="/Nosotros">Nosotros</a>
                                 </li>
                                 <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="#">FAQ</a>
+                                    <a class="text-light text-decoration-none" href="/Faq">FAQ</a>
                                 </li>
                             </ul>
                         </li>

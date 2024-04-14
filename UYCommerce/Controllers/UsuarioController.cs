@@ -13,6 +13,7 @@ using UYCommerce.Data;
 using UYCommerce.DTOs;
 using UYCommerce.Models;
 using UYCommerce.Services;
+using UYCommerce.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -108,7 +109,91 @@ namespace UYCommerce.Controllers
         }
 
 
-        
+        [HttpGet]
+        [Route("/reviews")]
+        public async Task<IActionResult> GetReviews()
+        {
+
+            ReviewsVM result = new();
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.Reviews)!.ThenInclude(r => r.Producto)!.ThenInclude(p => p!.Imagenes)
+                .Include(u => u.Ordenes)!.ThenInclude(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto).ThenInclude(p => p!.Imagenes)
+                .FirstOrDefaultAsync(u => u.Id == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
+
+            if (usuario is null) return Redirect("/Compras");
+
+            result.Reviews = usuario?.Reviews?.ToList();
+
+            var productosReviews = result.Reviews?.Select(r => r.Producto).ToList();
+
+            var productosOrdenes = usuario!.Ordenes!.SelectMany(o => o.Productos!).Select(p => p.Sku).Select(s => s!.Producto).Distinct();
+
+            var productosPendientesReview = productosOrdenes.Where(p => !productosReviews!.Any(pr => pr!.Id == p!.Id)).ToList();
+
+            result.Productos = productosPendientesReview!;
+
+            return View("Reviews", result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AgregarReview([FromBody] ReviewDTO reviewDTO)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                var producto = await _context.Productos.Include(p => p.Reviews)!.ThenInclude(r => r.Usuario).FirstOrDefaultAsync(p => p.Id == reviewDTO.ProductoId);
+
+                var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                if (producto is null || producto.Reviews!.Any(r => r.UsuarioId == usuarioId))
+                {
+
+                    return BadRequest("error");
+                }
+
+                Review review = new()
+                {
+                    ProductoId = reviewDTO.ProductoId,
+                    Texto = reviewDTO.Comentario,
+                    Puntuacion = reviewDTO.Valoracion,
+                    UsuarioId = usuarioId
+                };
+
+                producto.Reviews?.Add(review);
+
+                _context.Productos.Update(producto);
+                await _context.SaveChangesAsync();
+
+                return Ok("Se agrego la review");
+            }
+
+            return BadRequest("Campos invalidos");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateReview([FromBody] UpdateReviewDTO reviewDTO)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewDTO.ReviewId);
+
+                if (review is null) return BadRequest();
+
+                review.Texto = reviewDTO.Comentario;
+                review.Puntuacion = reviewDTO.Valoracion;
+
+                _context.Update(review);
+                await _context.SaveChangesAsync();
+
+                return Ok("Se actualizo la review correctamente");
+            }
+
+            return BadRequest("error");
+        }
     }
 }
 

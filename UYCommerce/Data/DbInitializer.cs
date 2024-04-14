@@ -10,14 +10,12 @@ namespace UYCommerce.Data
         {
         }
 
-        public static void Initialize(IServiceProvider serviceProvider)
+        public async static void Initialize(IServiceProvider serviceProvider)
         {
-
-
             using (var context = new ShopContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ShopContext>>()))
             {
-                //context.Database.EnsureDeleted();
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
                 Atributo[] atributos = new Atributo[] {
@@ -138,7 +136,7 @@ namespace UYCommerce.Data
                             Descripcion = "Grabe videos en 4K, tome hermosos retratos y capture paisajes completos con el nuevo sistema de cámara dual. Toma fotos increíbles con poca luz utilizando el modo Noche. Vea colores reales en fotos, videos y juegos en la pantalla Liquid Retina de 6.1 pulgadas. Lleve el rendimiento sin precedentes del chip A13 Bionic a sus juegos, realidad aumentada y fotografías. Una batería para todo el día: haz mucho y recarga poco. Y cuente con una resistencia al agua de hasta dos metros por hasta 30 minutos. \n\nEl iPhone 11 tiene un nuevo sistema de cámara dual para capturar más de lo que ves y amas. Viene con el chip más rápido en un celular inteligente.También tiene la mejor calidad de video en un teléfono móvil. De esa forma, sus recuerdos serán verdaderamente inolvidables. \n\nLa cámara gran angular de 12 MP tiene Focus Pixeles 100% para un enfoque automático hasta tres veces más rápido en ambiente con poca luz. La cámara ultra angular de 12 MP captura cuatro veces más de la imagen que la cámara gran angular. Perfecto para paisajes, viajes, grupos grandes, grandes espacios y objetos en movimiento.\n \nAmbas cámaras del iPhone 11 graban videos 4K nítidos a 60 fps. La nueva cámara ultra angular captura 4 veces más de cualquier escena y es ideal para sujetos en movimiento. Y con el Zoom de audio, el sonido se acerca junto con la imagen. Además, editar videos es tan simple como editar fotos. El Modo Noche es una nueva función automática para capturar imágenes en ambientes con poca luz. Los colores se ven más naturales, las fotos se ven más brillantes y ni siquiera necesitas usar el flash. \n\nEl vidrio de la parte delantera y trasera del iPhone 11 se ha reforzado mediante un proceso de intercambio iónico. El iPhone 11 es resistente al agua hasta una profundidad de dos metros durante 30 minutos, el doble de la profundidad del iPhone XR. ",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Apple"),
-                            VecesComprado = 2,
+                            VecesComprado = 1,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "iphone11_1.png"},
@@ -212,7 +210,7 @@ namespace UYCommerce.Data
                             Descripcion = "",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Remeras"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Vlone"),
-                            VecesComprado = 1,
+                            VecesComprado = 4,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "remera-vlone1.jpg"},
@@ -396,7 +394,7 @@ namespace UYCommerce.Data
                             Descripcion = "Doble cámara y más detalles\nSus 2 cámaras traseras de 12 Mpx/12 Mpx te permitirán tomar imágenes con más detalles y lograr efectos únicos como el famoso modo retrato de poca profundidad de campo.\n\nAdemás, el dispositivo cuenta con cámara frontal de 10 Mpx para que puedas sacarte divertidas selfies o hacer videollamadas.\n\nDescubrí la pantalla plegable\nAl plegarse, adopta un tamaño pequeño y compacto que te resultará muy cómodo para transportar. Cuando quieras disfrutar de tus contenidos favoritos se transforma desplegando su pantalla de 6.7\".\n\nDesbloqueo veloz con tu huella dactilar\nCon el sensor de huella dactilar, el acceso es seguro y podrás desbloquearlo automáticamente con un toque.\n\nBatería para todo el día\nSu batería de 3300 mAh se adapta a tu ritmo de vida y te garantiza energía para toda una jornada con una sola carga.\n\nGran capacidad de almacenamiento\nCon su memoria interna de 128 GB podrás almacenar archivos y aplicaciones de gran tamaño sin necesidad de subirlos a la nube y aprovechar tus momentos sin conexión para darles el máximo uso.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Samsung"),
-                            VecesComprado = 0,
+                            VecesComprado = 1,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "galaxyflip1.png"},
                                 new ProductoImagen{ImagenNombre = "galaxyflip2.png"},
@@ -421,7 +419,7 @@ namespace UYCommerce.Data
                             Descripcion = "iPhone 13. El sistema de dos cámaras más avanzado en un iPhone. El superrápido chip A15 Bionic. Un gran\nsalto en duración de batería. Un diseño resistente. Y una pantalla Super Retina XDR más brillante.\n\nAvisos Legales\n1La pantalla tiene esquinas redondeadas que siguen el elegante diseño curvo del teléfono, y las esquinas se encuentran dentro de un rectángulo estándar. Si se mide en forma de rectángulo estándar, la pantalla tiene 6.06 pulgadas en diagonal. El área real de visualización es menor.\n2La duración de la batería varía según el uso y la configuración. Para obtener más información, visita apple.com/mx/batteries.\n3El iPhone 13 es resistente a los derrames, a las salpicaduras y al polvo, y fue probado en condiciones de laboratorio controladas, con una clasificación IP68 según la norma IEC 60529. La resistencia a los derrames, a las salpicaduras y al polvo no es una condición permanente, y podría disminuir como consecuencia del uso normal. No intentes cargar un iPhone mojado; consulta el manual del usuario para ver las instrucciones de limpieza y secado. La garantía no cubre daños producidos por líquidos.\n4Algunas funcionalidades podrían no estar disponibles en todos los países o áreas.\n5Los accesorios se venden por separado.",
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Iphone"),
-                            VecesComprado = 0,
+                            VecesComprado = 1,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "iphone13-1.png"},
                                 new ProductoImagen{ImagenNombre = "iphone13-2.png"},
@@ -685,7 +683,160 @@ namespace UYCommerce.Data
                         },
                         Total = 1850,
                         MetodoDePago = "Paypal"
+                    },
+                    new Orden
+                    {
+                        Id = "3",
+                        NombreComprador = "Juan",
+                        UsuarioId = 1,
+                        Estado = "En camino",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
+                        FechaDeCompra = DateTime.Now.AddMonths(-1),
+                        Productos = new ProductoOrden[]
+                        {
+                            new ProductoOrden
+                            {
+                                OrdenId = "3",
+                                SkuId = 6,
+                                Sku = productos[1].Skus!.ElementAt(3),
+                                Nombre = "Remera Vlone Rojo",
+                                Precio = 300,
+                                Cantidad = 2,
+                            },
+                        },
+                        Total = 600,
+                        MetodoDePago = "Paypal"
+                    },
+                    new Orden
+                    {
+                        Id = "4",
+                        NombreComprador = "Juan",
+                        UsuarioId = 1,
+                        Estado = "En camino",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
+                        FechaDeCompra = DateTime.Now.AddMonths(-2),
+                        Productos = new ProductoOrden[]
+                        {
+                            new ProductoOrden
+                            {
+                                OrdenId = "4",
+                                SkuId = 6,
+                                Sku = productos[1].Skus!.ElementAt(3),
+                                Nombre = "Remera Vlone Rojo",
+                                Precio = 300,
+                                Cantidad = 2,
+                            },
+                        },
+                        Total = 600,
+                        MetodoDePago = "Paypal"
                     }
+                    ,
+                    new Orden
+                    {
+                        Id = "5",
+                        NombreComprador = "Juan",
+                        UsuarioId = 1,
+                        Estado = "En camino",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
+                        FechaDeCompra = DateTime.Now.AddMonths(-3),
+                        Productos = new ProductoOrden[]
+                        {
+                            new ProductoOrden
+                            {
+                                OrdenId = "5",
+                                SkuId = 6,
+                                Sku = productos[1].Skus!.ElementAt(3),
+                                Nombre = "Remera Vlone Rojo",
+                                Precio = 300,
+                                Cantidad = 2,
+                            },
+                        },
+                        Total = 600,
+                        MetodoDePago = "Paypal"
+                    },
+                    new Orden
+                    {
+                        Id = "6",
+                        NombreComprador = "Juan",
+                        UsuarioId = 1,
+                        Estado = "Entregado",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
+                        FechaDeCompra = DateTime.Now.AddMonths(-3),
+                        FechaDeEntrega = DateTime.Now.AddDays(-7),
+                        Productos = new ProductoOrden[]
+                        {
+                            new ProductoOrden
+                            {
+                                OrdenId = "6",
+                                SkuId = productos[5].Skus!.ElementAt(1).Id,
+                                Sku = productos[5].Skus!.ElementAt(1),
+                                Nombre = productos[5].Skus!.ElementAt(1).Nombre,
+                                Precio = productos[5].Skus!.ElementAt(1).Precio,
+                                Cantidad = 2,
+                            },
+                        },
+                        Total = productos[5].Skus!.ElementAt(1).Precio * 2,
+                        MetodoDePago = "Paypal"
+                    },
+                    new Orden
+                    {
+                        Id = "7",
+                        NombreComprador = "Juan",
+                        UsuarioId = 1,
+                        Estado = "Entregado",
+                        Direccion = new OrdenDireccion{
+                            address_line_1 = "Calle 1",
+                            address_line_2 = "apt 23",
+                            admin_area_1 = "CL",
+                            admin_area_2 = "Las Toscas",
+                            postal_code = "16002",
+                            country_code = "UY"
+                        },
+                        FechaDeCompra = DateTime.Now.AddMonths(-2),
+                        FechaDeEntrega = DateTime.Now.AddDays(-5),
+                        Productos = new ProductoOrden[]
+                        {
+                            new ProductoOrden
+                            {
+                                OrdenId = "7",
+                                SkuId = productos[4].Skus!.ElementAt(0).Id,
+                                Sku = productos[4].Skus!.ElementAt(0),
+                                Nombre = productos[4].Skus!.ElementAt(0).Nombre,
+                                Precio = productos[4].Skus!.ElementAt(0).Precio,
+                                Cantidad = 1,
+                            },
+                        },
+                        Total = productos[4].Skus!.ElementAt(0).Precio,
+                        MetodoDePago = "Paypal"
+                    },
                 };
 
                 //Reviews
@@ -728,12 +879,6 @@ namespace UYCommerce.Data
                         Texto = "Genial para mtb",
                         UsuarioId = 1
                     },
-                    new Review {
-                        ProductoId = 4,
-                        Puntuacion = 5,
-                        Texto = "Le daria mas estrellas pero tuve que ajustarla mucho",
-                        UsuarioId = 2
-                    },
                 };
 
 
@@ -763,25 +908,23 @@ namespace UYCommerce.Data
                 Pregunta[] preguntas = new Pregunta[]
                 {
                     new Pregunta{ Contenido= "Tienen stock?", Fecha = DateTime.Now, Usuario = usuarios[0], Producto = productos[0]}
-
                 };
 
 
-                context.AddRangeAsync(categorias);
-                context.AddRangeAsync(subCategorias);
-                context.AddRangeAsync(marcas);
-                context.AddRangeAsync(atributos);
-                context.AddRangeAsync(atributoValores);
-                context.AddRangeAsync(productos);
-                context.AddRangeAsync(roles);
-                context.AddRangeAsync(usuarios);
-                context.AddRangeAsync(ordenes);
-                context.AddRangeAsync(reviews);
-                context.AddRangeAsync(productosCarrito);
-                context.AddRangeAsync(preguntas);
+                await context.AddRangeAsync(categorias);
+                await context.AddRangeAsync(subCategorias);
+                await context.AddRangeAsync(marcas);
+                await context.AddRangeAsync(atributos);
+                await context.AddRangeAsync(atributoValores);
+                await context.AddRangeAsync(productos);
+                await context.AddRangeAsync(roles);
+                await context.AddRangeAsync(usuarios);
+                await context.AddRangeAsync(ordenes);
+                await context.AddRangeAsync(reviews);
+                await context.AddRangeAsync(productosCarrito);
+                await context.AddRangeAsync(preguntas);
 
-                context.SaveChangesAsync();
-
+                await context.SaveChangesAsync();
             }
 
         }

@@ -1,14 +1,16 @@
 ﻿@model List<Pregunta>
-
+@{
+    Layout = "AdminLayout";
+}
 
 <body class="bg-body-tertiary">
 
-    <div class="container p-0">
+    <div class="container-fluid">
 
-        <h3 class="pt-5 mb-4">Preguntas</h3>
+        <h5 class="my-5">Preguntas</h5>
 
 
-        <select class="form-select mb-4" onchange="window.location= this.value" >
+        <select class="form-select mb-4" onchange="window.location= this.value">
             <option>Todas las preguntas</option>
             <option value="/admin/preguntas/sin responder">Sin Responder</option>
             <option value="/admin/preguntas/respondidas">Respondidas</option>
@@ -22,33 +24,38 @@
                 @foreach (var p in Model)
                 {
                     <div class="border pt-3 pb-3 ps-5 pe-5 d-flex">
+                        <div class="me-5 col-auto">
+                            <a class="fs-5 link-dark" href="/@p.Producto?.NombreClave">@p.Producto.Nombre</a>
+                            <img class="object-fit-contain d-block" style="height:100px;width:100%" src="~/Imagenes/Productos/@p.Producto.Imagenes!.First().ImagenNombre" />
+                        </div>
 
-                        <div class="col-8 me-5">
+                        <div class="me-5 align-content-center">
+                            <h6>@p.Usuario.Nombre</h6>
+                            <div class="d-flex align-items-center">
+                                <h6 class="p-0 my-0 me-2">@p.Usuario.Email</h6>
+                                <p class="p-0 m-0 text-secondary">@p.Fecha</p>
+                            </div>
 
-                            <h6>@p.Usuario.Nombre @p.Usuario.Email @p.Fecha</h6>
                             <p>@p.Contenido</p>
 
-                            @if (p.Respuesta != null)
-                            {
+                            <div id="respuesta@(p.Id)" class="d-flex">
 
-                                <p>@p.Respuesta.Contenido</p>
-                            }
-                            else
-                            {
-                                <div class="d-flex">
-                                    <form id="@p.Id" action="AgregarRespuesta(this)">
-                                        <input name="preguntaId" type="number" value="@p.Id" hidden />
-                                        <input name="respuesta" type="text" class="form-control" />
-                                        <button type="submit" class="btn btn-primary">Responder</button>
+                                @if (p.Respuesta is not null)
+                                {
+                                    <p class="me-2">@p.Respuesta.Contenido</p><p class="text-secondary">@p.Respuesta.Fecha</p>
+                                }
+                                else
+                                {
+                                    <form class="d-flex" id="@p.Id">
+                                        <input name="PreguntaId" type="number" value=@p.Id hidden />
+                                        <textarea name="Contenido" rows="1" cols="100" maxlength="500" type="text" class="form-control me-2" style="resize:none;"></textarea>
+                                        <button data-reply-id="respuesta@(p.Id)" data-form-id="@p.Id" type="button" class="btn btn-primary" onclick="AgregarRespuesta(this)">Responder</button>
                                     </form>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
 
-                        <div class="col-4">
-                            <a class="fs-3" href="/@p.Producto.NombreClave">@p.Producto.Nombre</a>
-                            <img class="object-fit-contain border row" style="height:150px;width:150px" src="~/Imagenes/Productos/@p.Producto.Imagenes!.First().ImagenNombre" />
-                        </div>
+
 
                     </div>
                 }
@@ -58,11 +65,33 @@
 
     </div>
 
-    <script>function AgregarRespuesta(e) {
+    <script>async function AgregarRespuesta(e) {
 
-            alert(e);
+            let formData = new FormData(document.getElementById(e.dataset.formId))
+            let form = Object.fromEntries(formData);
 
+            console.log(form)
 
+            const response = await fetch("/Admin/AgregarRespuesta", {
+                headers: { "Content-Type": "application/json" },
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify(form)
+            }).then((response) => {
+                if (response.ok) {
+                    console.log(response)
+                    return response.json();
+                }
+            }).then((responseJson) => {
+
+               let respuesta = document.getElementById(e.dataset.replyId);
+                respuesta.innerHTML = `<p class="me-2">${responseJson.contenido}</p>
+                <p class="text-secondary">${Date.parse(responseJson.fecha)}</p>
+                `;
+
+            }).catch((error) => {
+                console.log(error)
+            })
 
         }</script>
 </body>

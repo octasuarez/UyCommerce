@@ -1,0 +1,31 @@
+﻿@model List<Marca>
+@{
+    Layout = "AdminLayout";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex my-5">
+        <h5>Marcas</h5>
+        <a class="btn btn-primary ms-auto">+ Nueva Marca</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Cantidad Productos</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td>@m.Id</td>
+                    <td>@m.Nombre</td>
+                    <td>@m.Productos?.Count()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

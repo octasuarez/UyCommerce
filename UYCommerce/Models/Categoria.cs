@@ -8,6 +8,7 @@
         public virtual ICollection<Categoria>? SubCategorias { get; set; }
         public virtual ICollection<Producto>? Productos { get; set; }
         public bool MostrarEnInicio { get; set; } = false;
+        public bool EsCategoriaPadre { get; set; } = false;
         public string? ImagenNombre { get; set; }
         public virtual ICollection<Atributo>? Atributos { get; set; }
     }

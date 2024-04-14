@@ -1,10 +1,17 @@
 ﻿@model List<Producto>
 
+@{
+    Layout = "AdminLayout";
+}
 <body class="bg-light" style="min-height:500px;">
 
-    <div class="container p-0">
+    <div class="container-fluid">
 
-        <h3 class="py-5">Productos @Model.Count</h3>
+        <div class="d-flex py-5 me-3">
+            <h5>Productos @Model.Count</h5>
+            <a href="/Producto/CrearProducto" class="btn btn-primary h-50 d-flex ms-auto">+ Nuevo Producto</a>
+        </div>
+
         <ul class="list-unstyled bg-white">
             @if (Model.Any())
             {
@@ -35,8 +42,8 @@
                                         <h6><b>Reviews:</b> @p.Reviews?.Count</h6>
                                         <h6><b>Preguntas:</b> @p.Preguntas?.Count</h6>
                                     </div>
-                                    
-                                    
+
+
                                 </div>
                             </div>
                             <div class="d-flex flex-column ms-auto me-5">
@@ -60,26 +67,41 @@
                                             <ul class="list-unstyled">
                                                 @foreach (var s in p.Skus)
                                                 {
-                                                    <li class="d-flex border p-3">
-                                                        @if (s.Imagenes != null && s.Imagenes.Any())
-                                                        {
-                                                            <div class="d-inline">
-                                                                <img src="~/Imagenes/Productos/@s.Imagenes.First().ImagenNombre" class="object-fit-contain" style="height:150px;width:150px;" />
-                                                            </div>
-                                                        }
-                                                        <div class="d-inline">
-                                                            <h6>@s.Nombre</h6>
+                                                    <li class="d-flex border p-3 align-items-center">
 
-                                                        </div>
-                                                        @if (s.AtributosValores!.Any())
-                                                        {
-                                                            <div class="">
-                                                                @foreach (var a in s.AtributosValores)
-                                                                {
-                                                                    <p><strong>@a.Atributo.Nombre:</strong>@a.Valor</p>
-                                                                }
+                                                        <div class="d-flex">
+
+                                                            @if (s.Imagenes != null && s.Imagenes.Any())
+                                                            {
+                                                                <div class="me-3">
+                                                                    <img src="~/Imagenes/Productos/@s.Imagenes.First().ImagenNombre" class="object-fit-contain" style="height:150px;width:150px;" />
+                                                                </div>
+                                                            }
+
+                                                            <div class="me-3">
+                                                                <h5 class="mb-2">@s.Nombre</h5>
+                                                                <div class="d-flex">
+                                                                    <div class="me-3">
+
+                                                                        <h6><strong>Id:</strong> @s.Id</h6>
+                                                                        <h6><strong>Sku:</strong> @s.Key</h6>
+                                                                        <h6><strong>Precio:</strong> @s.Precio</h6>
+                                                                        <h6><strong>Stock:</strong> @s.Stock</h6>
+                                                                    </div>
+
+                                                                    <div class="">
+                                                                        @if (s.AtributosValores is not null && s.AtributosValores!.Any())
+                                                                        {
+                                                                            @foreach (var a in s.AtributosValores)
+                                                                            {
+                                                                                <p class="p-0 m-0"><strong>@a.Atributo?.Nombre:</strong>@a.Valor</p>
+                                                                            }
+                                                                        }
+                                                                    </div>
+
+                                                                </div>
                                                             </div>
-                                                        }
+                                                        </div>
 
                                                     </li>
                                                 }

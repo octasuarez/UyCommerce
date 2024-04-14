@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string? Nombre { get; set; }
-        public virtual ICollection<Producto>? ProductosCelular { get; set; }
+        public virtual ICollection<Producto>? Productos { get; set; }
     }
 }

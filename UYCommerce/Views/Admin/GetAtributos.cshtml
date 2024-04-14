@@ -1,0 +1,233 @@
+﻿@model List<Atributo>
+@{
+    Layout = "AdminLayout";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex my-5">
+        <h5>Atributos</h5>
+        <a class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalCreate">+ Nuevo Atributo</a>
+
+        <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Atributo</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-atributo" class="d-flex flex-column" method="post" asp-action="CrearAtributo" asp-controller="Atributo">
+                            <input id="atributoNombre" class="form-control mb-2" type="text" placeholder="Nombre" />
+                            <button onclick="CrearAtributo()" type="button" class="btn btn-primary mx-auto">Guardar</button>
+                        </form>
+                        <span id="error" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="">
+        <table class="table bg-white">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Valores</th>
+                    <th>Productos</th>
+                    <th>Categorias</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.Id</td>
+                        <td>@a.Nombre</td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modal@(a.Id)">@a.Valores?.Count</a>
+                            <!-- Modal Valores-->
+                            <div class="modal fade" id="modal@(a.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">@a.Nombre</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div id="@(a.Nombre)Valores" class="modal-body">
+                                            <a data-div-id="@(a.Nombre)Valores" data-id="@(a.Id)" onclick="AgregarInput(this)" class="btn btn-primary my-3">Agregar Valor</a>
+                                            @if (a.Valores is not null && a.Valores.Any())
+                                            {
+                                                <ul>
+                                                    @foreach (var v in a.Valores)
+                                                    {
+                                                        <li>
+                                                            <p>@v.Valor</p>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalProductos@(a.Id)">@a.Productos?.Count</a>
+                            <!-- Modal Productos-->
+                            <div class="modal fade" id="modalProductos@(a.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Productos</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @if (a.Productos is not null && a.Productos.Any())
+                                            {
+                                                <ul>
+                                                    @foreach (var p in a.Productos)
+                                                    {
+                                                        <li>
+                                                            <p>@p.Nombre</p>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalCategorias@(a.Id)">@a.Categorias?.Count</a>
+                            <!-- Modal Categorias-->
+                            <div class="modal fade" id="modalCategorias@(a.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Categorias</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @if (a.Valores is not null && a.Valores.Any())
+                                            {
+                                                <ul>
+                                                    @foreach (var c in a.Categorias!)
+                                                    {
+                                                        <li>
+                                                            <p>@c.Nombre</p>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <ul class="list-unstyled">
+        </ul>
+    </div>
+
+
+
+</div>
+
+<script>async function CrearAtributo() {
+
+        let nombre = document.getElementById('atributoNombre').value;
+
+        const response = await fetch("/Atributo/CrearAtributo", {
+
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify(nombre)
+
+        }).then((response) => {
+            return response.json();
+        }).then((msg) => {
+            document.getElementById("error").innerText = msg;
+        })
+
+    }</script>
+
+<script>function AgregarInput(e) {
+
+        let element = document.getElementById(e.dataset.divId);
+
+        let input = element.getElementsByTagName('input');
+
+        console.log(input);
+        if (!input.length > 0) {
+            console.log("asdfas")
+            element.innerHTML +=
+                `<div>
+                <div class="d-flex">
+                    <input id="${e.dataset.id}input" data-atributo-id=${e.dataset.id} class="form-control me-2" type="text" name="Valor" placeholder="Valor"/>
+                    <button data-input="${e.dataset.id}input" onclick="AgregarValor(this)" type="button" class="btn btn-primary me-2">Guardar</button>
+                    <button onclick="BorrarInput(this.parentElement)" type="button" class="btn btn-danger">X</button>
+                </div>
+                <span class="text-danger"></span>
+            </div>
+            `;
+        }
+    }</script>
+
+<script>function BorrarInput(e) {
+        e.parentElement.remove();
+    }</script>
+
+<script>async function AgregarValor(e) {
+
+        let input = document.getElementById(e.dataset.input)
+        let Valor = input.value;
+        let AtributoId = input.dataset.atributoId;
+
+        let error = e.parentElement.nextElementSibling;
+
+        e.setAttribute("disabled", "");
+
+        const response = await fetch("/Atributo/AgregarValor", {
+
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ Valor, AtributoId })
+
+        }).then((response) => {
+            return response.json();
+        }).then((result) => {
+
+            if (result.status === 200) {
+                e.parentElement.remove();
+                location.reload();
+            } else {
+                setTimeout(function () {
+                    e.removeAttribute("disabled")
+                    error.innerText = result.error;
+                }, 1000);
+            }
+
+        })
+
+    }</script>

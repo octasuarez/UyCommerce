@@ -13,11 +13,17 @@ namespace UYCommerce.Models
 		[Required(ErrorMessage = "Es necesario poner un precio")]
         [Range(0, int.MaxValue, ErrorMessage = "El precio debe ser mayor")]
 		public double Precio { get; set; }
-		[Required(ErrorMessage = "Sube al menos 1 imagen")]
+
+        [Range(0, int.MaxValue, ErrorMessage = "El stock debe ser mayor")]
+		[Required(ErrorMessage = "Es necesario tener stock")]
+		public int Stock { get; set; }
+
         public ICollection<IFormFile>? Imagenes { get; set; }
 
 		public ICollection<int>? AtributoValores { get; set; }
+
 		public ICollection<Atributo>? Atributos { get; set; }
+
 		public Producto? Producto { get; set; }
 	}
 }

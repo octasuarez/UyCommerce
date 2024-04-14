@@ -1,0 +1,139 @@
+﻿@model CategoriaDTO
+@{
+    Layout = "AdminLayout";
+}
+
+
+<body class="bg-light">
+    <div class="container-fluid" style="padding-right:20em;">
+
+        <div class="my-5">
+            <h2 class="text-center">Crear Categoria</h2>
+        </div>
+        <div class="card mx-auto bg-white p-4" style="width:500px;">
+            <form method="post" asp-action="CrearCategoria" asp-controller="Categoria" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <input class="form-control" type="text" name="Nombre" placeholder="Nombre" asp-for="Nombre"/>
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex mb-3">
+                    <span class="me-2 fw-semibold">Es categoria padre:</span>
+                    <span class="me-1">Si</span>
+                    <input class="me-2" type="radio" value="true" name="EsCategoriaPadre" onclick="CategoriaPadreInput(this)"/>
+                    <span class="me-1">No</span>
+                    <input type="radio" value="false" name="EsCategoriaPadre" onclick="CategoriaPadreInput(this)"/>
+                </div>
+                <span asp-validation-for="EsCategoriaPadre" class="text-danger"></span>
+
+                <div class="d-flex my-3" id="selectCatPadre"></div>
+
+                <div class="d-flex mb-3 ">
+                    <span class="me-2 fw-semibold">Mostrar en inicio:</span>
+                    <span class="me-1">Si</span>
+                    <input class="me-2" type="radio" value="true" name="MostrarEnInicio" />
+                    <span class="me-1">No</span>
+                    <input type="radio" value="false" name="MostrarEnInicio" asp-for="MostrarEnInicio"/>
+                </div>
+                <span asp-validation-for="MostrarEnInicio" class="text-danger"></span>
+
+                <div class="d-flex align-items-center">
+                    <span class="me-2 fw-semibold">Imagen:</span>
+                    <input class="form-control" type="file" name="Imagen" accept="image/*" asp-for="Imagen"/>
+                    <span asp-validation-for="Imagen" class="text-danger"></span>
+                </div>
+
+                <div class="mt-3">
+                    <span class="fw-semibold">Agregar atributos:</span>
+                    <div id="atributos" class="d-flex flex-column mt-3"></div>
+                </div>
+
+                <div class="d-flex my-2">
+                    <button class="btn btn-primary mx-auto" type="submit">Crear</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script>$(document).ready(async function () {
+
+            let atributos = document.getElementById('atributos');
+
+            const response = await fetch("/Atributo/GetAtributosJson", {
+
+                method: 'GET',
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                credentials: 'include',
+
+            }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                console.log('error');
+            }).then((result) => {
+                atributos.innerHTML = "";
+
+                for (var i = 0; i < result.length; i++) {
+                    var a = result[i];
+                    atributos.innerHTML +=
+                        `<div class="d-flex">
+                        <input class="form-check-input me-2" type="checkbox" value=${a.id} name="Atributos"/><span class="form-check-label">${a.nombre}</span>
+                        </div>`
+                }
+            })
+
+        })</script>
+
+    <script>async function CategoriaPadreInput(e) {
+
+            if (e.value == "false") {
+                console.log(e.value)
+
+                const response = await fetch("/Categoria/GetCategoriasApi", {
+
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    credentials: 'include',
+                    method: 'GET',
+                }).then((response) => {
+                    return response.json();
+                }).then((categorias) => {
+                    var element = document.getElementById('CategoriaPadre');
+
+                    if (categorias.length > 0 && !element) {
+
+                        let span = document.createElement('span');
+                        span.innerText = "Sub categoria de:";
+                        span.id = "CatPadreSpan";
+                        span.className = "fw-semibold me-2"
+
+                        let select = document.createElement('select');
+
+                        select.name = "CategoriaPadreId";
+                        select.id = "CategoriaPadre";
+                        select.className = "card";
+
+                        for (var i = 0; i < categorias.length; i++) {
+                            var c = categorias[i];
+                            var option = document.createElement('option');
+                            option.value = c.id;
+                            option.innerText = c.nombre;
+                            select.appendChild(option);
+                        }
+
+                        document.getElementById("selectCatPadre").appendChild(span);
+                        document.getElementById("selectCatPadre").appendChild(select);
+
+                    } else {
+                        console.log(categorias);
+                    }
+
+                })
+            } else {
+
+                let element = document.getElementById("selectCatPadre");
+                if (element) { element.innerHTML = "" };
+            }
+
+        }</script>
+</body>

@@ -27,7 +27,17 @@ namespace UYCommerce.Controllers
         }
 
         [HttpGet]
+        [Route("admin/marcas")]
         public async Task<IActionResult> GetMarcas()
+        {
+            var marcas = await _context.Marcas
+                .Include(m => m.Productos)
+                .ToListAsync();
+            return View("../Admin/GetMarcas",marcas);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMarcasApi()
         {
             return Ok(await _context.Marcas.ToListAsync());
         }

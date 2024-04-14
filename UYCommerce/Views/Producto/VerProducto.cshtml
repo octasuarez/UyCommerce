@@ -72,8 +72,8 @@
 
             @*Detalles del producto y sus atributos*@
 
-            <div class="col-auto col-lg-6 border p-3" style="height:fit-content;">
-                <p class="text-secondary p-0 m-0">@Model.Sku.Producto.VecesComprado vendidos</p>
+            <div id="detalles" class="col-auto col-lg-6 border p-3" style="height:fit-content;position:relative;">
+                <p class="text-secondary p-0 m-0">@Model.Sku.Producto?.VecesComprado vendidos</p>
                 <h1 class="mb-2">@Model.Sku.Nombre</h1>
                 @if (Model.Sku.Producto?.Reviews is not null)
                 {
@@ -85,8 +85,6 @@
                         {
                             if (i < Model.Sku.Producto!.GetPuntuacionPromedio())
                             {
-
-
                                 <li class="d-inline text-warning p-0"><i class="bi bi-star-fill "></i></li>
                             }
                             else
@@ -155,9 +153,9 @@
                 {
                     if (Model.Sku.Stock == 0)
                     {
-                            <div>
-                                <p class="text-danger fw-semibold">Sin stock disponible.</p>
-                            </div>
+                        <div>
+                            <p class="text-danger fw-semibold">Sin stock disponible.</p>
+                        </div>
                     }
                     else
                     {
@@ -174,11 +172,7 @@
                                 </select>
                             </div>
                             <div class="form-row input-group mx-auto" style="width:70%;">
-                                <!--<div class="input-grpup-prepend" style="width:60px;">-->
-                                @*<input id="qty" class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" max="@Model.Sku.Stock" />*@
-
-                                <!--</div>-->
-                                @if (!User.Identity.IsAuthenticated)
+                                @if (!User.Identity!.IsAuthenticated)
                                 {<a style="" value="@Model.Sku.Id" href="/Login" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></a> }
                                 else
                                 { <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></button>}
@@ -206,7 +200,7 @@
 
         <div class=" my-3">
             <h3 class="text-center">Descripcion</h3>
-            <span class="text-wrap">@Model.Sku?.Producto.Descripcion</span>
+            <span class="text-wrap">@Model.Sku?.Producto?.Descripcion</span>
         </div>
 
         @* Preguntas *@
@@ -214,7 +208,7 @@
 
             <h3 class="text-center">Preguntas</h3>
 
-            <h5 id="pcount" data-count=@Model.Sku.Producto.Preguntas!.Count>@Model.Sku.Producto.Preguntas.Count preguntas</h5>
+            <h5 id="pcount" data-count=@Model.Sku?.Producto?.Preguntas!.Count>@Model.Sku?.Producto?.Preguntas?.Count preguntas</h5>
 
             <div class="row mb-4 mt-3">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -232,7 +226,7 @@
 
             <div class="my-5" id="Preguntas">
 
-                @if (Model.Sku.Producto.Preguntas != null && Model.Sku.Producto.Preguntas.Any())
+                @if (Model.Sku?.Producto?.Preguntas != null && Model.Sku.Producto.Preguntas.Any())
                 {
                     foreach (var p in Model.Sku.Producto.Preguntas)
                     {
@@ -330,7 +324,7 @@
 
                                     @for (int i = 0; i < 5; i++)
                                     {
-                                        if (i < s.Producto.GetPuntuacionPromedio())
+                                        if (i < s.Producto?.GetPuntuacionPromedio())
                                         {
                                             <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
                                         }
@@ -360,7 +354,21 @@
 
 
     <script>function cambioAtributo(e) {
-    var url = "/@Model.Sku.Producto.NombreClave";
+
+    let loading =
+    `<div class="overlay">
+    <div class="overlay bg-light fadein50" style="z-index:100;"></div>
+         <div class="d-flex justify-content-center h-100 overlay">
+            <div class="spinner-border mx-auto my-auto" role="status">
+                 <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>`;
+
+    let detalles = document.getElementById('detalles');
+    detalles.innerHTML += loading;
+
+    var url = "/@Model.Sku?.Producto?.NombreClave";
                      if (e.id == 0) {
 
                         window.location.href = (url + `-${e.value}`).toLowerCase();
@@ -373,14 +381,29 @@
                     }
                     window.location.href = url.toLowerCase();
                     }
-            }</script>
+}
+    </script>
 
     <script>
     function AgregarProductoAlCarrito(e) {
 
-
-
         if ("@Model.Sku" != null) {
+
+
+            let loading =
+                `<div class="overlay">
+    <div class="overlay bg-light fadein50" style="z-index:100;"></div>
+         <div class="d-flex justify-content-center h-100 overlay">
+            <div class="spinner-border mx-auto my-auto" role="status">
+                 <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>`;
+
+            let detalles = document.getElementById('detalles');
+            detalles.innerHTML += loading;
+
+
             let formData = {
                 skuId: e.value,
                 quantity: document.getElementById('qty').value

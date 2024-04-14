@@ -1,0 +1,48 @@
+﻿@model List<Usuario>
+@{
+    Layout = "AdminLayout";
+}
+
+
+<div class="container-fluid">
+
+    <h5 class="my-5">Clientes</h5>
+    <div class="">
+        <table class="table bg-white">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Compras</th>
+                    <th>Total</th>
+                    <th>Items Carrito</th>
+                    <th>Preguntas</th>
+                    <th>Reviews</th>
+                    <th>Activo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>@u.Id</td>
+                        <td>@u.Nombre</td>
+                        <td>@u.Email</td>
+                        <td>@u.Ordenes?.Count</td>
+                        <td>$@u.Ordenes?.Sum(o => o.Total)</td>
+                        <td>@u.Carrito.Productos?.Count</td>
+                        <td>@u.Preguntas?.Count</td>
+                        <td>@u.Reviews?.Count</td>
+                        <td>@u.Activo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <ul class="list-unstyled">
+           
+        </ul>
+    </div>
+
+</div>

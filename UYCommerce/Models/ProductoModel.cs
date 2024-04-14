@@ -19,6 +19,7 @@ namespace UYCommerce.Models
         [Required(ErrorMessage = "Sube al menos 1 imagen")]
         public IFormFileCollection Imagenes { get; set; }
 
+        public List<int>? Atributos { get; set; }
 	}
 }
 

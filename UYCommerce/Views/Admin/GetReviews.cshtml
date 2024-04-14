@@ -1,0 +1,72 @@
+﻿@model List<Review>
+@{
+    Layout = "AdminLayout";
+}
+
+<body>
+
+    <div class="container-fluid">
+
+        <h5 class="my-5">Reviews @Model.Count</h5>
+
+        <ul class="list-unstyled">
+            @foreach (var r in Model)
+            {
+
+                <li class="card my-2 p-2">
+                    <div class="d-flex align-items-center">
+                        <div class="me-4">
+                            <img class="" src="~/Imagenes/Productos/@r.Producto?.Imagenes?.First().ImagenNombre" style="width:60px;height:60px;object-fit:contain;" />
+                        </div>
+
+                        <div class="me-4  align-content-center">
+                            <h5>@r.Producto?.Nombre</h5>
+                        </div>
+
+                        <div class="me-4">
+                            <span>@r.Usuario?.Nombre</span>
+                            <span>@r.Usuario?.Email</span>
+                        </div>
+
+                        <div class="me-4 align-content-center">
+                            <span class="p-0 m-0">@r.Texto</span>
+                        </div>
+
+                        <div class="align-content-center">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                var color = i < r.Puntuacion ? "orange" : "gray";
+                                <span><i class="bi bi-star-fill fs-3" style="color:@color"></i></span>
+                            }
+                        </div>
+
+                        <div class="ms-auto me-5">
+                            <a data-review-id=@r.Id onclick="EliminarReview(this)" class="btn btn-danger"><i class="bi bi-trash3"></i> Eliminar</a>
+                        </div>
+                    </div>
+                </li>
+
+            }
+        </ul>
+    </div>
+
+
+    <script>async function EliminarReview(e) {
+
+            let reviewId = e.dataset.reviewId;
+    console.log(reviewId)
+            const response = await fetch("/Admin/EliminarReview", {
+
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                method: "POST",
+                body: JSON.stringify(reviewId),
+            }).then((response) => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.log(response)
+                }
+            })
+        }</script>
+</body>

@@ -3,7 +3,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
+using UYCommerce.DTOs;
 using UYCommerce.Models;
+using UYCommerce.Services;
 
 namespace UYCommerce.Controllers;
 
@@ -11,11 +13,13 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly ShopContext _context;
+    private readonly IEmailService _emailService;
 
-    public HomeController(ILogger<HomeController> logger, ShopContext context)
+    public HomeController(ILogger<HomeController> logger, ShopContext context, IEmailService emailService)
     {
         _logger = logger;
         _context = context;
+        _emailService = emailService;
     }
 
     public async Task<IActionResult> Index()
@@ -56,6 +60,37 @@ public class HomeController : Controller
     public IActionResult NotFoundPage()
     {
         return View("NotFound");
+    }
+
+    [HttpGet]
+    [Route("/Contacto")]
+    public IActionResult Contacto() {
+
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Contacto([FromBody]ContactoDTO contacto) {
+
+        if (ModelState.IsValid) {
+
+            Message message = new()
+            {
+                Content = contacto.Mensaje,
+                Subject = contacto.Asunto,
+                To = new MimeKit.MailboxAddress("octasuarezp@gmail.com", "octasuarezp@gmail.com")
+            };
+
+            _emailService.SendEmail(message);
+
+            return Ok("Se envió correctamente");
+        }
+
+        var errors = string.Join("\n", ModelState.Values
+        .SelectMany(v => v.Errors)
+        .Select(e => e.ErrorMessage));
+
+        return BadRequest(errors);
     }
 
 }

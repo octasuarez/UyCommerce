@@ -4,7 +4,7 @@
 
 @media (min-width: 768px) {
     html {
-        font-size: 18px;
+        font-size: 14px;
     }
 }
 
@@ -66,7 +66,7 @@ button.accept-policy {
     position: relative;
     bottom: 0px;
     width: 100%;
-    white-space:nowrap;
+    white-space: nowrap;
 }
 
 .product-card {
@@ -76,10 +76,10 @@ button.accept-policy {
     cursor: pointer;
 }
 
-.product-card:hover {
-/*    transform: scale(1.05);*/
-    box-shadow: 0 10px 50px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
-}
+    .product-card:hover {
+        /*    transform: scale(1.05);*/
+        box-shadow: 0 10px 50px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+    }
 
 
 .ui-autocomplete {
@@ -139,9 +139,9 @@ button.accept-policy {
     border-color: lightskyblue;
 }
 
-.atributo a:hover{
-    cursor:pointer;
-    opacity:70%;
+.atributo a:hover {
+    cursor: pointer;
+    opacity: 70%;
 }
 
 .filtro {
@@ -149,12 +149,12 @@ button.accept-policy {
     background-color: whitesmoke;
     padding: 5px;
     width: fit-content;
-    margin-top:10px;
-    font-weight:500;
+    margin-top: 10px;
+    font-weight: 500;
 }
 
 .qty-btn {
-/*    border: solid 1px gray;*/
+    /*    border: solid 1px gray;*/
     width: 6em;
     display: block;
     border-radius: 20px 20px 20px 20px;
@@ -164,48 +164,49 @@ button.accept-policy {
     box-shadow: 0px 0px 5px 1px lightgray;
 }
 
-.qty-btn button {
-    text-decoration: none;
-    background: none;
-    border: none;
-    outline: none;
-    box-shadow: none;
-    width:30px;   
+    .qty-btn button {
+        text-decoration: none;
+        background: none;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        width: 30px;
+    }
+
+    .qty-btn input {
+        width: 2em;
+        text-align: center;
+        display: inline-block;
+        align-content: center;
+        margin-left: 10px;
+        border: none;
+        background-color: white;
+        height: 100%;
+    }
+
+.categorias {
+    justify-content: center;
 }
 
-.qty-btn input {
-    width: 2em;
-    text-align: center;
-    display:inline-block;
-    align-content:center;
-    margin-left:10px;
-    border: none;
-    background-color: white;
-    height: 100%;
+.categoria {
+    margin-right: 20px;
+    width: 400px;
+    height: 300px;
+    border: solid 1px lightgray;
+    border-radius: 10px;
 }
 
-.categorias{
-    justify-content:center;
-}
-.categoria{
-    margin-right:20px;
-    width:400px;
-    height:300px;
-    border:solid 1px lightgray;
-    border-radius:10px;
-}
+    .categoria img {
+        height: 80%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease 0s, opacity 0.5s;
+        border-radius: 10px 10px 0px 0px;
+    }
 
-.categoria img {
-    height: 80%;
-    width: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease 0s, opacity 0.5s;
-    border-radius: 10px 10px 0px 0px;
-}
-
-.categoria img:hover{
-    opacity:60%;
-}
+        .categoria img:hover {
+            opacity: 60%;
+        }
 
 /* Tooltip text */
 .tooltiptext {
@@ -240,4 +241,111 @@ button.accept-policy {
 #pwdRegister:focus-within .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+/*Rating*/
+
+.rating {
+    display: inline-block;
+    position: relative;
+    height: 25px;
+    line-height: 25px;
+    font-size: 25px;
+}
+
+    .rating label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        cursor: pointer;
+    }
+
+        .rating label:last-child {
+            position: static;
+        }
+
+        .rating label:nth-child(1) {
+            z-index: 5;
+        }
+
+        .rating label:nth-child(2) {
+            z-index: 4;
+        }
+
+        .rating label:nth-child(3) {
+            z-index: 3;
+        }
+
+        .rating label:nth-child(4) {
+            z-index: 2;
+        }
+
+        .rating label:nth-child(5) {
+            z-index: 1;
+        }
+
+        .rating label input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .rating label .icon {
+            float: left;
+            color: transparent;
+            margin-right:3px;
+        }
+
+        .rating label:last-child .icon {
+            color: gray;
+        }
+
+    .rating:not(:hover) label input:checked ~ .icon,
+    .rating:hover label:hover input ~ .icon {
+        color: orange;
+    }
+
+    .rating label input:focus:not(:checked) ~ .icon:last-child {
+        color: yellow;
+        text-shadow: 0 0 5px #09f;
+    }
+
+.overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 999;
+    display: block;
+    top: 0;
+    left: 0;
+}
+
+.fadein100{
+    animation: fadeIn100 0.5s;
+}
+
+.fadein50 {
+    animation: fadeIn50 0.5s;
+}
+
+@keyframes fadeIn50 {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 50%;
+    }
+}
+
+@keyframes fadeIn100 {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }

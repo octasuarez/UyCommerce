@@ -1,0 +1,52 @@
+﻿@model List<Categoria>
+@{
+    Layout = "AdminLayout";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex my-5">
+        <h5>Categorias</h5>
+        <a href="categorias/create" class="btn btn-primary ms-auto">+ Nueva Categoria</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Cantidad Productos</th>
+                <th>Mostrar en inicio</th>
+                <th>Atributos</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+
+
+                <tr>
+                    <td style="height: 100px; width: 100px;align-content:center;">
+
+                        @if (string.IsNullOrEmpty(c.ImagenNombre))
+                        {
+                            <span>Sin Imagen</span>
+                        }
+                        else
+                        {
+                            <img src="~/Imagenes/Categorias/@c.ImagenNombre" style="height:100px;width:100px;object-fit:contain" />
+                        }
+
+                    </td>
+                    <td>@c.Id</td>
+                    <td>@c.Nombre</td>
+                    <td>@c.Productos?.Count()</td>
+                    <td>@c.MostrarEnInicio</td>
+                    <td>@c.Atributos?.Count()</td>
+                    <td class="align-content-center"><button class="btn btn-light border">Ver Detalles</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
