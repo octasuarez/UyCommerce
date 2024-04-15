@@ -91,12 +91,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
 
-    DbInitializer.Initialize(services);
-}
 
 
 app.MapRazorPages();
