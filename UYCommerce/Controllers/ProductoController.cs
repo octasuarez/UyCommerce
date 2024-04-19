@@ -452,7 +452,55 @@ namespace UYCommerce.Controllers
 
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> EliminarSkuProducto([FromBody] int skuId)
+        {
+
+            var sku = await GetSkuById(skuId);
+
+            if (sku is null)
+                return BadRequest(new { error = "Error sku not found" });
+
+            if (await SkuInUse(skuId))
+                return BadRequest(new { error = "Error sku in use" });
+
+            try
+            {
+                _context.Remove(sku);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
+
+            return Ok();
+        }
+
+        private async Task<Sku?> GetSkuById(int skuId)
+        {
+
+            var sku = await _context.Skus
+                .Include(s => s.Imagenes)
+                .Include(s => s.Usuarios)
+                .Include(s => s.AtributosValores)
+                .FirstOrDefaultAsync(s => s.Id == skuId);
+
+            return sku;
+        }
+
+        private async Task<bool> SkuInUse(int skuId)
+        {
+
+            var productoOrden = await _context.Ordenes.FirstOrDefaultAsync(o => o.Productos!.Any(p => p.SkuId == skuId));
+            var productoCarrito = await _context.Carritos.FirstOrDefaultAsync(c => c.Productos!.Any(p => p.SkuId == skuId));
+
+            if (productoOrden is not null || productoCarrito is not null)
+                return true;
+
+            return false;
+        }
 
     }
 }
