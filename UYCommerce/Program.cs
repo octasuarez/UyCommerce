@@ -90,9 +90,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
-
-
+using (var scope = app.Services.CreateScope())
+{
+    var ServiceProvider = scope.ServiceProvider;
+    DbInitializer.Initialize(ServiceProvider);
+}
 
 app.MapRazorPages();
 app.MapDefaultControllerRoute();

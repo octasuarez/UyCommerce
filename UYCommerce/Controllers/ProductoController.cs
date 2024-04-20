@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ namespace UYCommerce.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "Admin")]
         public IActionResult CrearProducto()
         {
 
@@ -45,6 +47,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CrearProducto(ProductoModel producto)
         {
 
@@ -96,6 +99,7 @@ namespace UYCommerce.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AgregarSku(int productoId)
         {
 
@@ -117,6 +121,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AgregarSku(AgregarSkuModel skuModel)
         {
 
@@ -378,7 +383,7 @@ namespace UYCommerce.Controllers
                     opciones = opciones.Distinct().ToList();
                     var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo);
 
-                    result.Opciones = opcionesPorAtributo;
+                    result.Opciones = opcionesPorAtributo!;
                 }
 
                 return View("VerProducto", result);
@@ -407,6 +412,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> AgregarAFavoritos(string skuId)
         {
 
@@ -454,6 +460,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> EliminarSkuProducto([FromBody] int skuId)
         {
 
@@ -504,6 +511,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> EliminarProducto([FromBody] int productoId)
         {
 
