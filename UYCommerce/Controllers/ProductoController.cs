@@ -204,6 +204,7 @@ namespace UYCommerce.Controllers
                 .Include(p => p.Atributos)!.ThenInclude(a => a.Valores)
                 .Include(p => p.Reviews)
                 .Include(p => p.Skus)
+                .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
                 .Include(p => p.Imagenes)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -502,6 +503,34 @@ namespace UYCommerce.Controllers
             return false;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EliminarProducto([FromBody] int productoId)
+        {
+
+            var producto = await GetProductoById(productoId);
+
+            if (producto is null)
+                return BadRequest(new { error = "Producto not found" });
+
+            foreach (var s in producto.Skus!)
+            {
+                var skuInUse = await SkuInUse(s.Id);
+                if (skuInUse)
+                    return BadRequest(new { error = "Product has skus in use" });
+            }
+
+            try
+            {
+                _context.Remove(producto);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+
+            return Ok();
+        }
     }
 }
 
