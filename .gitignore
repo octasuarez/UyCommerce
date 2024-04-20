@@ -484,3 +484,8 @@ $RECYCLE.BIN/
 
 #mac generated folder
 .DS_Store
+DS_Store
+
+#appsettings
+appsettings.json
+appsettings.Development.json
