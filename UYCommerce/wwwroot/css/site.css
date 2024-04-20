@@ -330,6 +330,10 @@ button.accept-policy {
     animation: fadeIn50 0.5s;
 }
 
+.fadeOut{
+    animation: fadeOut 1s;
+}
+
 @keyframes fadeIn50 {
     0% {
         opacity: 0;
@@ -347,5 +351,15 @@ button.accept-policy {
 
     100% {
         opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1
+    }
+
+    to {
+        opacity: 0
     }
 }

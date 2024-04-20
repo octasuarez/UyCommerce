@@ -17,7 +17,7 @@
             {
                 foreach (var p in Model)
                 {
-                    <li class="border mx-auto">
+                    <li id="@p.Id" class="border mx-auto">
                         <div class="d-lg-flex align-items-center py-3">
                             <div class=" ms-5">
                                 <img src="~/Imagenes/Productos/@p.Imagenes!.First().ImagenNombre"
@@ -47,7 +47,7 @@
                                 </div>
                             </div>
                             <div class="d-flex flex-column ms-auto me-5">
-                                <a class="btn btn-danger mb-2 "><i class="bi bi-trash3"></i> Eliminar</a>
+                                <a onclick="EliminarProducto(this)" data-producto-id="@p.Id" class="btn btn-danger mb-2 del-sku"><i class="bi bi-trash3"></i> Eliminar</a>
                                 <a href="/Producto/AgregarSku?productoId=@p.Id" class="btn btn-primary mb-2 ">+ Agregar Skus</a>
                                 <a class="btn bg-info-subtle  mb-2"><i class="bi bi-pencil"></i> Modificar</a>
                                 <a target="”_blank”" href="/@p.NombreClave" class="btn bg-body-tertiary  mb-2"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
@@ -67,9 +67,9 @@
                                             <ul class="list-unstyled">
                                                 @foreach (var s in p.Skus)
                                                 {
-                                                    <li class="d-flex border p-3 align-items-center">
+                                                    <li id="@s.Id" class="d-flex border p-3 align-items-center">
 
-                                                        <div class="d-flex">
+                                                        <div class="d-flex w-100">
 
                                                             @if (s.Imagenes != null && s.Imagenes.Any())
                                                             {
@@ -86,7 +86,14 @@
                                                                         <h6><strong>Id:</strong> @s.Id</h6>
                                                                         <h6><strong>Sku:</strong> @s.Key</h6>
                                                                         <h6><strong>Precio:</strong> @s.Precio</h6>
-                                                                        <h6><strong>Stock:</strong> @s.Stock</h6>
+                                                                        @if (s.Stock > 0)
+                                                                        {
+                                                                            <h6 class="text-success"><strong>Stock:</strong> @s.Stock</h6>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <h6 class="text-danger"><strong>Sin Stock</strong></h6>
+                                                                        }
                                                                     </div>
 
                                                                     <div class="">
@@ -100,6 +107,12 @@
                                                                     </div>
 
                                                                 </div>
+                                                            </div>
+
+
+                                                            <div class="ms-auto d-flex flex-column me-4">
+                                                                <a onclick="EliminarSku(this)" data-sku-id="@s.Id" data-pro-id="@s.ProductoId" class="btn btn-danger mb-3"><i class="bi bi-trash3"></i> Eliminar</a>
+                                                                <a href="/@s.Key" target="_blank" class="btn btn-light"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
                                                             </div>
                                                         </div>
 
@@ -116,5 +129,59 @@
             }
         </ul>
     </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>async function EliminarSku(e) {
+
+            let skuId = e.dataset.skuId;
+
+            const response = await fetch("/Producto/EliminarSkuProducto", {
+
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(skuId)
+            }).then((response) => {
+                if (response.ok) {
+                    document.getElementById(skuId).remove();
+                    ShowToast('', "Eliminado")
+                } else {
+                    return response.json();
+                }
+            }).then((responseJson) => {
+                if (responseJson) {
+                    ShowToast('error', responseJson.error)
+                }
+            })
+
+        }</script>
+
+    <script>async function EliminarProducto(e) {
+
+            let productoId = e.dataset.productoId;
+
+            const response = await fetch("/Producto/EliminarProducto", {
+
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(productoId)
+            }).then((response) => {
+                if (response.ok) {
+                    alert('Deleted');
+                    location.reload();
+                    ShowToast('', "Eliminado")
+                } else {
+                    return response.json();
+                }
+            }).then((responseJson) => {
+
+                if (responseJson) {
+                    ShowToast('error', responseJson.error)
+                }
+            })
+
+        }</script>
 
 </body>
