@@ -25,12 +25,15 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
 
-        var productos = await _context.Productos.Include(p => p.Reviews)
+        var productos = await _context.Productos
+            .Include(p => p.Reviews)
             .Include(p=> p.Skus)!.ThenInclude(s => s.Imagenes)
+            .Where(p => p.Featured == true)
             .ToListAsync();
 
-        var skus = productos.OrderByDescending(p => p.GetPuntuacionPromedio())
-            .Take(4).Select(p => p.Skus!.First()).ToList();
+        var skus = productos
+            .OrderByDescending(p => p.GetPuntuacionPromedio())
+            .Select(p => p.Skus!.First()).ToList();
 
         HomeVM homeVM = new()
         {

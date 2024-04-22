@@ -137,6 +137,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Apple"),
                             VecesComprado = 1,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "iphone11_1.png"},
@@ -211,6 +212,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Remeras"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Vlone"),
                             VecesComprado = 4,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "remera-vlone1.jpg"},
@@ -343,6 +345,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Bicicletas"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Scott"),
                             VecesComprado = 0,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "bici-scott-negra-1.jpg"},
@@ -464,6 +467,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Joggers"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Adidas"),
                             VecesComprado = 0,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "joggings-adidas-blanco.jpg"},
                                 new ProductoImagen{ImagenNombre = "joggings-adidas-negro.jpg"},

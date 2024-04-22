@@ -539,6 +539,24 @@ namespace UYCommerce.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> Feature(int productId, bool featured) {
+
+
+            var product = await GetProductoById(productId);
+
+            if (product is null)
+                return BadRequest(new { msg = "Product not found" });
+
+            product.Featured = featured;
+
+            _context.Update(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(new {msg = featured == true ? "Featured" : "Not featured"});
+        }
     }
 }
 

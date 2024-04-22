@@ -17,7 +17,7 @@ namespace UYCommerce.Models
         public ICollection<Sku>? Skus { get; set; }
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<Atributo>? Atributos { get; set; }
-
+        public bool Featured { get; set; } = false;
 
         public double GetPuntuacionPromedio()
         {

@@ -43,7 +43,20 @@
                                         <h6><b>Preguntas:</b> @p.Preguntas?.Count</h6>
                                     </div>
 
+                                    <div>
+                                        <div class="form-check form-switch">
+                                            @if (p.Featured)
+                                            {
+                                                <input onchange="FeaturedChanged(this)" data-producto-id="@p.Id" class="form-check-input" type="checkbox" role="checkbox" checked id="Featured-@p.Id">
+                                            }
+                                            else
+                                            {
 
+                                                <input onchange="FeaturedChanged(this)" data-producto-id="@p.Id" class="form-check-input" type="checkbox" role="checkbox" id="Featured-@p.Id">
+                                            }
+                                            <label class="form-check-label fw-bold" for="Featured">Mostrar en Inicio</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-flex flex-column ms-auto me-5">
@@ -53,6 +66,9 @@
                                 <a target="”_blank”" href="/@p.NombreClave" class="btn bg-body-tertiary  mb-2"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
                             </div>
                         </div>
+
+                        @*Skus*@
+
                         @if (p.Skus != null && p.Skus.Any())
                         {
                             <div class="accordion" id="accordionExample">
@@ -184,4 +200,39 @@
 
         }</script>
 
+    <script>function FeaturedChanged(e) {
+
+            let productId = e.dataset.productoId;
+            let checked = e.checked;
+
+            e.disabled = true;
+
+            $.ajax({
+                url: '/Producto/Feature',
+                method: 'POST',
+                data: { productId: productId, featured: e.checked },
+                success: function (result) {
+                    ShowToast("", result.msg);
+                },
+                error: function (result) {
+                    ShowToast(result);
+                    console.log(result);
+                },
+                statusCode: {
+                    401: function () {
+                        location.href = "/login"
+                    }
+                }
+            })
+
+            if (checked === false) {
+                e.removeAttribute("checked");
+            } else {
+                e.setAttribute("checked", "");
+            }
+
+            setTimeout(function () {
+                document.getElementById(e.id).disabled = false;
+            }, 3000)
+        }</script>
 </body>
