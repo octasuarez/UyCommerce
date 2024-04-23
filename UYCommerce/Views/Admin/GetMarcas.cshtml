@@ -7,7 +7,34 @@
 
     <div class="d-flex my-5">
         <h5>Marcas</h5>
-        <a class="btn btn-primary ms-auto">+ Nueva Marca</a>
+        <a class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalCreate">+ Nueva Marca</a>
+
+        <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Marca</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-marca">
+                            <div>
+                                <label for="nombre">Nombre</label>
+                                <input class="form-control mb-2" id="nombre" name="nombre" type="text" />
+                            </div>
+                            <div>
+                                <span id="error" class="text-danger"></span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="CreateMarca()" type="button" class="btn btn-primary me-2">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <table class="table">
         <thead>
@@ -15,6 +42,7 @@
                 <th>Id</th>
                 <th>Nombre</th>
                 <th>Cantidad Productos</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -24,8 +52,53 @@
                     <td>@m.Id</td>
                     <td>@m.Nombre</td>
                     <td>@m.Productos?.Count()</td>
+                    <td class="d-flex">
+                    <button data-marca-id="@m.Id" class="btn btn-danger ms-auto me-5" type="button" onclick="DeleteMarca(this)">
+                        <i class="bi bi-trash3"></i>
+                        Eliminar
+                    </button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<script>function CreateMarca() {
+
+        let form = new FormData(document.getElementById('form-marca'));
+        let nombre = Object.fromEntries(form).nombre;
+
+        $.ajax({
+            url: '/Marca/CreateMarca',
+            method: 'post',
+            data: { nombre: nombre },
+            dataType: 'json',
+            statusCode: {
+                200: () => { location.href = "/admin/marcas" },
+                400: (data) => {
+                    let error = data.responseJSON.error;
+                    document.getElementById("error").innerText = error;
+                }
+            }
+        })
+    }</script>
+
+<script>
+
+    function DeleteMarca(e) {
+
+        $.ajax({
+
+            url: '/Marca/DeleteMarca',
+            method: 'post',
+            data: { marcaId: e.dataset.marcaId },
+            success: () => {
+                location.reload();
+                ShowToast("Success", "Marca eliminada");
+            },
+            error: () => { ShowToast("", "error"); }
+        })
+
+    }
+</script>
