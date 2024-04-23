@@ -30,6 +30,16 @@ namespace UYCommerce.Services
 
         }
 
+        public void DeleteFile(List<string> fileNames, string folder) {
+
+            var basePath = Path.Combine(_environment.WebRootPath, folder);
+
+            foreach(var fn in fileNames) {
+
+                File.Delete(Path.Combine(basePath,fn));
+            }
+        }
+
     }
 }
 

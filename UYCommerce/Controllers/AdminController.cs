@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
 using UYCommerce.DTOs;
 using UYCommerce.Models;
+using UYCommerce.Services;
 using UYCommerce.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,11 +21,12 @@ namespace UYCommerce.Controllers
     public class AdminController : Controller
     {
         private readonly ShopContext _context;
+        private readonly IFileService _fileService;
 
-        public AdminController(ShopContext context)
+        public AdminController(ShopContext context, IFileService fileService)
         {
-
             _context = context;
+            _fileService = fileService;
         }
 
         // GET: /<controller>/
@@ -187,7 +189,8 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EliminarReview([FromBody] int reviewId) {
+        public async Task<IActionResult> EliminarReview([FromBody] int reviewId)
+        {
 
             var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
 
@@ -220,8 +223,68 @@ namespace UYCommerce.Controllers
             _context.Update(pregunta);
             await _context.SaveChangesAsync();
 
-            return Ok(new { respuestaNueva.Contenido, respuestaNueva.PreguntaId, respuestaNueva.Fecha});
+            return Ok(new { respuestaNueva.Contenido, respuestaNueva.PreguntaId, respuestaNueva.Fecha });
 
+        }
+
+        [HttpGet]
+        [Route("admin/carousel")]
+        public async Task<IActionResult> Carousel()
+        {
+
+            var carouselImages = await _context.CarouselImages.ToListAsync();
+
+            return View(carouselImages);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCarouselImage(int imageId)
+        {
+
+            var image = await _context.CarouselImages.FirstOrDefaultAsync(i => i.Id == imageId);
+
+            if (image is null)
+                return BadRequest();
+
+            _context.CarouselImages.Remove(image);
+            await _context.SaveChangesAsync();
+
+            _fileService.DeleteFile(new List<string>() { image.Name }, "Imagenes/Carousel");
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCarouselImage(IFormFile file)
+        {
+
+            CarouselImage image = new() { Name = file.FileName };
+            _context.CarouselImages.Add(image);
+            await _context.SaveChangesAsync();
+
+            await _fileService.SaveFile(new List<IFormFile>() { file }, "Imagenes/Carousel");
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeCarouselImage(IFormFile file, int imageId)
+        {
+
+            var image = await _context.CarouselImages.FirstOrDefaultAsync(i => i.Id == imageId);
+
+            if (image is null)
+                return BadRequest();
+
+            image.Name = file.FileName;
+
+            _context.Update(image);
+            await _context.SaveChangesAsync();
+
+            await _fileService.SaveFile(new List<IFormFile>() { file }, "Imagenes/Carousel");
+            _fileService.DeleteFile(new List<string>() { image.Name }, "Imagenes/Carousel");
+
+            return Ok();
         }
     }
 }

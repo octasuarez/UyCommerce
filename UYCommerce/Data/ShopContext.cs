@@ -26,6 +26,7 @@ namespace UYCommerce.Data
         public DbSet<Pregunta> Preguntas { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Codigo> Codigos { get; set; }
+        public DbSet<CarouselImage> CarouselImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

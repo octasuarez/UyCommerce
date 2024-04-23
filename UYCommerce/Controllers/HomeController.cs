@@ -39,6 +39,7 @@ public class HomeController : Controller
         {
             Skus = skus,
             Categorias = await _context.Categorias.Where(c => c.MostrarEnInicio == true).ToListAsync(),
+            Carousel = await _context.CarouselImages.ToListAsync()
         };
 
         var usuario = _context.Usuarios.Include(u => u.Favoritos).FirstOrDefault(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));

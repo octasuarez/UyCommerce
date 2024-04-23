@@ -5,6 +5,7 @@ namespace UYCommerce.Services
 	{
 
 		Task SaveFile(List<IFormFile> files, string folder);
+		void DeleteFile(List<string> fileNames, string folder);
 	}
 }
 

@@ -18,6 +18,13 @@ namespace UYCommerce.Data
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
+
+                CarouselImage[] carouselImages = new CarouselImage[]{
+
+                    new CarouselImage{Name= "carousel_1.png"},
+                    new CarouselImage{Name= "carousel_2.png"},
+                };
+
                 Atributo[] atributos = new Atributo[] {
 
                         new Atributo{Nombre = "Color"},
@@ -927,6 +934,7 @@ namespace UYCommerce.Data
                 await context.AddRangeAsync(reviews);
                 await context.AddRangeAsync(productosCarrito);
                 await context.AddRangeAsync(preguntas);
+                await context.AddRangeAsync(carouselImages);
 
                 await context.SaveChangesAsync();
             }

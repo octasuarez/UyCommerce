@@ -1,0 +1,116 @@
+﻿@model List<CarouselImage>
+@{Layout = "AdminLayout";
+}
+
+<body>
+
+    <div class="container-fluid">
+
+        <div class="d-flex flex-column">
+
+            <h3 class="text-center my-5">Imagenes Carousel</h3>
+
+            <div class="d-flex mx-auto align-items-center">
+                <label class="form-label me-2 text-nowrap" for="img-input">Subir Imagen</label>
+                <input onchange="AddImage(this)" class="form-control" type="file" accept="image/*" name="img" id="img-input" />
+            </div>
+
+            <div class="mt-5">
+                <ul class="list-unstyled px-5">
+                    @foreach (var i in Model)
+                    {
+                        <li class="card">
+                            <div class="d-flex p-5 align-items-center w-100">
+
+                                <span class="p-5">@i.Id</span>
+                                <img class="p-5 border" src="~/Imagenes/Carousel/@i.Name" style="max-height:300px;" />
+
+                                <div class="ms-auto d-flex flex-column">
+                                    <button onclick="DeleteImage(this)" data-image-id="@i.Id" class="btn btn-danger w-100 mb-3"><i class="bi bi-trash3"></i> Eliminar</button>
+                                    <label class="btn btn-primary" for="img-@i.Id"><i class="bi bi-repeat me-2"></i>Cambiar</label>
+                                    <input onchange="ChangeImage(this)" data-image-id="@i.Id" class="form-control" hidden type="file" accept="image/*" name="img" id="img-@i.Id" placeholder="Cambiar Imagen" />
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>async function DeleteImage(e) {
+
+            let imageId = e.dataset.imageId;
+
+            $.ajax({
+
+                url: '/Admin/DeleteCarouselImage',
+                method: 'post',
+                data: { imageId: imageId },
+                success: () => {
+                    location.reload();
+                }
+
+            })
+        }</script>
+
+    <script>async function AddImage(e) {
+
+            if (e.files.length > 0) {
+
+                let formData = new FormData();
+                var file = e.files[0];
+                formData.append("file", file);
+
+                console.log(file);
+                $.ajax({
+
+                    url: '/Admin/CreateCarouselImage',
+                    method: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: () => {
+                        location.reload();
+                    },
+                    error: (response) => {
+                        ShowToast("error", response);
+                    }
+                })
+
+            }
+
+        }</script>
+
+    <script>async function ChangeImage(e) {
+
+            if (e.files.length > 0) {
+
+                let formData = new FormData();
+                var file = e.files[0];
+                formData.append("file", file);
+                formData.append("imageId", e.dataset.imageId);
+
+                console.log(file);
+                $.ajax({
+
+                    url: '/Admin/ChangeCarouselImage',
+                    method: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: () => {
+                        location.reload();
+                    },
+                    error: (response) => {
+                        ShowToast("error", response);
+                    }
+                })
+
+            }
+
+        }</script>
+</body>
