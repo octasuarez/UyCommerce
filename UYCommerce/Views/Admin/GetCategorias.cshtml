@@ -16,8 +16,8 @@
                 <th>Id</th>
                 <th>Nombre</th>
                 <th>Cantidad Productos</th>
-                <th>Mostrar en inicio</th>
                 <th>Atributos</th>
+                <th>Mostrar en inicio</th>
                 <th></th>
             </tr>
         </thead>
@@ -42,11 +42,58 @@
                     <td>@c.Id</td>
                     <td>@c.Nombre</td>
                     <td>@c.Productos?.Count()</td>
-                    <td>@c.MostrarEnInicio</td>
                     <td>@c.Atributos?.Count()</td>
+                    <td>
+                        <div class="form-check form-switch">
+                            @if (c.MostrarEnInicio)
+                            {
+                                <input onchange="FeaturedChanged(this)" class="form-check-input" data-categoria-id="@c.Id" type="checkbox" role="checkbox" checked id="Featured-@c.Id">
+                            }
+                            else
+                            {
+                                <input onchange="FeaturedChanged(this)" class="form-check-input" data-categoria-id="@c.Id" type="checkbox" role="checkbox" id="Featured-@c.Id">
+                            }
+                        </div>
+                    </td>
                     <td class="align-content-center"><button class="btn btn-light border">Ver Detalles</button></td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<script>function FeaturedChanged(e) {
+
+        let categoriaId = e.dataset.categoriaId;
+        let checked = e.checked;
+
+        e.disabled = true;
+
+        $.ajax({
+            url: '/Categoria/Feature',
+            method: 'POST',
+            data: { categoriaId: categoriaId, featured: e.checked },
+            success: function (result) {
+                ShowToast("", result.msg);
+            },
+            error: function (result) {
+                ShowToast(result);
+                console.log(result);
+            },
+            statusCode: {
+                401: function () {
+                    location.href = "/login"
+                }
+            }
+        })
+
+        if (checked === false) {
+            e.removeAttribute("checked");
+        } else {
+            e.setAttribute("checked", "");
+        }
+
+        setTimeout(function () {
+            document.getElementById(e.id).disabled = false;
+        }, 3000)
+    }</script>

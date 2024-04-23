@@ -126,6 +126,33 @@ namespace UYCommerce.Controllers
 
             return View(categoria);
         }
+
+        [HttpGet]
+        [Authorize(Policy = "Admin")]
+        public async Task<Categoria?> GetCategoriaById(int categoriaId) {
+
+            var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == categoriaId);
+            return categoria;
+        }
+        
+
+        [HttpPost]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> Feature(int categoriaId, bool featured)
+        {
+
+            var categoria = await GetCategoriaById(categoriaId);
+
+            if (categoria is null)
+                return BadRequest(new { msg = "Categoria not found" });
+
+            categoria.MostrarEnInicio = featured;
+
+            _context.Update(categoria);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { msg = featured == true ? "Featured" : "Not featured" });
+        }
     }
 }
 
