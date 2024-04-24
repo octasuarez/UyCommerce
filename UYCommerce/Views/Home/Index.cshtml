@@ -66,52 +66,105 @@
         <div class="container">
             <h1 class="text-center">Destacados</h1>
             <div class="d-lg-flex">
-
-                @foreach (var s in Model.Skus!)
-                {
-
-                    <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0" style="height:600px;width: 400px;">
-                        <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                            @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
-                            {
-                                <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
-                            }
-                            else
-                            {
-                                <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
-                            }
-                        </a>
-                        <a href="/@s.Key" class="text-decoration-none text-reset">
-                            <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
-                        </a>
-                        <div class="card-body">
-                            <ul class="text-center p-0">
-
-                                @for (int i = 0; i < 5; i++)
-                                {
-                                    if (i < s.Producto.GetPuntuacionPromedio())
+                <div class="cover container">
+                    <button class="left" >
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="scroll-images">
+                        @foreach (var s in Model.Skus!)
+                        {
+                            <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child" style="height:600px;min-width: 380px;">
+                                <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
+                                    @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
                                     {
-                                        <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
+                                        <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                     }
                                     else
                                     {
-                                        <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                        <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                     }
-                                }
-                            </ul>
-                            <a href="/@s.Key" class="text-decoration-none text-reset">
-                                <h4 class="card-title text-center">@s.Nombre</h4>
-                                <p class="card-text text-center">
-                                    <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
-                                </p>
-                            </a>
-                        </div>
+                                </a>
+                                <a href="/@s.Key" class="text-decoration-none text-reset">
+                                    <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                </a>
+                                <div class="card-body">
+                                    <ul class="text-center p-0">
+
+                                        @for (int i = 0; i < 5; i++)
+                                        {
+                                            if (i < s.Producto.GetPuntuacionPromedio())
+                                            {
+                                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
+                                            }
+                                        }
+                                    </ul>
+                                    <a href="/@s.Key" class="text-decoration-none text-reset">
+                                        <h4 class="card-title text-center">@s.Nombre</h4>
+                                        <p class="card-text text-center">
+                                            <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
+                                        </p>
+                                    </a>
+                                </div>
+                            </div>
+                        }
                     </div>
-                }
+
+                    <button class="right">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="~/js/site.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const scrollImages = document.querySelector(".scroll-images");
+            const scrollLength = scrollImages.scrollWidth - scrollImages.clientWidth;
+            const leftButton = document.querySelector(".left");
+            const rightButton = document.querySelector(".right");
+
+            function checkScroll() {
+                const currentScroll = scrollImages.scrollLeft;
+                if (currentScroll === 0) {
+                    leftButton.setAttribute("disabled", "true");
+                    rightButton.removeAttribute("disabled");
+                } else if (currentScroll === scrollLength) {
+                    rightButton.setAttribute("disabled", "true");
+                    leftButton.removeAttribute("disabled");
+                } else {
+                    leftButton.removeAttribute("disabled");
+                    rightButton.removeAttribute("disabled");
+                }
+            }
+
+            scrollImages.addEventListener("scroll", checkScroll);
+            window.addEventListener("resize", checkScroll);
+            checkScroll();
+
+            function leftScroll() {
+                scrollImages.scrollBy({
+                    left: -400,
+                    behavior: "smooth"
+                });
+            }
+
+            function rightScroll() {
+                scrollImages.scrollBy({
+                    left: 400,
+                    behavior: "smooth"
+                });
+            }
+
+            leftButton.addEventListener("click", leftScroll);
+            rightButton.addEventListener("click", rightScroll);
+        });
+    </script>
 </body>
 </html>

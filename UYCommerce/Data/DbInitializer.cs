@@ -297,6 +297,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Computadoras"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Apple"),
                             VecesComprado = 1,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]
                             {
                                 new ProductoImagen{ImagenNombre = "macbook-1.jpg"},
@@ -405,6 +406,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Samsung"),
                             VecesComprado = 1,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "galaxyflip1.png"},
                                 new ProductoImagen{ImagenNombre = "galaxyflip2.png"},
@@ -430,6 +432,7 @@ namespace UYCommerce.Data
                             Categoria = subCategorias.FirstOrDefault(c => c.Nombre == "Celulares"),
                             Marca = marcas.FirstOrDefault(m=>m.Nombre == "Iphone"),
                             VecesComprado = 1,
+                            Featured = true,
                             Imagenes = new ProductoImagen[]{
                                 new ProductoImagen{ImagenNombre = "iphone13-1.png"},
                                 new ProductoImagen{ImagenNombre = "iphone13-2.png"},
