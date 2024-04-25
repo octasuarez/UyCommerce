@@ -9,6 +9,8 @@ namespace UYCommerce.Models
         public Categoria? Categoria { get; set; }
 		public ICollection<Sku>? Favoritos { get; set; }
 		public List<KeyValuePair<string, string>>? Atributos { get; set; }
+		public decimal NumberOfPages { get; set; }
+		public int Pag { get; set; }
     }
 }
 

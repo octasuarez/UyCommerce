@@ -219,84 +219,114 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("/search")]
-        public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 0)
+        public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 0, int pag = 0, int qty = 3)
         {
             BusquedaProductoVM result = new();
 
-            IQueryable<Producto> productos = _context.Productos
-             .Include(p => p.Categoria)
-             .ThenInclude(c => c!.CategoriaPadre)
-             .Include(p => p.Imagenes)
-             .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-             .Include(p => p.Skus)!.ThenInclude(s => s.Producto).ThenInclude(p => p.Reviews)
-             .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
+            result.Skus = await GetSkusByQuery(query);
 
-            productos = productos.Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower()));
+            //paginacion
+            result.NumberOfPages = decimal.Divide(result.Skus.Count, qty);
+            int numPag = pag > 0 ? pag - 1 : 0;
 
-            result.Skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
+            if (orden > 0)
+                result.Skus = OrdenarSkus(result.Skus, orden);
+
+            result.Skus = result.Skus.Skip(numPag * qty).Take(qty).ToList();
 
             result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
                 .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
 
             if (User.Identity!.IsAuthenticated)
-            {
                 result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
-            }
 
-            if (orden > 0)
-                result.Skus = OrdenarSkus(result.Skus, orden);
+            result.Pag = numPag + 1;
 
             return View("BusquedaProductos", result);
         }
 
+        private async Task<ICollection<Sku>> GetSkusByQuery(string query) {
+
+            IQueryable<Producto> productos = GetProductosQueryable();
+
+            productos = productos.Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower()));
+
+            var skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
+
+            return skus;
+        }
+
         [HttpGet]
         [Route("/c/{categoria}")]
-        public async Task<IActionResult> BuscarProductosPorCategoria(string categoria, string[]? filtros, int orden = 0)
+        public async Task<IActionResult> BuscarProductosPorCategoria(string categoria, string[]? filtros, int orden = 0, int pag = 0, int qty = 3)
         {
             BusquedaProductoVM result = new()
             {
                 Categoria = _context.Categorias
                 .Include(c => c.CategoriaPadre)
                 .Include(c => c.Atributos)!.ThenInclude(a => a.Valores)
-                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre.ToLower() == categoria.ToLower()),
+                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre!.ToLower() == categoria.ToLower()),
             };
 
-            if (result.Categoria != null)
+            if (result.Categoria is not null)
             {
+                result.Skus = await GetSkusByCategoria(categoria.ToLower());
 
-                IQueryable<Producto> productos = _context.Productos
-                 .Include(p => p.Categoria)
-                 .ThenInclude(c => c!.CategoriaPadre)
-                 .Include(p => p.Imagenes)
-                 .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-                 .Include(p => p.Skus)!.ThenInclude(s => s.Producto).ThenInclude(p => p.Reviews)
-                 .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
+                var atributosValores = filtros is not null && filtros.Any() ? GetAtributosDeFiltros(filtros) : null;
 
-                productos = productos.Where(p => p.Categoria!.Nombre!.ToLower() == categoria.ToLower()
-                || p.Categoria.CategoriaPadre!.Nombre!.Equals(categoria));
-
-                result.Skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
-
-                var atributosValores = filtros != null && filtros.Any() ? GetAtributosDeFiltros(filtros) : null;
-
-                if (atributosValores != null)
+                if (atributosValores is not null)
                 {
                     result.Skus = result.Skus.Where(s => atributosValores.All(atr => s.AtributosValores!.Any(av => av.Atributo!.Nombre!.ToLower() == atr.Key && av.Valor!.ToLower() == atr.Value))).ToList();
                     result.Atributos = atributosValores;
                 }
-                else { result.Skus = result.Skus.DistinctBy(s => s.ProductoId).ToList(); }
+                else
+                {
+                    result.Skus = result.Skus.DistinctBy(s => s.ProductoId).ToList();
+                }
 
-                result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
-
-                //if (User.Identity!.IsAuthenticated)
-                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+                //paginacion
+                result.NumberOfPages = decimal.Divide(result.Skus.Count, qty);
+                var numPag = pag > 0 ? pag - 1 : 0;
 
                 if (orden > 0)
                     result.Skus = OrdenarSkus(result.Skus, orden);
 
+                result.Skus = result.Skus.Skip(numPag * qty).Take(qty).ToList();
+
+                result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
+
+                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+
+                result.Pag = numPag + 1;
+
                 return View("BusquedaProductos", result);
             }
             return View("NotFound");
+        }
+
+        private async Task<ICollection<Sku>> GetSkusByCategoria(string categoria)
+        {
+
+            IQueryable<Producto> productos = GetProductosQueryable();
+
+            productos = productos.Where(p => p.Categoria!.Nombre!.ToLower() == categoria.ToLower()
+                || p.Categoria.CategoriaPadre!.Nombre!.Equals(categoria));
+
+            return await productos.SelectMany(p => p.Skus!).ToListAsync();
+        }
+
+        private IQueryable<Producto> GetProductosQueryable()
+        {
+
+            IQueryable<Producto> productos = _context.Productos
+                 .Include(p => p.Categoria)
+                 .ThenInclude(c => c!.CategoriaPadre)
+                 .Include(p => p.Imagenes)
+                 .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+                 .Include(p => p.Skus)!.ThenInclude(s => s.Producto).ThenInclude(p => p!.Reviews)
+                 .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(atv => atv.Atributo);
+
+            return productos;
         }
 
         private static ICollection<Sku> OrdenarSkus(ICollection<Sku> skus, int orden)
@@ -542,7 +572,8 @@ namespace UYCommerce.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> Feature(int productId, bool featured) {
+        public async Task<IActionResult> Feature(int productId, bool featured)
+        {
 
 
             var product = await GetProductoById(productId);
@@ -555,7 +586,7 @@ namespace UYCommerce.Controllers
             _context.Update(product);
             await _context.SaveChangesAsync();
 
-            return Ok(new {msg = featured == true ? "Featured" : "Not featured"});
+            return Ok(new { msg = featured == true ? "Featured" : "Not featured" });
         }
     }
 }

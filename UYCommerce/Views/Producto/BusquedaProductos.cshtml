@@ -129,7 +129,7 @@
 
                     <h4 class="d-block" style="padding-left:35%;">@Model.Skus!.Count Resultados</h4>
 
-                    @if (Model.Skus != null && Model.Skus!.Any())
+                    @if (Model.Skus is not null && Model.Skus!.Any())
                     {
                         <div class="d-flex align-items-center col-xl-4 mx-4">
                             <h5 class="text-nowrap me-2">Ordenar por</h5>
@@ -141,6 +141,7 @@
                             </select>
                         </div>
 
+                        //List of Products
                         <div class="d-flex flex-wrap w-100">
 
                             @foreach (var s in Model.Skus)
@@ -164,7 +165,7 @@
 
                                             @for (int i = 0; i < 5; i++)
                                             {
-                                                if (i < s.Producto.GetPuntuacionPromedio())
+                                                if (i < s.Producto!.GetPuntuacionPromedio())
                                                 {
                                                     <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
                                                 }
@@ -184,6 +185,29 @@
                                     </div>
                                 </div>
                             }
+
+                        </div>
+                        <div class="mx-auto">
+                            <nav>
+                                <ul class="pagination">
+                                    @if (Model.NumberOfPages > 1)
+                                    {
+                                        if (Model.Pag > 1)
+                                        {
+                                            <li class="page-item"><a data-pag="@(Model.Pag -1)" class="page-link">Previous</a> </li>
+                                        }
+                                        for (int i = 0; i < Model.NumberOfPages; i++)
+                                        {
+                                            var p = i + 1;
+                                            <li class="page-item @(Model.Pag == p ? "active" : "")"><a data-pag="@p" class="page-link">@p</a> </li>
+                                        }
+                                        if (Model.NumberOfPages > Model.Pag)
+                                        {
+                                            <li class="page-item"><a data-pag="@(Model.Pag + 1)" class="page-link">Next</a> </li>
+                                        }
+                                    }
+                                </ul>
+                            </nav>
                         </div>
                     }
                 </div>
@@ -239,5 +263,13 @@
             }
         }</script>
 
-    
+    <script>document.querySelectorAll('.page-link').forEach((a) => a.addEventListener('click', function (e) {
+
+            const url = new URLSearchParams(location.search);
+            url.set('pag', e.target.dataset.pag);
+            var href = `${location.pathname}?${url.toString()}`
+            e.target.setAttribute('href', href);
+
+        }))</script>
+
 </body>
