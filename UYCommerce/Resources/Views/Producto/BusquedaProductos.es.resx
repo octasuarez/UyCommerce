@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+
+	<data name="Results">
+		<value>Resultados</value>
+    </data>
+	<data name="Attributes">
+		<value>Atributos</value>
+    </data>
+	<data name="Filters">
+		<value>Filtros</value>
+    </data>
+	<data name="Order By:">
+		<value>Ordenar Por:</value>
+    </data>
+	<data name="Price:High to Low">
+		<value>Precio:Mayor a Menor</value>
+    </data>
+	<data name="Position">
+		<value>Posición</value>
+    </data>
+	<data name="Price:Low to High">
+		<value>Precio:Menor a Mayor</value>
+    </data>
+	<data name="Rating">
+		<value>Puntuación</value>
+    </data>
+	<data name="Product not found">
+		<value>No se econtró ningun producto con ese nombre.</value>
+    </data>
+</root>
+

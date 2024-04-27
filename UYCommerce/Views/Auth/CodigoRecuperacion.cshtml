@@ -10,12 +10,12 @@
 
     <div class="container" style="min-height:500px;">
         <div class="col-5 mx-auto mt-5">
-            <p class="text-center">Ingrese el codigo enviado a su correo</p>
+            <p class="text-center">@Localizer["Type in the code sent to your email"]</p>
 
             <form class="d-flex flex-column" method="post" asp-action="VerificarCodigoRecuperacion">
                 <input type="number" value="@Model" hidden readonly name="usrId" />
-                <input class="form-control mb-3" type="text" placeholder="Codigo" name="codigo" />
-                <button class="btn btn-primary mx-auto" type="submit">Enviar Codigo</button>
+                <input class="form-control mb-3" type="text" placeholder="@Localizer["Code"]" name="codigo" />
+                <button class="btn btn-primary mx-auto" type="submit">@Localizer["Confirm code"]</button>
             </form>
 
         </div>

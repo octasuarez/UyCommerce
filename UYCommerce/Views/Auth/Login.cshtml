@@ -10,7 +10,7 @@
         <div class="row mt-5">
             <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-2 pt-3 pb-3 border-0 shadow">
                 <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
-                <h1 class="mx-auto fw-semibold">Iniciar Sesion</h1>
+                <h1 class="mx-auto fw-semibold">@Localizer["Sign in"]</h1>
                 <div class="card-body">
 
                     <form method="post" asp-controller="Auth" asp-action="Login">
@@ -21,7 +21,7 @@
                         </div>
                         <div class="form-floating mb-3 d-flex">
                             <input asp-for="Password" type="password" class="form-control" id="password" name="Password" placeholder="" style="border-radius:5px 0px 0px 5px;box-shadow:none;">
-                            <label for="password">Contraseña</label>
+                            <label for="password">@Localizer["Password"]</label>
                             <div class="input-group-append">
                                 <span class="input-group-text h-100" id="basic-addon2" style="border-radius:0px 5px 5px 0px;">
                                     <i onclick="ViewPassword(this)" class="bi bi-eye-slash my-auto input-group-append" style="cursor:pointer;"></i>
@@ -35,17 +35,17 @@
                         <div class="d-flex mb-3">
                             <div class="form-check">
                                 <input asp-for="RememberMe" class="form-check-input" type="checkbox" name="RememberMe" />
-                                <label class="form-check-label" for="form2Example31">Mantenerme iniciado en sesion</label>
+                                <label class="form-check-label" for="form2Example31">@Localizer["Stay logged in"]</label>
                             </div>
-                            <a href="/RecuperarPwd" class="ms-auto">Recuperar contraseña</a>
+                            <a href="/RecuperarPwd" class="ms-auto">@Localizer["Remember Password"]</a>
                         </div>
 
-                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">Ingresar</button>
+                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">@Localizer["Sign in"]</button>
                     </form>
                 </div>
 
                 <div class="d-flex">
-                    <a href="/register" class="d-flex mx-auto mt-5">No tienes cuenta? Registrate</a>
+                    <a href="/register" class="d-flex mx-auto mt-5">@Localizer["Create a new Account"]</a>
                 </div>
             </div>
         </div>

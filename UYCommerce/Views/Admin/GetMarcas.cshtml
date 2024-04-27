@@ -6,20 +6,20 @@
 <div class="container-fluid">
 
     <div class="d-flex my-5">
-        <h5>Marcas</h5>
-        <a class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalCreate">+ Nueva Marca</a>
+        <h5>@Localizer["Brands"]</h5>
+        <a class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalCreate">+ @Localizer["New Brand"]</a>
 
         <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Marca</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["New Brand"]</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
                     </div>
                     <div class="modal-body">
                         <form id="form-marca">
                             <div>
-                                <label for="nombre">Nombre</label>
+                                <label for="nombre">@Localizer["Name"]</label>
                                 <input class="form-control mb-2" id="nombre" name="nombre" type="text" />
                             </div>
                             <div>
@@ -28,8 +28,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button onclick="CreateMarca()" type="button" class="btn btn-primary me-2">Guardar</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button onclick="CreateMarca()" type="button" class="btn btn-primary me-2">@Localizer["Save"]</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                     </div>
                 </div>
             </div>
@@ -40,8 +40,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Nombre</th>
-                <th>Cantidad Productos</th>
+                <th>@Localizer["Name"]</th>
+                <th>@Localizer["Total Products"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -53,10 +53,10 @@
                     <td>@m.Nombre</td>
                     <td>@m.Productos?.Count()</td>
                     <td class="d-flex">
-                    <button data-marca-id="@m.Id" class="btn btn-danger ms-auto me-5" type="button" onclick="DeleteMarca(this)">
-                        <i class="bi bi-trash3"></i>
-                        Eliminar
-                    </button>
+                        <button data-marca-id="@m.Id" class="btn btn-danger ms-auto me-5" type="button" onclick="DeleteMarca(this)">
+                            <i class="bi bi-trash3"></i>
+                            @Localizer["Delete"]
+                        </button>
                     </td>
                 </tr>
             }

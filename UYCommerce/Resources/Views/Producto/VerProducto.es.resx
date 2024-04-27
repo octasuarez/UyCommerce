@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+
+	<data name="In Stock">
+		<value>Disponible</value>
+    </data>
+	<data name="Out of Stock">
+		<value>Sin Stock</value>
+    </data>
+	<data name="Quantity:">
+		<value>Cantidad:</value>
+    </data>
+	<data name="Add to cart">
+		<value>Agregar al carrito</value>
+    </data>
+	<data name="Buy">
+		<value>Comprar</value>
+    </data>
+	<data name="Description">
+		<value>Descripción</value>
+    </data>
+	<data name="Questions">
+		<value>Preguntas</value>
+    </data>
+	<data name="No questions yet.">
+		<value>No hay preguntas todavía.</value>
+    </data>
+	<data name="Average rating">
+		<value>Puntuación promedio</value>
+    </data>
+	<data name="Similar Products">
+		<value>Productos Relacionados</value>
+    </data>
+	<data name="Write a question">
+		<value>Escribe tu pregunta</value>
+    </data>
+	<data name="Submit">
+		<value>Preguntar</value>
+    </data>
+	<data name="Sold">
+		<value>Vendidos</value>
+    </data>
+	<data name="No reviews yet.">
+		<value>No hay reviews.</value>
+    </data>
+</root>
+

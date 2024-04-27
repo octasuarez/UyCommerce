@@ -7,17 +7,17 @@
 
     <div class="d-flex my-5">
         <h5>Categorias</h5>
-        <a href="categorias/create" class="btn btn-primary ms-auto">+ Nueva Categoria</a>
+        <a href="categorias/create" class="btn btn-primary ms-auto">+ @Localizer["New Category"]</a>
     </div>
     <table class="table">
         <thead>
             <tr>
-                <th>Imagen</th>
+                <th>@Localizer["Image"]</th>
                 <th>Id</th>
-                <th>Nombre</th>
-                <th>Cantidad Productos</th>
-                <th>Atributos</th>
-                <th>Mostrar en inicio</th>
+                <th>@Localizer["Name"]</th>
+                <th>@Localizer["Total Products"]</th>
+                <th>@Localizer["Attributes"]</th>
+                <th>@Localizer["Featured"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -31,7 +31,7 @@
 
                         @if (string.IsNullOrEmpty(c.ImagenNombre))
                         {
-                            <span>Sin Imagen</span>
+                            <span>@Localizer["No Image"]</span>
                         }
                         else
                         {
@@ -40,22 +40,24 @@
 
                     </td>
                     <td>@c.Id</td>
-                    <td>@c.Nombre</td>
+                    <td>@c.@Localizer["Name"]</td>
                     <td>@c.Productos?.Count()</td>
                     <td>@c.Atributos?.Count()</td>
                     <td>
                         <div class="form-check form-switch">
                             @if (c.MostrarEnInicio)
                             {
-                                <input onchange="FeaturedChanged(this)" class="form-check-input" data-categoria-id="@c.Id" type="checkbox" role="checkbox" checked id="Featured-@c.Id">
+                                <input onchange="FeaturedChanged(this)" class="form-check-input" data-categoria-id="@c.Id"
+                                       type="checkbox" role="checkbox" checked id="Featured-@c.Id">
                             }
                             else
                             {
-                                <input onchange="FeaturedChanged(this)" class="form-check-input" data-categoria-id="@c.Id" type="checkbox" role="checkbox" id="Featured-@c.Id">
+                                <input onchange="FeaturedChanged(this)" class="form-check-input" data-categoria-id="@c.Id"
+                                       type="checkbox" role="checkbox" id="Featured-@c.Id">
                             }
                         </div>
                     </td>
-                    <td class="align-content-center"><button class="btn btn-light border">Ver Detalles</button></td>
+                    <td class="align-content-center"><button class="btn btn-light border">@Localizer["See details"]</button></td>
                 </tr>
             }
         </tbody>

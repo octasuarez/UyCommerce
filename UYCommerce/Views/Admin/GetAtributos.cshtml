@@ -6,26 +6,26 @@
 <div class="container-fluid">
 
     <div class="d-flex my-5">
-        <h5>Atributos</h5>
+        <h5>@Localizer["Attributes"]</h5>
         <a class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalCreate">+ Nuevo Atributo</a>
 
         <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Atributo</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["New attribute"]</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
                     </div>
                     <div class="modal-body">
                         <form id="form-atributo" class="d-flex flex-column" method="post" asp-action="CrearAtributo" asp-controller="Atributo">
-                            <input id="atributoNombre" class="form-control mb-2" type="text" placeholder="Nombre" />
-                            <button onclick="CrearAtributo()" type="button" class="btn btn-primary mx-auto">Guardar</button>
+                            <input id="atributoNombre" class="form-control mb-2" type="text" placeholder="@Localizer["Name"]" />
+                            <button onclick="CrearAtributo()" type="button" class="btn btn-primary mx-auto">@Localizer["Save"]</button>
                         </form>
                         <span id="error" class="text-danger"></span>
                     </div>
                     <div class="modal-footer">
 
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                     </div>
                 </div>
             </div>
@@ -36,10 +36,10 @@
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Nombre</th>
-                    <th>Valores</th>
-                    <th>Productos</th>
-                    <th>Categorias</th>
+                    <th>@Localizer["Name"]</th>
+                    <th>@Localizer["Values"]</th>
+                    <th>@Localizer["Products"]</th>
+                    <th>@Localizer["Categories"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,10 +56,11 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h1 class="modal-title fs-5" id="exampleModalLabel">@a.Nombre</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
                                         </div>
                                         <div id="@(a.Nombre)Valores" class="modal-body">
-                                            <a data-div-id="@(a.Nombre)Valores" data-id="@(a.Id)" onclick="AgregarInput(this)" class="btn btn-primary my-3">Agregar Valor</a>
+                                            <a data-div-id="@(a.Nombre)Valores" data-id="@(a.Id)"
+                                               onclick="AgregarInput(this)" class="btn btn-primary my-3">@Localizer["Create new value"]</a>
                                             @if (a.Valores is not null && a.Valores.Any())
                                             {
                                                 <ul>
@@ -73,7 +74,7 @@
                                             }
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                                         </div>
                                     </div>
                                 </div>
@@ -86,7 +87,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Productos</h1>
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["Products"]</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -103,7 +104,7 @@
                                             }
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                                         </div>
                                     </div>
                                 </div>
@@ -116,8 +117,8 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Categorias</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["Categories"]</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
                                         </div>
                                         <div class="modal-body">
                                             @if (a.Valores is not null && a.Valores.Any())
@@ -133,7 +134,7 @@
                                             }
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                                         </div>
                                     </div>
                                 </div>

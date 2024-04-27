@@ -8,8 +8,9 @@
     <div class="container">
 
         <div class="col-5 mx-auto mb-5">
-            <h3 class="mt-3 text-center">Agregar sku para @Model.Producto?.Nombre</h3>
-            <img class="my-4 d-flex mx-auto" src="~/Imagenes/Productos/@Model.Producto.Imagenes.First().ImagenNombre" style="height:200px;" />
+            <h3 class="mt-3 text-center">@Localizer["Create a sku for"] @Model.Producto?.Nombre</h3>
+            <img class="my-4 d-flex mx-auto"
+                 src="~/Imagenes/Productos/@Model.Producto?.Imagenes?.First().ImagenNombre" style="height:200px;" />
 
             <form asp-action="AgregarSku" asp-controller="Producto" method="post" enctype="multipart/form-data">
 
@@ -18,12 +19,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Nombre Sku</label>
+                    <label class="form-label">@Localizer["Sku Name"]</label>
                     <input type="text" class="form-control" asp-for="Nombre" name="Nombre" placeholder="" />
                     <span class="text-danger" asp-validation-for="Nombre"></span>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Precio</label>
+                    <label class="form-label">@Localizer["Price"]</label>
                     <input type="number" class="form-control" asp-for="Precio" name="Precio" placeholder="Precio" />
                     <span class="text-danger" asp-validation-for="Precio"></span>
                 </div>
@@ -33,7 +34,7 @@
                     <span class="text-danger" asp-validation-for="Stock"></span>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Imagenes</label>
+                    <label class="form-label">@Localizer["Images"]</label>
                     <input type="file" class="form-control" asp-for="Imagenes" name="Imagenes" accept="image/*" multiple />
                     <span class="text-danger" asp-validation-for="Imagenes"></span>
                 </div>
@@ -41,7 +42,7 @@
                 {
                     for (int i = 0; i < Model.Atributos.Count; i++)
                     {
-                        <h6>Seleccione un @Model.Atributos.ElementAt(i).Nombre</h6>
+                        <h6>@Localizer["Select a"] @Model.Atributos.ElementAt(i).Nombre</h6>
                         <select class="form-select mb-3" name="AtributoValores">
                             @foreach (var v in Model.Atributos.ElementAt(i).Valores)
                             {
@@ -51,7 +52,7 @@
                     }
                 }
 
-                <button type="submit" class="btn btn-primary d-flex mx-auto">Agregar</button>
+                <button type="submit" class="btn btn-primary d-flex mx-auto">@Localizer["Create"]</button>
             </form>
         </div>
 

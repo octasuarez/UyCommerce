@@ -13,11 +13,13 @@
             <div class="">
                 <form class="d-flex align-items-center justify-content-center" method="get" asp-action="Dashboard">
 
-                    <h6 class="mb-0 me-1">Desde:</h6>
-                    <input class="me-5 card p-2" type="date" name="fchDesde" value="@Model.FechaDesde.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <h6 class="mb-0 me-1">@Localizer["From:"]</h6>
+                    <input class="me-5 card p-2" type="date" name="fchDesde"
+                           value="@Model.FechaDesde.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
 
-                    <h6 class="mb-0 me-1">Hasta:</h6>
-                    <input class="card p-2" type="date" name="fchHasta" value="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <h6 class="mb-0 me-1">@Localizer["To:"]</h6>
+                    <input class="card p-2" type="date" name="fchHasta"
+                           value="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
 
                 </form>
 
@@ -33,7 +35,7 @@
                     <div class="d-flex">
                         <div class="card col-6 mx-2">
                             <div class="card-body text-center">
-                                <p>Total Ordenes:</p>
+                                <p>@Localizer["Total Orders"]</p>
                                 <p class="text-center m-0 fw-bold fs-5">@Model.CantidadVentas</p>
                             </div>
 
@@ -41,7 +43,7 @@
 
                         <div class="card col-6">
                             <div class="card-body text-center">
-                                <p>Total Ganancias:</p>
+                                <p>@Localizer["Total Profit:"]</p>
                                 <p class="text-center m-0 fw-bold fs-5">$@Model.Total</p>
                             </div>
                         </div>
@@ -51,7 +53,7 @@
 
                     <div class="card col-6 m-2">
                         <div class="card-body text-center">
-                            <p>Ordenes por entregar:</p>
+                            <p>@Localizer["Orders pending shipping:"]</p>
                             <p class="text-center m-0 fw-bold fs-5">@Model.Ordenes.Where(o => o.Estado != "Entregado").Count()</p>
                         </div>
                     </div>
@@ -69,16 +71,16 @@
 
         <div class="col-12 mx-auto card">
 
-            <h5 class="text-center my-4">Productos Vendidos</h5>
+            <h5 class="text-center my-4">@Localizer["Products Sold"]</h5>
 
             <table class="table">
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Nombre</th>
+                        <th>@Localizer["Name"]</th>
                         <th>Sku</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
+                        <th>@Localizer["Price"]</th>
+                        <th>@Localizer["Quantity"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -115,7 +117,7 @@
         type: 'line',
         data: {
             datasets: [{
-                label: 'Cantidad ventas',
+                label: `@Localizer["Total sales"]`,
                 //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
                 data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosVentas))')
             }]
@@ -140,7 +142,7 @@
         type: 'bar',
         data: {
             datasets: [{
-                label: 'Ganancias',
+                label: `@Localizer["Profit"]`,
                 //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
                 data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosGanacias))'),
                 backgroundColor: 'lightgreen'

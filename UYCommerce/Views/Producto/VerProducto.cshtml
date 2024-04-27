@@ -18,19 +18,21 @@
                 @if (Model.Categoria != null && Model.Categoria.CategoriaPadre != null)
                 {
                     <li class="breadcrumb-item" aria-current="page">
-                        <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Model.Categoria.CategoriaPadre.Nombre</a>
+                        <a class="link-body-emphasis fw-semibold text-decoration-none"
+                           href="/c/@Model.Categoria.CategoriaPadre.Nombre">
+                        @Localizer[Model.Categoria.CategoriaPadre.Nombre!]</a>
                     </li>
                     <li class="breadcrumb-item" aria-current="page">
-                        <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.Nombre">@Model.Categoria.Nombre</a>
+                        <a class="link-body-emphasis fw-semibold text-decoration-none"
+                           href="/c/@Model.Categoria.Nombre">
+                        @Localizer[Model.Categoria.Nombre!]</a>
                     </li>
                 }
                 else if (Model.Categoria != null)
                 {
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Categoria!.Nombre</li>
-
+                    <li class="breadcrumb-item active" aria-current="page">@Localizer[Model.Categoria.Nombre!]</li>
                 }
                 <li class="breadcrumb-item active" aria-current="page">@Model.Sku.Nombre</li>
-
 
             </ol>
         </nav>
@@ -42,12 +44,16 @@
             <div class="col-lg-6">
                 <div class="ms-lg-auto">
 
-                    <img id="imgmain" class="magniflier object-fit-contain d-flex mx-auto img-fluid" style="height:600px;width:600px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                    <img id="imgmain" class="magniflier object-fit-contain d-flex mx-auto img-fluid"
+                         style="height:600px;width:600px;"
+                         src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
 
                     <ul class="list-unstyled d-flex">
                         <li class="me-2">
                             <img onmouseover="cambiarImagen(this)"
-                                 class="object-fit-contain active-img" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                                 class="object-fit-contain active-img"
+                                 style="height:100px;width:100px;"
+                                 src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
                         </li>
                         @if (Model.Sku.Imagenes!.Count > 1)
                         {
@@ -55,7 +61,9 @@
                             {
                                 <li class="me-2">
                                     <img onmouseover="cambiarImagen(this)"
-                                         class="object-fit-contain" style="height:100px;width:100px;" src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i).ImagenNombre" />
+                                         class="object-fit-contain"
+                                         style="height:100px;width:100px;"
+                                         src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i).ImagenNombre" />
                                 </li>
 
                             }
@@ -63,17 +71,13 @@
                     </ul>
                 </div>
 
-                <div class="d-flex">
-
-
-                </div>
-
+                <div class="d-flex"></div>
             </div>
 
             @*Detalles del producto y sus atributos*@
 
             <div id="detalles" class="col-auto col-lg-6 border p-3" style="height:fit-content;position:relative;">
-                <p class="text-secondary p-0 m-0">@Model.Sku.Producto?.VecesComprado vendidos</p>
+                <p class="text-secondary p-0 m-0">@Model.Sku.Producto?.VecesComprado @Localizer["Sold"]</p>
                 <h1 class="mb-2">@Model.Sku.Nombre</h1>
                 @if (Model.Sku.Producto?.Reviews is not null)
                 {
@@ -83,14 +87,9 @@
                         </li>
                         @for (int i = 0; i < 5; i++)
                         {
-                            if (i < Model.Sku.Producto!.GetPuntuacionPromedio())
-                            {
-                                <li class="d-inline text-warning p-0"><i class="bi bi-star-fill "></i></li>
-                            }
-                            else
-                            {
-                                <li class="d-inline text-warning p-0"><i class="bi bi-star "></i></li>
-                            }
+                            <li class="d-inline text-warning p-0">
+                                <i class="bi bi-star-fill @(i <  Model.Sku.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star" )"></i>
+                            </li>
                         }
                         <li class="d-inline">
                             <a href="#reviews">@Model.Sku.Producto!.Reviews!.Count reviews</a>
@@ -116,7 +115,7 @@
                         }
                         else
                         {
-                            <p style="max-height:150px;">@Model.Sku.Producto.Descripcion</p>
+                            <p style="max-height:150px;">@Model.Sku.Producto!.Descripcion</p>
                         }
                     </div>
                 }
@@ -154,7 +153,7 @@
                     if (Model.Sku.Stock == 0)
                     {
                         <div>
-                            <p class="text-danger fw-semibold">Sin stock disponible.</p>
+                            <p class="text-danger fw-semibold">@Localizer["Out of Stock"]</p>
                         </div>
                     }
                     else
@@ -162,8 +161,8 @@
                         <div class="form-row mt-5">
 
                             <div class="mb-3 mx-auto">
-                                <p class="text-success mb-0">En Stock</p>
-                                <p class="d-inline">Cantidad:</p>
+                                <p class="text-success mb-0">@Localizer["In Stock"]</p>
+                                <p class="d-inline">@Localizer["Quantity:"]</p>
                                 <select id="qty" class="d-inline">
                                     @for (int i = 1; i < Model.Sku.Stock + 1; i++)
                                     {
@@ -171,11 +170,22 @@
                                     }
                                 </select>
                             </div>
+
                             <div class="form-row input-group mx-auto" style="width:70%;">
                                 @if (!User.Identity!.IsAuthenticated)
-                                {<a style="" value="@Model.Sku.Id" href="/Login" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></a> }
+                                {
+                                    <a style="" value="@Model.Sku.Id" href="/Login"
+                                       class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">
+                                        @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
+                                    </a>
+                                }
                                 else
-                                { <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">Agregar al carrito <i class="bi bi-cart-fill"></i></button>}
+                                {
+                                    <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)"
+                                            class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">
+                                        @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
+                                    </button>
+                                }
                             </div>
 
                         </div>
@@ -186,11 +196,18 @@
                     <div class="form-row">
                         <div class="form-row input-group">
                             <div class="input-grpup-prepend col-2">
-                                <input class="form-control text-center fs-5 fw-semibold py-2" type="number" inputmode="numeric" min="1" required value="1" />
+                                <input class="form-control text-center fs-5 fw-semibold py-2"
+                                       type="number" inputmode="numeric" min="1" required value="1" />
                             </div>
-                            <button disabled onclick="AgregarProductoAlCarrito(this)" class="fs-5 form-control btn btn-primary py-2 fw-semibold mb-2">Agregar al Carrito</button>
+                            <button disabled onclick="AgregarProductoAlCarrito(this)"
+                                    class="fs-5 form-control btn btn-primary py-2 fw-semibold mb-2">
+                                @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
+                            </button>
                         </div>
-                        <button disabled type="submit" class="form-control btn btn-primary py-2 fw-semibold fs-5">Comprar</button>
+                        <button disabled type="submit"
+                                class="form-control btn btn-primary py-2 fw-semibold fs-5">
+                            @Localizer["Buy"]
+                        </button>
                     </div>
                 }
             </div>
@@ -199,7 +216,7 @@
         @* Descripcion del producto *@
 
         <div class=" my-3">
-            <h3 class="text-center">Descripcion</h3>
+            <h3 class="text-center">@Localizer["Description"]</h3>
             <span class="text-wrap">@Model.Sku?.Producto?.Descripcion</span>
         </div>
 
@@ -208,19 +225,23 @@
 
             <h3 class="text-center">Preguntas</h3>
 
-            <h5 id="pcount" data-count=@Model.Sku?.Producto?.Preguntas!.Count>@Model.Sku?.Producto?.Preguntas?.Count preguntas</h5>
+            <h5 id="pcount" data-count=@Model.Sku?.Producto?.Preguntas!.Count>
+            @Model.Sku?.Producto?.Preguntas?.Count @Localizer["Questions"]</h5>
 
             <div class="row mb-4 mt-3">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                    <input id="txtPregunta" class="form-control form-control-lg w-50 me-2" type="text" placeholder="Escribe tu pregunta..." />
-                    <button onclick="AgregarPregunta()" class="btn btn-primary col-auto">Preguntar</button>
+                    <input id="txtPregunta" type="text" placeholder="@Localizer["Write a question"]"
+                           class="form-control form-control-lg w-50 me-2" />
+                    <button onclick="AgregarPregunta()" class="btn btn-primary col-auto"
+                            style="width:110px;">@Localizer["Submit"]</button>
                 }
                 else
                 {
-                    <input disabled id="txtPregunta" class="form-control form-control-lg w-50 me-2" type="text" placeholder="Escribe tu pregunta..."
-                           title="Inicia sesion para poder agregar una pregunta" />
-                    <button disabled onclick="AgregarPregunta()" class="btn btn-primary col-auto">Preguntar</button>
+                    <input disabled id="txtPregunta"  type="text" placeholder="@Localizer["Write a question"]"
+                           title="Sign in to ask a question"
+                           class="form-control form-control-lg w-50 me-2"/>
+                    <button disabled onclick="AgregarPregunta()" class="btn btn-primary col-auto">@Localizer["Submit"]</button>
                 }
             </div>
 
@@ -232,7 +253,7 @@
                     {
                         <h5>@p.Usuario.Nombre</h5>
                         <p>@p.Contenido</p>
-                        <p class="fs-6 fw-lighter"> Publicado el @p.Fecha</p>
+                        <p class="fs-6 fw-lighter">@p.Fecha</p>
 
                         if (p.Respuesta != null)
                         {
@@ -242,7 +263,7 @@
                 }
                 else
                 {
-                    <h5>No hay preguntas todavia.</h5>
+                    <h5>@Localizer["No questions yet."]</h5>
                 }
 
             </div>
@@ -257,7 +278,7 @@
             {
                 <h3 class="text-center mb-3">@Model.Reviews.Count() Reviews</h3>
 
-                <h5 class="text-center">Puntuacion promedio @Model.GetPuntuacionPromedio()</h5>
+                <h5 class="text-center">@Localizer["Average rating"] @Model.GetPuntuacionPromedio()</h5>
 
                 <ul class="list-unstyled">
                     @foreach (var r in Model.Reviews)
@@ -271,14 +292,9 @@
                                 <ul class="d-block row text-center p-0 align-items-center">
                                     @for (int i = 0; i < 5; i++)
                                     {
-                                        if (i < r.Puntuacion)
-                                        {
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                        }
-                                        else
-                                        {
-                                            <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
-                                        }
+                                        <li class="d-inline text-warning p-0 me-1">
+                                            <i class="bi bi-star-fill @(i < r.Puntuacion ? "bi-star-fill" : "bi-star" )"></i>
+                                        </li>
                                     }
                                 </ul>
                             </div>
@@ -291,7 +307,7 @@
             }
             else
             {
-                <h3 class="No hay reviews todavia"></h3>
+                <h3 class="@Localizer["No reviews yet."]"></h3>
             }
         </div>
 
@@ -299,7 +315,7 @@
         @* La lista de productos relacionados *@
         <div class="mb-5">
             <div class="container-fluid">
-                <h3 class="text-center">Productos Relacionados</h3>
+                <h3 class="text-center">@Localizer["Similar Products"]</h3>
                 <div class="d-lg-flex">
                     <div class="cover container-fluid">
                         <button class="left">
@@ -310,7 +326,7 @@
                             {
                                 <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child" style="height:600px;min-width: 380px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
+                                        @if (Model.Favoritos is not null && Model.Favoritos.Contains(s))
                                         {
                                             <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
@@ -320,27 +336,24 @@
                                         }
                                     </a>
                                     <a href="/@s.Key" class="text-decoration-none text-reset">
-                                        <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                        <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;"
+                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                                     </a>
                                     <div class="card-body">
                                         <ul class="text-center p-0">
 
                                             @for (int i = 0; i < 5; i++)
                                             {
-                                                if (i < s.Producto.GetPuntuacionPromedio())
-                                                {
-                                                    <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                                }
-                                                else
-                                                {
-                                                    <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
-                                                }
+                                                <li class="d-inline text-warning p-0 me-1">
+                                                    <i class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star" )"></i>
+                                                </li>
                                             }
                                         </ul>
                                         <a href="/@s.Key" class="text-decoration-none text-reset">
                                             <h4 class="card-title text-center">@s.Nombre</h4>
                                             <p class="card-text text-center">
-                                                <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
+                                                <strike class="card-text">$@(s.Precio + 100)</strike>
+                                                <b class="card-text text-center"> $@s.Precio</b>
                                             </p>
                                         </a>
                                     </div>

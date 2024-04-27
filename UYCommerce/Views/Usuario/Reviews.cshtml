@@ -10,10 +10,12 @@
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="true">Realizadas</button>
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                        type="button" role="tab" aria-controls="reviews" aria-selected="true">@Localizer["Finished"]</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#productos" type="button" role="tab" aria-controls="productos" aria-selected="false">Pendientes</button>
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#productos"
+                        type="button" role="tab" aria-controls="productos" aria-selected="false">@Localizer["Pending"]</button>
             </li>
 
         </ul>
@@ -27,7 +29,8 @@
                         <li class="card my-2 p-2">
                             <div class="d-flex align-items-center">
                                 <div class="me-4">
-                                    <img class="" src="~/Imagenes/Productos/@r.Producto?.Imagenes?.First().ImagenNombre" style="width:60px;height:60px;object-fit:contain;" />
+                                    <img class="" src="~/Imagenes/Productos/@r.Producto?.Imagenes?.First().ImagenNombre"
+                                         style="width:60px;height:60px;object-fit:contain;" />
                                 </div>
 
                                 <div class="me-4  align-content-center">
@@ -47,7 +50,8 @@
                                 </div>
 
                                 <div class="ms-auto me-5">
-                                    <a class="btn btn-light" href="#" data-bs-toggle="modal" data-bs-target="#modal@(r.Id)"><i class="bi bi-pencil"></i>Editar</a>
+                                    <a class="btn btn-light" href="#" data-bs-toggle="modal" data-bs-target="#modal@(r.Id)">
+                                    <i class="bi bi-pencil"></i>@Localizer["Edit"]</a>
                                     <!--Modal-->
                                     <div class="modal fade" id="modal@(r.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -63,12 +67,12 @@
                                                         <input type="number" name="ReviewId" value="@r.Id" hidden />
 
                                                         <div class="mb-3">
-                                                            <h6 class="text-center">Comentario:</h6>
+                                                            <h6 class="text-center">@Localizer["Comment:"]</h6>
                                                             <textarea name="Comentario" class="form-control"></textarea>
                                                         </div>
 
                                                         <div class="d-flex flex-column">
-                                                            <h6 class="text-center">Valoracion:</h6>
+                                                            <h6 class="text-center">@Localizer["Rating:"]:</h6>
                                                             <div class="rating mx-auto">
                                                                 <label>
                                                                     <input type="radio" name="Valoracion" value="1" />
@@ -106,8 +110,9 @@
                                                     </form>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button data-form-id="form@(r.Id)" onclick="UpdateReview(this)" type="button" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button data-form-id="form@(r.Id)" onclick="UpdateReview(this)" type="button"
+                                                            class="btn btn-primary" data-bs-dismiss="modal">@Localizer["Submit"]</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -139,12 +144,12 @@
 
                                     <input type="number" value="@p.Id" name="ProductoId" hidden />
                                     <div class="me-4 d-flex flex-column">
-                                        <h6 for="Comentario">Deja tu opinion:</h6>
+                                        <h6 for="Comentario">@Localizer["Write your opinion:"]</h6>
                                         <textarea class="form-control" name="Comentario"></textarea>
                                     </div>
 
                                     <div>
-                                        <h6 class="text-center">Valoracion:</h6>
+                                        <h6 class="text-center">@Localizer["Rating:"]</h6>
                                         <div class="rating mx-auto">
                                             <label>
                                                 <input type="radio" name="Valoracion" value="1" />
@@ -180,7 +185,7 @@
                                     </div>
 
                                     <div class="ms-auto me-5">
-                                        <button data-form-id="review@(p.Id)" type="button" onclick="CrearReview(this)" class="btn btn-primary">Guardar</button>
+                                        <button data-form-id="review@(p.Id)" type="button" onclick="CrearReview(this)" class="btn btn-primary">@Localizer["Submit"]</button>
                                     </div>
                                 </form>
 

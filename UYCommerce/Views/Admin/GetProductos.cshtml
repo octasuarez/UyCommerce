@@ -8,8 +8,8 @@
     <div class="container-fluid">
 
         <div class="d-flex py-5 me-3">
-            <h5>Productos @Model.Count</h5>
-            <a href="/Producto/CrearProducto" class="btn btn-primary h-50 d-flex ms-auto">+ Nuevo Producto</a>
+            <h5>@Localizer["Products"] @Model.Count</h5>
+            <a href="/Producto/CrearProducto" class="btn btn-primary h-50 d-flex ms-auto">+ @Localizer["New Product"]</a>
         </div>
 
         <ul class="list-unstyled bg-white">
@@ -26,44 +26,49 @@
                             </div>
                             <div class="ms-4 d-flex flex-column">
                                 <div class="mb-3">
-                                    <h4>Nombre: @p.Nombre</h4>
+                                    <h4>@Localizer["Name"]: @p.Nombre</h4>
 
                                 </div>
                                 <div class="d-flex">
                                     <div class="me-4">
-                                        <h6><b>Clave:</b> @p.NombreClave</h6>
+                                        <h6><b>@Localizer["Key"]:</b> @p.NombreClave</h6>
                                         <h6><b>Id:</b> @p.Id</h6>
-                                        <h6><b>Vendido</b> @p.VecesComprado</h6>
-                                        <h6><b>Categoria:</b> @p.Categoria?.Nombre</h6>
+                                        <h6><b>@Localizer["Sold"]</b> @p.VecesComprado</h6>
+                                        <h6><b>@Localizer["Category"]:</b> @p.Categoria?.Nombre</h6>
                                     </div>
                                     <div class="me-4">
-                                        <h6><b>Marca:</b> @p.Marca?.Nombre</h6>
+                                        <h6><b>@Localizer["Brand"]:</b> @p.Marca?.Nombre</h6>
                                         <h6><b>Rating:</b> @p.GetPuntuacionPromedio()</h6>
                                         <h6><b>Reviews:</b> @p.Reviews?.Count</h6>
-                                        <h6><b>Preguntas:</b> @p.Preguntas?.Count</h6>
+                                        <h6><b>@Localizer["Questions"]:</b> @p.Preguntas?.Count</h6>
                                     </div>
 
                                     <div>
                                         <div class="form-check form-switch">
                                             @if (p.Featured)
                                             {
-                                                <input onchange="FeaturedChanged(this)" data-producto-id="@p.Id" class="form-check-input" type="checkbox" role="checkbox" checked id="Featured-@p.Id">
+                                                <input onchange="FeaturedChanged(this)" data-producto-id="@p.Id"
+                                                       class="form-check-input" type="checkbox" role="checkbox" checked id="Featured-@p.Id">
                                             }
                                             else
                                             {
 
-                                                <input onchange="FeaturedChanged(this)" data-producto-id="@p.Id" class="form-check-input" type="checkbox" role="checkbox" id="Featured-@p.Id">
+                                                <input onchange="FeaturedChanged(this)" data-producto-id="@p.Id"
+                                                       class="form-check-input" type="checkbox" role="checkbox" id="Featured-@p.Id">
                                             }
-                                            <label class="form-check-label fw-bold" for="Featured">Mostrar en Inicio</label>
+                                        <label class="form-check-label fw-bold" for="Featured">@Localizer["Featured"]</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex flex-column ms-auto me-5">
-                                <a onclick="EliminarProducto(this)" data-producto-id="@p.Id" class="btn btn-danger mb-2 del-sku"><i class="bi bi-trash3"></i> Eliminar</a>
-                                <a href="/Producto/AgregarSku?productoId=@p.Id" class="btn btn-primary mb-2 ">+ Agregar Skus</a>
-                                <a class="btn bg-info-subtle  mb-2"><i class="bi bi-pencil"></i> Modificar</a>
-                                <a target="”_blank”" href="/@p.NombreClave" class="btn bg-body-tertiary  mb-2"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
+                                <a onclick="EliminarProducto(this)" data-producto-id="@p.Id" class="btn btn-danger mb-2 del-sku">
+                                    <i class="bi bi-trash3"></i> @Localizer["Delete"]
+                                </a>
+                                <a href="/Producto/AgregarSku?productoId=@p.Id" class="btn btn-primary mb-2 ">+ @Localizer["New Sku"]</a>
+                                <a class="btn bg-info-subtle  mb-2"><i class="bi bi-pencil"></i> @Localizer["Edit"]</a>
+                                <a target="”_blank”" href="/@p.NombreClave" class="btn bg-body-tertiary  mb-2"><i class="bi bi-box-arrow-up-right">
+                                          </i> @Localizer["See in store"]</a>
                             </div>
                         </div>
 
@@ -74,7 +79,8 @@
                             <div class="accordion" id="accordionExample">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(p.Id)" aria-expanded="true" aria-controls="collapseOne">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapse@(p.Id)" aria-expanded="true" aria-controls="collapseOne">
                                             <p class="my-0 w-100 text-center fw-semibold">Skus @p.Skus.Count</p>
                                         </button>
                                     </h2>
@@ -90,7 +96,8 @@
                                                             @if (s.Imagenes != null && s.Imagenes.Any())
                                                             {
                                                                 <div class="me-3">
-                                                                    <img src="~/Imagenes/Productos/@s.Imagenes.First().ImagenNombre" class="object-fit-contain" style="height:150px;width:150px;" />
+                                                                    <img src="~/Imagenes/Productos/@s.Imagenes.First().ImagenNombre"
+                                                                         class="object-fit-contain" style="height:150px;width:150px;" />
                                                                 </div>
                                                             }
 
@@ -101,14 +108,14 @@
 
                                                                         <h6><strong>Id:</strong> @s.Id</h6>
                                                                         <h6><strong>Sku:</strong> @s.Key</h6>
-                                                                        <h6><strong>Precio:</strong> @s.Precio</h6>
+                                                                        <h6><strong>@Localizer["Price"]:</strong> @s.Precio</h6>
                                                                         @if (s.Stock > 0)
                                                                         {
                                                                             <h6 class="text-success"><strong>Stock:</strong> @s.Stock</h6>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <h6 class="text-danger"><strong>Sin Stock</strong></h6>
+                                                                            <h6 class="text-danger"><strong>@Localizer["Out of stock"]</strong></h6>
                                                                         }
                                                                     </div>
 
@@ -127,8 +134,15 @@
 
 
                                                             <div class="ms-auto d-flex flex-column me-4">
-                                                                <a onclick="EliminarSku(this)" data-sku-id="@s.Id" data-pro-id="@s.ProductoId" class="btn btn-danger mb-3"><i class="bi bi-trash3"></i> Eliminar</a>
-                                                                <a href="/@s.Key" target="_blank" class="btn btn-light"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
+                                                                <a onclick="EliminarSku(this)" data-sku-id="@s.Id" data-pro-id="@s.ProductoId"
+                                                                   class="btn btn-danger mb-3">
+                                                                    <i class="bi bi-trash3">
+                                                                    </i> @Localizer["Delete"]
+                                                                </a>
+                                                                <a href="/@s.Key" target="_blank" class="btn btn-light">
+                                                                    <i class="bi bi-box-arrow-up-right">
+                                                                    </i> @Localizer["See in store"]
+                                                                </a>
                                                             </div>
                                                         </div>
 

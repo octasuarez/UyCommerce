@@ -7,7 +7,7 @@
 
     <div class="container-fluid">
 
-        <h5 class="my-5">Reviews @Model.Count</h5>
+        <h5 class="my-5">@Localizer["Reviews"] @Model.Count</h5>
 
         <ul class="list-unstyled">
             @foreach (var r in Model)
@@ -16,7 +16,8 @@
                 <li class="card my-2 p-2">
                     <div class="d-flex align-items-center">
                         <div class="me-4">
-                            <img class="" src="~/Imagenes/Productos/@r.Producto?.Imagenes?.First().ImagenNombre" style="width:60px;height:60px;object-fit:contain;" />
+                            <img class="" src="~/Imagenes/Productos/@r.Producto?.Imagenes?.First().ImagenNombre"
+                                 style="width:60px;height:60px;object-fit:contain;" />
                         </div>
 
                         <div class="me-4  align-content-center">
@@ -41,7 +42,10 @@
                         </div>
 
                         <div class="ms-auto me-5">
-                            <a data-review-id=@r.Id onclick="EliminarReview(this)" class="btn btn-danger"><i class="bi bi-trash3"></i> Eliminar</a>
+                            <a data-review-id=@r.Id onclick="EliminarReview(this)" class="btn btn-danger">
+                                <i class="bi bi-trash3">
+                                </i> @Localizer["Delete"]
+                            </a>
                         </div>
                     </div>
                 </li>

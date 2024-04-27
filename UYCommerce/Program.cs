@@ -1,7 +1,12 @@
 ﻿
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization.Routing;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using UYCommerce;
 using UYCommerce.Controllers;
 using UYCommerce.Data;
 using UYCommerce.Paypal;
@@ -9,11 +14,24 @@ using UYCommerce.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
 builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddMvc()
+    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+    .AddDataAnnotationsLocalization();
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "es" };
+    options.SetDefaultCulture(supportedCultures[0])
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+
+});
 
 builder.Services.AddSession(options =>
 {
@@ -25,7 +43,7 @@ builder.Services.AddSession(options =>
 //email config
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 
-builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(emailConfig!);
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSingleton<IFileService, FileService>();
 
@@ -66,7 +84,9 @@ builder.Services.AddAuthorization(options =>
                       policy.RequireClaim(ClaimTypes.Role, "User"));
 });
 
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -75,6 +95,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions!.Value);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

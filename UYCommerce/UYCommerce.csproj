@@ -25,6 +25,16 @@
     <None Remove="ViewModels\" />
     <None Remove="Helpers\" />
     <None Remove="Views\Categoria\" />
+    <None Remove="Resources\" />
+    <None Remove="Resources\Views\" />
+    <None Remove="Resources\Views\Home\" />
+    <None Remove="Resources\Views\Shared\" />
+    <None Remove="Resources\Views\Shared\_Layout.es" />
+    <None Remove="Resources\Views\Admin\" />
+    <None Remove="Resources\Views\Producto\" />
+    <None Remove="Resources\Views\Auth\" />
+    <None Remove="Resources\Views\Pagos\" />
+    <None Remove="Resources\Views\Usuario\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -44,6 +54,15 @@
     <Folder Include="Helpers\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\Categoria\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\Views\" />
+    <Folder Include="Resources\Views\Home\" />
+    <Folder Include="Resources\Views\Shared\" />
+    <Folder Include="Resources\Views\Admin\" />
+    <Folder Include="Resources\Views\Producto\" />
+    <Folder Include="Resources\Views\Auth\" />
+    <Folder Include="Resources\Views\Pagos\" />
+    <Folder Include="Resources\Views\Usuario\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
@@ -61,5 +80,255 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="MySqlConnector" Version="2.3.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Localization.Routing" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Views\Home\Index.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Index.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Home\Index.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Index.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\_Layout.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>_Layout.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\_Layout.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>_Layout.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\_SelectLanguagePartial.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>_SelectLanguagePartial.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\_SelectLanguagePartial.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>_SelectLanguagePartial.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\Components.Menu.Default.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Components.Menu.Default.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Producto\BusquedaProductos.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BusquedaProductos.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Producto\BusquedaProductos.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BusquedaProductos.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Home\Contacto.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Contacto.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Producto\VerProducto.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>VerProducto.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Producto\VerProducto.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>VerProducto.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Auth\Login.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Login.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Auth\Register.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Register.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Auth\CodigoRecuperacion.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CodigoRecuperacion.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Auth\CambiarPwd.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CambiarPwd.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Auth\RecuperarPwd.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RecuperarPwd.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Pagos\Checkout.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Checkout.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Pagos\Success.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Success.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\NotFound.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotFound.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Usuario\Favoritos.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Favoritos.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Usuario\Reviews.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Reviews.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Usuario\VerCompra.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>VerCompra.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Producto\AgregarSku.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AgregarSku.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\Carousel.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Carousel.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\Dashboard.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Dashboard.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetAtributos.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetAtributos.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetCategorias.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetCategorias.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetClientes.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetClientes.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetMarcas.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetMarcas.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetOrdenes.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetOrdenes.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetProductos.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetProductos.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\GetReviews.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GetReviews.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Admin\Preguntas.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Preguntas.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Shared\AdminLayout.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AdminLayout.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\Views\Home\Index.en.Designer.cs">
+      <DependentUpon>Index.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Home\Index.es.Designer.cs">
+      <DependentUpon>Index.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\_Layout.Designer.cs">
+      <DependentUpon>_Layout.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\_Layout.es.Designer.cs">
+      <DependentUpon>_Layout.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\_SelectLanguagePartial.en.Designer.cs">
+      <DependentUpon>_SelectLanguagePartial.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\_SelectLanguagePartial.es.Designer.cs">
+      <DependentUpon>_SelectLanguagePartial.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\Components.Menu.Default.en.Designer.cs">
+      <DependentUpon>Components.Menu.Default.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Producto\BusquedaProductos.es.Designer.cs">
+      <DependentUpon>BusquedaProductos.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Producto\BusquedaProductos.en.Designer.cs">
+      <DependentUpon>BusquedaProductos.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Home\Contacto.es.Designer.cs">
+      <DependentUpon>Contacto.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Producto\VerProducto.es.Designer.cs">
+      <DependentUpon>VerProducto.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Producto\VerProducto.en.Designer.cs">
+      <DependentUpon>VerProducto.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Auth\Login.es.Designer.cs">
+      <DependentUpon>Login.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Auth\Register.es.Designer.cs">
+      <DependentUpon>Register.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Auth\CodigoRecuperacion.es.Designer.cs">
+      <DependentUpon>CodigoRecuperacion.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Auth\CambiarPwd.es.Designer.cs">
+      <DependentUpon>CambiarPwd.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Auth\RecuperarPwd.es.Designer.cs">
+      <DependentUpon>RecuperarPwd.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Pagos\Checkout.es.Designer.cs">
+      <DependentUpon>Checkout.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Pagos\Success.es.Designer.cs">
+      <DependentUpon>Success.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\NotFound.es.Designer.cs">
+      <DependentUpon>NotFound.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Usuario\Favoritos.es.Designer.cs">
+      <DependentUpon>Favoritos.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Usuario\Reviews.es.Designer.cs">
+      <DependentUpon>Reviews.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Usuario\VerCompra.es.Designer.cs">
+      <DependentUpon>VerCompra.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Producto\AgregarSku.es.Designer.cs">
+      <DependentUpon>AgregarSku.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\Carousel.es.Designer.cs">
+      <DependentUpon>Carousel.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\Dashboard.es.Designer.cs">
+      <DependentUpon>Dashboard.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetAtributos.es.Designer.cs">
+      <DependentUpon>GetAtributos.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetCategorias.es.Designer.cs">
+      <DependentUpon>GetCategorias.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetClientes.es.Designer.cs">
+      <DependentUpon>GetClientes.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetMarcas.es.Designer.cs">
+      <DependentUpon>GetMarcas.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetOrdenes.es.Designer.cs">
+      <DependentUpon>GetOrdenes.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetProductos.es.Designer.cs">
+      <DependentUpon>GetProductos.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\GetReviews.es.Designer.cs">
+      <DependentUpon>GetReviews.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Admin\Preguntas.es.Designer.cs">
+      <DependentUpon>Preguntas.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Views\Shared\AdminLayout.es.Designer.cs">
+      <DependentUpon>AdminLayout.es.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

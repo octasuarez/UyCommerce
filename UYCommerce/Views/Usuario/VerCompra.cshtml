@@ -4,16 +4,16 @@
 
     <section class="container" style="min-height:500px;background-color:white;padding-top:10px;">
 
-        <a style="position:absolute;transform:translate(-300px, 10px)" href="/Compras"><i class="bi bi-arrow-left"></i> Volver a mis compras</a>
+        <a style="position:absolute;transform:translate(-300px, 10px)" href="/Compras"><i class="bi bi-arrow-left"></i> @Localizer["Return to purchase history"]</a>
         <div class="d-lg-flex mt-5 align-items-center">
-            <h3 class="fw-bold">Compra @Model.Id</h3>
+            <h3 class="fw-bold">@Localizer["Purchase"] @Model.Id</h3>
             <h5 class="ms-auto text-secondary">@Model.FechaDeCompra</h5>
         </div>
         <div class="border my-3"></div>
         <div class="d-lg-flex">
 
             <div class="col-auto me-5">
-                <h6 class="fw-bold" style="">DIRECCION DE ENVÍO</h6>
+                <h6 class="fw-bold" style="">@Localizer["SHIPPING ADDRESS"]</h6>
                 <p class="my-0">@Model.Direccion!.address_line_1</p>
                 <p class="my-0">@Model.Direccion.address_line_2</p>
                 <p class="my-0"></p>
@@ -22,16 +22,16 @@
                 <p class="my-0">@Model.Direccion.country_code</p>
             </div>
             <div class="col-auto me-5">
-                <h6 class="fw-bold" style="">METODO DE PAGO</h6>
+                <h6 class="fw-bold" style="">@Localizer["PURCHASE METHOD"]</h6>
                 <p class="my-0">@Model.MetodoDePago</p>
             </div>
             <div class="col-auto me-5">
-                <h6 class="fw-bold" style="">ESTADO</h6>
+                <h6 class="fw-bold" style="">@Localizer["STATE"]</h6>
                 <p class="my-0">@Model.Estado</p>
                 <p class="my-0">
                     @if (Model.FechaDeEntrega != null)
-                    {@Model.FechaDeEntrega;
-                }
+                        {@Model.FechaDeEntrega;
+                        }
                 </p>
             </div>
 
@@ -40,16 +40,16 @@
         <div class="my-4">
             
         </div>
-        <h6 class="mt-5 fw-semibold">Productos</h6>
+        <h6 class="mt-5 fw-semibold">@Localizer["Products"]</h6>
         <div class="table-responsive">
 
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
+                        <th>@Localizer["Name"]</th>
                         <th>SKU</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
+                        <th>@Localizer["Price"]</th>
+                        <th>@Localizer["Quantity"]</th>
                         <th>Subtotal</th>
                     </tr>
                 </thead>
@@ -60,7 +60,8 @@
                         <tr>
                             <td>
                                 <div class="d-flex">
-                                    <img src="~/Imagenes/Productos/@p.Sku?.Imagenes?.First().ImagenNombre" style="height:150px;width:150px;object-fit:contain" />
+                                    <img src="~/Imagenes/Productos/@p.Sku?.Imagenes?.First().ImagenNombre"
+                                         style="height:150px;width:150px;object-fit:contain" />
                                     <div class="d-flex flex-column ms-3">
 
                                         <a href="/@p.Sku?.Key" class="text-dark fw-semibold mb-3">@p.Nombre</a>

@@ -8,8 +8,8 @@
             <div class="mx-auto">
 
                 <div class="col-10 mx-auto">
-                    <h2>Favoritos</h2>
-                    <p>@Model.Count articulos</p>
+                    <h2>@Localizer["Wishlist"]</h2>
+                    <p>@Model.Count @Localizer["Products"]</p>
                 </div>
                 <ul class="list-unstyled bg-white col-10 mx-auto">
                     @foreach (var s in Model)
@@ -43,7 +43,7 @@
         }
         else
         {
-            <h1>No tiene ningun articulo como favorito</h1>
+            <h1>@Localizer["No products added to the WishList yet."]</h1>
         }
 
     </section>

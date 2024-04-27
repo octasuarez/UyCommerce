@@ -9,7 +9,7 @@
         {
 
             <div class="d-flex mx-auto my-auto">
-                <h1 class=" container mx-auto my-auto">No se econtró ningun producto con ese nombre.</h1>
+                <h1 class=" container mx-auto my-auto">@Localizer["Product not found"]</h1>
             </div>
         }
         else
@@ -27,13 +27,13 @@
                     @if (Model.Categoria != null && Model.Categoria.CategoriaPadre != null)
                     {
                         <li class="breadcrumb-item" aria-current="page">
-                            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Model.Categoria.CategoriaPadre.Nombre</a>
+                            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Localizer[Model.Categoria.CategoriaPadre.Nombre!]</a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">@Model.Categoria!.Nombre</li>
+                        <li class="breadcrumb-item active" aria-current="page">@Localizer[Model.Categoria!.Nombre!]</li>
                     }
                     else if (Model.Categoria != null)
                     {
-                        <li class="breadcrumb-item active" aria-current="page">@Model.Categoria!.Nombre</li>
+                        <li class="breadcrumb-item active" aria-current="page">@Localizer[Model.Categoria!.Nombre!]</li>
 
                     }
 
@@ -46,7 +46,7 @@
 
                     @if (Model.Atributos != null && Model.Atributos.Any())
                     {
-                        <h4 class="fw-bold mb-4">Filtros</h4>
+                        <h4 class="fw-bold mb-4">@Localizer["Filters"]</h4>
                         <div>
                             <ul class="list-unstyled">
 
@@ -59,7 +59,7 @@
                             </ul>
                         </div>
                     }
-                    <h4 class="fw-bold mb-4">Categorias</h4>
+                    <h4 class="fw-bold mb-4">@Localizer["Categories"]</h4>
 
                     <ul class="list-unstyled">
                         @foreach (var c in Model.Categorias!)
@@ -67,19 +67,19 @@
                             <li class="mb-2">
                                 @if (Model.Categoria != null && c.Id == Model.Categoria.Id)
                                 {
-                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-info">@c.Nombre</a>
+                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-info">@Localizer[c.Nombre!]</a>
                                     <div class="ps-3 mt-3">
                                         <ul class="list-unstyled">
-                                            @foreach (var sc in Model.Categoria.SubCategorias)
+                                            @foreach (var sc in Model.Categoria.SubCategorias!)
                                             {
                                                 <li class="mb-3">
                                                     @if (sc.Id == Model.Categoria.Id)
                                                     {
-                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-info">@sc.Nombre</a>
+                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-info">@Localizer[sc.Nombre!]</a>
                                                     }
                                                     else
                                                     {
-                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-body">@sc.Nombre</a>
+                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-body">@Localizer[sc.Nombre!]</a>
                                                     }
                                                 </li>
                                             }
@@ -89,7 +89,7 @@
                                 }
                                 else
                                 {
-                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-body">@c.Nombre</a>
+                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-body">@Localizer[c.Nombre!]</a>
                                 }
                             </li>
                         }
@@ -98,23 +98,22 @@
 
                     @if (Model.Categoria != null && Model.Categoria.Atributos != null && Model.Categoria.Atributos.Any())
                     {
-                        <h4 class="fw-bold mb-4">Filtros</h4>
+                        <h4 class="fw-bold mb-4">@Localizer["Filters"]</h4>
 
                         <ul class="list-unstyled">
                             @foreach (var a in Model.Categoria.Atributos)
                             {
-                                if (Model.Atributos == null || !Model.Atributos.Select(a => a.Key).Contains(a.Nombre.ToLower()))
+                                if (Model.Atributos == null || !Model.Atributos.Select(a => a.Key).Contains(a.Nombre?.ToLower()))
                                 {
                                     <li class="mb-3">
                                         <p class="fs-5 fw-semibold">@a.Nombre</p>
                                         <ul class="list-unstyled">
 
-                                            @foreach (var v in a.Valores)
+                                            @foreach (var v in a.Valores!)
                                             {
                                                 <li class="atributo">
                                                     <a data-value="@a.Nombre-@v.Valor" onclick="AgregarFiltro(this)" class="text-decoration-none text-body">@v.Valor</a>
                                                 </li>
-
                                             }
                                         </ul>
                                     </li>
@@ -127,17 +126,17 @@
 
                 <div class="d-flex flex-column w-100">
 
-                    <h4 class="d-block" style="padding-left:35%;">@Model.Skus!.Count Resultados</h4>
+                    <h4 class="d-block" style="padding-left:35%;">@Model.Skus!.Count @Localizer["Results"]</h4>
 
                     @if (Model.Skus is not null && Model.Skus!.Any())
                     {
                         <div class="d-flex align-items-center col-xl-4 mx-4">
-                            <h5 class="text-nowrap me-2">Ordenar por</h5>
+                            <h5 class="text-nowrap me-2">@Localizer["Order By:"]</h5>
                             <select class="form-select" onchange="OrdenarProductos(this.value)">
-                                <option value="">Posicion</option>
-                                <option value="1">Precio: Mayor a Menor</option>
-                                <option value="2">Precio: Menor a Mayor</option>
-                                <option value="3">Rating</option>
+                                <option value="">@Localizer["Position"]</option>
+                                <option value="1">@Localizer["Price:High to Low"]</option>
+                                <option value="2">@Localizer["Price:Low to High"]</option>
+                                <option value="3">@Localizer["Rating"]</option>
                             </select>
                         </div>
 
@@ -148,7 +147,7 @@
                             {
                                 <div id="@s.Id" class="card product-card m-3" style="height:600px;width: 400px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
+                                        @if (Model.Favoritos is not null && Model.Favoritos.Contains(s))
                                         {
                                             <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
@@ -158,28 +157,25 @@
                                         }
                                     </a>
                                     <a href="/@s.Key" class="text-decoration-none text-reset">
-                                        <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                        <img class="card-img-top"
+                                             style="height:400px;min-width:100%;object-fit:contain;"
+                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                                     </a>
                                     <div class="card-body">
                                         <ul class="text-center p-0">
 
                                             @for (int i = 0; i < 5; i++)
                                             {
-                                                if (i < s.Producto!.GetPuntuacionPromedio())
-                                                {
-                                                    <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star-fill"></i></li>
-                                                }
-                                                else
-                                                {
-                                                    <li class="d-inline text-warning p-0 me-1"><i class="bi bi-star"></i></li>
-                                                }
+                                                <li class="d-inline text-warning p-0 me-1">
+                                                    <i class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star" )"></i>
+                                                </li>
                                             }
                                         </ul>
                                         <a href="/@s.Key" class="text-decoration-none text-reset">
                                             <h4 class="card-title text-center">@s.Nombre</h4>
                                             <p class="card-text text-center">
-                                                @if (s.PrecioAnterior > 0)
-                                                {<strike class="card-text text-secondary">$@(s.PrecioAnterior)</strike>}<b class="card-text text-center fs-5"> $@s.Precio</b>
+                                                @(s.PrecioAnterior > 0 ? Html.Raw($"<strike class=\"card-text text-secondary\">{s.PrecioAnterior}</strike>") : "")
+                                                <b class="card-text text-center fs-5"> $@s.Precio</b>
                                             </p>
                                         </a>
                                     </div>

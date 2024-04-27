@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UYCommerce.Data;
@@ -24,10 +25,9 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-
         var productos = await _context.Productos
             .Include(p => p.Reviews)
-            .Include(p=> p.Skus)!.ThenInclude(s => s.Imagenes)
+            .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
             .Where(p => p.Featured == true)
             .ToListAsync();
 
@@ -68,15 +68,18 @@ public class HomeController : Controller
 
     [HttpGet]
     [Route("/Contacto")]
-    public IActionResult Contacto() {
+    public IActionResult Contacto()
+    {
 
         return View();
     }
 
     [HttpPost]
-    public IActionResult Contacto([FromBody]ContactoDTO contacto) {
+    public IActionResult Contacto([FromBody] ContactoDTO contacto)
+    {
 
-        if (ModelState.IsValid) {
+        if (ModelState.IsValid)
+        {
 
             Message message = new()
             {
@@ -95,6 +98,18 @@ public class HomeController : Controller
         .Select(e => e.ErrorMessage));
 
         return BadRequest(errors);
+    }
+
+    [HttpPost]
+    public IActionResult SetLanguage(string culture, string returnUrl)
+    {
+        Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+        );
+
+        return LocalRedirect(returnUrl);
     }
 
 }

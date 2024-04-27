@@ -7,13 +7,13 @@
 
     <div class="container-fluid">
 
-        <h5 class="my-5">Preguntas</h5>
+        <h5 class="my-5">@Localizer["Questions"]</h5>
 
 
         <select class="form-select mb-4" onchange="window.location= this.value">
-            <option>Todas las preguntas</option>
-            <option value="/admin/preguntas/sin responder">Sin Responder</option>
-            <option value="/admin/preguntas/respondidas">Respondidas</option>
+            <option>@Localizer["All questions"]</option>
+            <option value="/admin/preguntas/sin responder">@Localizer["Pending reply"]</option>
+            <option value="/admin/preguntas/respondidas">@Localizer["Replied"]</option>
         </select>
 
         @if (Model != null && Model.Any())
@@ -25,8 +25,9 @@
                 {
                     <div class="border pt-3 pb-3 ps-5 pe-5 d-flex">
                         <div class="me-5 col-auto">
-                            <a class="fs-5 link-dark" href="/@p.Producto?.NombreClave">@p.Producto.Nombre</a>
-                            <img class="object-fit-contain d-block" style="height:100px;width:100%" src="~/Imagenes/Productos/@p.Producto.Imagenes!.First().ImagenNombre" />
+                            <a class="fs-5 link-dark" href="/@p.Producto?.NombreClave">@p.Producto?.Nombre</a>
+                            <img class="object-fit-contain d-block" style="height:100px;width:100%"
+                                 src="~/Imagenes/Productos/@p.Producto?.Imagenes!.First().ImagenNombre" />
                         </div>
 
                         <div class="me-5 align-content-center">
@@ -48,8 +49,12 @@
                                 {
                                     <form class="d-flex" id="@p.Id">
                                         <input name="PreguntaId" type="number" value=@p.Id hidden />
-                                        <textarea name="Contenido" rows="1" cols="100" maxlength="500" type="text" class="form-control me-2" style="resize:none;"></textarea>
-                                        <button data-reply-id="respuesta@(p.Id)" data-form-id="@p.Id" type="button" class="btn btn-primary" onclick="AgregarRespuesta(this)">Responder</button>
+                                        <textarea name="Contenido" rows="1" cols="100" maxlength="500" type="text"
+                                                  class="form-control me-2" style="resize:none;"></textarea>
+                                        <button data-reply-id="respuesta@(p.Id)" data-form-id="@p.Id" type="button"
+                                                class="btn btn-primary" onclick="AgregarRespuesta(this)">
+                                            @Localizer["Reply"]
+                                            </button>
                                     </form>
                                 }
                             </div>

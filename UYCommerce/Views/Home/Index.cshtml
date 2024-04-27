@@ -39,8 +39,8 @@
 
     @*Bienvenida y descripcion*@
     <div class="text-center my-5">
-        <h1>Bienvenido a nuestra Tienda</h1>
-        <p class="fs-5">Esta es una aplicacion e-commerce en donde podras encontrar todo tipo de articulos y tendras la opcion de comprar y crearte una cuenta y mucho mas</p>
+        <h1>@Localizer["Welcome"]</h1>
+        <p class="fs-5">@Localizer["Description"]</p>
     </div>
 
     @*Categorias en display*@
@@ -53,7 +53,7 @@
                         <img class="img-categoria" src="~/Imagenes/Categorias/@c.ImagenNombre" alt="@c.ImagenNombre">
                     </a>
                     <div class="categoria-text">
-                        <h3 class="text-center" style="font-size:30px;height:100%;">@c.Nombre</h3>
+                        <h3 class="text-center" style="font-size:30px;height:100%;">@Localizer[c.Nombre!]</h3>
                     </div>
                 </div>
             }
@@ -64,7 +64,7 @@
 
     <div class="mb-5">
         <div class="container">
-            <h1 class="text-center">Destacados</h1>
+            <h1 class="text-center">@Localizer["Featured"]</h1>
             <div class="d-lg-flex">
                 <div class="cover container">
                     <button class="left" >

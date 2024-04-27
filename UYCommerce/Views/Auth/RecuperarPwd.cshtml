@@ -11,12 +11,12 @@
 
 
         <div class="card col-5 mx-auto p-5" style="margin-top:150px;">
-            <h5 class="text-center">Recuperar Contraseña</h5>
+            <h5 class="text-center">@Localizer["Remember Password"]</h5>
             <form method="post"  asp-action="RecuperarPassword">
                 <div class="mx-auto text-center justify-content-center d-flex flex-column ">
-                    <p>Te enviaremos un codigo a tu direccion de correo para crear una nueva contraseña</p>
-                    <input class="form-control mb-3" type="text" placeholder="Ingresa tu correo electronico" name="email" value="juan@gmail.com"/>
-                    <button type="submit" class="btn btn-primary">Enviar Codigo</button>
+                    <p>@Localizer["We will send you a code to your email to change your password"]</p>
+                    <input class="form-control mb-3" type="text" placeholder="@Localizer["Type your email address here"]" name="email" value="juan@gmail.com"/>
+                    <button type="submit" class="btn btn-primary">@Localizer["Send"]</button>
                 </div>
             </form>
         </div>

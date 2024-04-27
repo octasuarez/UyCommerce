@@ -10,13 +10,13 @@
         <div class="row">
             <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-5 pt-3 pb-3 border-0 shadow" >
                 <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
-                <h1 class="mx-auto">Crea una cuenta</h1>
+                <h1 class="mx-auto">@Localizer["Create an account"]</h1>
                 <div class="card-body">
 
                     <form method="post" asp-controller="Auth" asp-action="AgregarUsuario">
                         <div class="form-floating mb-3">
                             <input asp-for="Nombre" type="text" class="form-control" id="floatingName" placeholder="" name="Nombre" style="box-shadow:none;">
-                            <label for="floatingName">Nombre</label>
+                            <label for="floatingName">@Localizer["Name"]</label>
                             <span asp-validation-for="Nombre" class="text-danger"></span>
                         </div>
 
@@ -27,25 +27,25 @@
                         </div>
 
                         <div id="pwdRegister" class="form-floating mb-3">
-                            <span class="tooltiptext">6 digitos, 1 mayuscula, 1 minuscula y 1 numero</span>
+                            <span class="tooltiptext">@Localizer["6 digits, 1 uppercase, 1 lowercase & 1 number"]</span>
                             <input asp-for="Password" type="password" class="form-control" id="floatingPassword" placeholder="" name="Password" style="box-shadow:none;">
-                            <label for="floatingPassword">Contraseña</label>
+                            <label for="floatingPassword">@Localizer["Password"]</label>
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="ConfirmPassword" type="password" class="form-control" id="floatingPassword2" placeholder="" name="ConfirmPassword" style="box-shadow:none;">
-                            <label for="floatingPassword2">Confirmar contraseña</label>
+                            <label for="floatingPassword2">@Localizer["Confirm password"]</label>
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">Crear cuenta</button>
+                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">@Localizer["Create account"]</button>
 
                     </form>
                 </div>
 
                 <div class="d-flex">
-                    <a href="/login" class="d-flex mx-auto mt-5">Ya tienes una Cuenta? Inicia Sesion</a>
+                    <a href="/login" class="d-flex mx-auto mt-5">@Localizer["Already have an account? Sign in"]</a>
                 </div>
             </div>
         </div>

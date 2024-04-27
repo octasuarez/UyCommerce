@@ -33,7 +33,7 @@
                     <div class="d-flex col-lg-5 mx-lg-5">
                         <form class="w-100" role="search" asp-controller="Producto" asp-action="BuscarProductosPorQuery" method="get">
                             <div class="input-group shadow">
-                                <input name="query" id="search" class="form-control d-flex py-2" type="search" placeholder="Buscar productos" aria-label="Search">
+                                <input name="query" id="search" class="form-control d-flex py-2" type="search" placeholder="@Localizer["Search"]" aria-label="Search">
                                 <button class="btn btn-light d-flex border" type="submit"><i class="bi bi-search text-dark "></i></button>
                             </div>
                         </form>
@@ -46,13 +46,13 @@
                             <ul class="navbar-nav d-flex">
                                 <li class="nav-item dropdown">
                                     <a class="nav-link text-light d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-person-circle text-white fs-4 m-2"></i> <p class="d-inline m-0 text-nowrap">Mi Cuenta</p>
+                                        <i class="bi bi-person-circle text-white fs-4 m-2"></i> <p class="d-inline m-0 text-nowrap">@Localizer["My Account"]</p>
                                     </a>
                                     <ul class="dropdown-menu fadein100">
-                                        <li><a class="dropdown-item" href="/Compras">Mis Compras</a></li>
-                                        <li><a class="dropdown-item" href="/Reviews">Mis Reviews</a></li>
-                                        <li><a class="dropdown-item" href="/Favoritos">Favoritos</a></li>
-                                        <li style="border-top:solid 1px lightgray;"><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Cerrar Sesion</a></li>
+                                        <li><a class="dropdown-item" href="/Compras">@Localizer["My Purchases"]</a></li>
+                                        <li><a class="dropdown-item" href="/Reviews">@Localizer["My Reviews"]</a></li>
+                                        <li><a class="dropdown-item" href="/Favoritos">@Localizer["WishList"]</a></li>
+                                        <li style="border-top:solid 1px lightgray;"><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">@Localizer["Sign out"]</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -60,9 +60,9 @@
                         }
                         else
                         {
-                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" href="/Register">Crea una cuenta</a>
+                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" href="/Register">@Localizer["Register"]</a>
 
-                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" asp-controller="Auth" asp-action="Login">Iniciar Sesion</a>
+                            <a class="my-auto text-nowrap text-light me-4 text-decoration-none" asp-controller="Auth" asp-action="Login">@Localizer["Sign in"]</a>
 
                         }
 
@@ -71,12 +71,16 @@
                         <ul class="ms-auto ms-lg-0 navbar-nav d-flex" onclick="window.location.href='/checkout'">
                             <li class="nav-item dropdown">
                                 <a class="nav-link d-flex flex-nowrap" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <p class="d-inline text-white my-auto d-lg-none">Carrito</p>
+                                    <p class="d-inline text-white my-auto d-lg-none">@Localizer["Cart"]</p>
                                     <i class="bi bi-cart-fill text-white fs-4 m-2" style="color:white;"></i>
                                     <p class="d-inline fw-bold text-white">@Context.Session.GetString("cartItems")</p>
                                 </a>
                             </li>
                         </ul>
+
+                        <div class="ms-auto align-content-center">
+                            @await Html.PartialAsync("_SelectLanguagePartial")
+                        </div>
                     </div>
 
                 </div>
@@ -90,10 +94,10 @@
                         <li>
                             <ul id="barra" class="list-unstyled navbar-nav collapse d-lg-flex">
                                 <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="/Contacto">Contacto</a>
+                                    <a class="text-light text-decoration-none" href="/Contacto">@Localizer["Contact"]</a>
                                 </li>
                                 <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="/Nosotros">Nosotros</a>
+                                    <a class="text-light text-decoration-none" href="/Nosotros">@Localizer["Us"]</a>
                                 </li>
                                 <li class="me-4">
                                     <a class="text-light text-decoration-none" href="/Faq">FAQ</a>
