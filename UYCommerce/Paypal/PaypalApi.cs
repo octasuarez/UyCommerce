@@ -22,7 +22,6 @@ namespace UYCommerce.Paypal
             this.baseUrl = baseUrl;
         }
 
-        //Genera un token para las llamadas a la api de Paypal
         public async Task<string?> GenerateAccessToken()
         {
             string? auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{secretKey}"));
@@ -56,41 +55,20 @@ namespace UYCommerce.Paypal
             return null;
         }
 
-
-
-        //Crea una orden en Paypal
-        public async Task<CreateOrderResponse?> CreateOrder(ICollection<ProductoCarrito>? productosAComprar, string? total)
+        
+        public async Task<CreateOrderResponse?> CreateOrder(ICollection<ProductoCarrito>? products, string? total)
         {
+
+            if (products is null)
+                return null;
 
             var token = await GenerateAccessToken();
 
             var url = $"{baseUrl}/v2/checkout/orders";
 
-            //creamos una lista de items con los productos del carrito del cliente
-            var items = new List<Item>();
+            List<Item> items = CreateItems(products);
 
-            if (productosAComprar is not null)
-            {
-
-                foreach (var pC in productosAComprar)
-                {
-                    items.Add(new Item
-                    {
-                        name = pC.Sku!.Key,
-                        quantity = pC!.Cantidad.ToString(),
-                        unit_amount = new Amount
-                        {
-                            value = pC.Sku?.Precio.ToString(),
-                            currency_code = "USD"
-                        },
-                        sku = pC!.SkuId.ToString()
-                    });
-                }
-            }
-
-
-            //Creamos el request con un Purchase Unit que tiene los Items de compra del cliente.
-            var request = new CreateOrderRequest
+            var requestBody = new CreateOrderRequest
             {
 
                 intent = "CAPTURE",
@@ -116,16 +94,28 @@ namespace UYCommerce.Paypal
                 }
             };
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(url),
+                Method = HttpMethod.Post,
+                Headers =
+                {
+                    Authorization = new AuthenticationHeaderValue("Bearer", token),
+                },
+                Content = JsonContent.Create(requestBody),
+            };
 
-            HttpResponseMessage response = await client.PostAsJsonAsync(new Uri(url), request);
+            request.Headers.Add("Prefer", "return=representation");
+            request.Headers.Add("PayPal-Request-Id", Guid.NewGuid().ToString());
 
-            var jsonString = response.Content.ReadAsStringAsync().Result;
+            HttpResponseMessage? httpResponse = await client.SendAsync(request);
+
+            var jsonString = httpResponse.Content.ReadAsStringAsync().Result;
 
             CreateOrderResponse? createOrderResponse = JsonSerializer.Deserialize<CreateOrderResponse>(jsonString);
 
 
-            if (response.IsSuccessStatusCode)
+            if (httpResponse.IsSuccessStatusCode)
             {
                 return createOrderResponse;
             }
@@ -134,7 +124,6 @@ namespace UYCommerce.Paypal
         }
 
 
-        //Funcion para capturar la orden
         public async Task<CaptureOrderResponse?> CaptureOrder(string? orderID)
         {
             var token = await GenerateAccessToken();
@@ -168,11 +157,33 @@ namespace UYCommerce.Paypal
             return response;
 
         }
+
+        private static List<Item> CreateItems(ICollection<ProductoCarrito> products)
+        {
+
+            var items = new List<Item>();
+
+            foreach (var p in products)
+            {
+                items.Add(new Item
+                {
+                    name = p.Sku!.Key,
+                    quantity = p!.Cantidad.ToString(),
+                    unit_amount = new Amount
+                    {
+                        currency_code = "USD",
+                        value = p.Sku?.Precio.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                    },
+                    sku = p!.SkuId.ToString()
+                });
+            }
+
+            return items;
+
+        }
     }
 }
 
-
-//Classes for requests and responses of the api
 
 public sealed class TokenResponse
 {
@@ -326,7 +337,8 @@ public class Payer
     public Address? address { get; set; }
 }
 
-public class Shipping {
+public class Shipping
+{
 
     public Address? address { get; set; }
 }

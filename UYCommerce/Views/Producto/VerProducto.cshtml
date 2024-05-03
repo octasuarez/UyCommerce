@@ -1,7 +1,6 @@
 ﻿@model VerProductoVM
 
 <body>
-
     <div class="container-lg-fluid p-3 col-lg-10 mx-lg-auto">
 
         @*Breadcrumb*@
@@ -20,12 +19,14 @@
                     <li class="breadcrumb-item" aria-current="page">
                         <a class="link-body-emphasis fw-semibold text-decoration-none"
                            href="/c/@Model.Categoria.CategoriaPadre.Nombre">
-                        @Localizer[Model.Categoria.CategoriaPadre.Nombre!]</a>
+                            @Localizer[Model.Categoria.CategoriaPadre.Nombre!]
+                        </a>
                     </li>
                     <li class="breadcrumb-item" aria-current="page">
                         <a class="link-body-emphasis fw-semibold text-decoration-none"
                            href="/c/@Model.Categoria.Nombre">
-                        @Localizer[Model.Categoria.Nombre!]</a>
+                            @Localizer[Model.Categoria.Nombre!]
+                        </a>
                     </li>
                 }
                 else if (Model.Categoria != null)
@@ -163,10 +164,11 @@
                             <div class="mb-3 mx-auto">
                                 <p class="text-success mb-0">@Localizer["In Stock"]</p>
                                 <p class="d-inline">@Localizer["Quantity:"]</p>
+
                                 <select id="qty" class="d-inline">
                                     @for (int i = 1; i < Model.Sku.Stock + 1; i++)
                                     {
-                                        <option value="@i">@i</option>
+                                        <option value=@i>@i</option>
                                     }
                                 </select>
                             </div>
@@ -226,7 +228,8 @@
             <h3 class="text-center">Preguntas</h3>
 
             <h5 id="pcount" data-count=@Model.Sku?.Producto?.Preguntas!.Count>
-            @Model.Sku?.Producto?.Preguntas?.Count @Localizer["Questions"]</h5>
+                @Model.Sku?.Producto?.Preguntas?.Count @Localizer["Questions"]
+            </h5>
 
             <div class="row mb-4 mt-3">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -234,13 +237,15 @@
                     <input id="txtPregunta" type="text" placeholder="@Localizer["Write a question"]"
                            class="form-control form-control-lg w-50 me-2" />
                     <button onclick="AgregarPregunta()" class="btn btn-primary col-auto"
-                            style="width:110px;">@Localizer["Submit"]</button>
+                            style="width:110px;">
+                        @Localizer["Submit"]
+                    </button>
                 }
                 else
                 {
-                    <input disabled id="txtPregunta"  type="text" placeholder="@Localizer["Write a question"]"
+                    <input disabled id="txtPregunta" type="text" placeholder="@Localizer["Write a question"]"
                            title="Sign in to ask a question"
-                           class="form-control form-control-lg w-50 me-2"/>
+                           class="form-control form-control-lg w-50 me-2" />
                     <button disabled onclick="AgregarPregunta()" class="btn btn-primary col-auto">@Localizer["Submit"]</button>
                 }
             </div>
@@ -408,6 +413,7 @@
 
         if ("@Model.Sku" != null) {
 
+            let qty = document.getElementById("qty");
 
             let loading =
                 `<div class="overlay">
@@ -423,15 +429,11 @@
             detalles.innerHTML += loading;
 
 
-            let formData = {
-                skuId: e.value,
-                quantity: document.getElementById('qty').value
-            }
-            console.log(formData)
+
             $.ajax({
                 type: 'POST',
-                url: '@Url.Action("AgregarProductoAlCarrito", "Carrito")',
-                data: formData,
+                url: "/Carrito/AgregarProductoAlCarrito",
+                data: { skuId: e.value, quantity: qty.value},
                 success: function (response) {
                     location.reload();
                 }

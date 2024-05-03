@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <script src="https://www.paypal.com/sdk/js?client-id=Ab3oHLrxl1Go9442dLDXSZTUtPQC-HPiO5LAPZrDvSFxu2ONgG8pjKmpUcq7goOJRUVp7VaXPWJ_svGU"></script>
+
 
     <div class="container-fluid" style="background-color: whitesmoke; position: relative;">
 
@@ -20,7 +22,6 @@
             </div>
         </div>
 
-        <script src="https://www.paypal.com/sdk/js?client-id=Ab3oHLrxl1Go9442dLDXSZTUtPQC-HPiO5LAPZrDvSFxu2ONgG8pjKmpUcq7goOJRUVp7VaXPWJ_svGU"></script>
 
         <div class="container d-flex flex-column" style="min-height:900px;">
 
@@ -60,7 +61,7 @@
                                             <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)" style="color: green;">+</button>
                                         </div>
                                         <button data-value="@p.SkuId" onclick="EliminarProductoCarrito(this)" class="btn">
-                                        <i class="bi bi-trash3 fs-5" style="color:gray;"></i>
+                                            <i class="bi bi-trash3 fs-5" style="color:gray;"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -92,93 +93,100 @@
                     <div class="border mx-3 my-3"></div>
                     <h3 class="text-center fw-bold">@Localizer["Pay"]</h3>
                     <div class="p-3" id="paypal-button-container"></div>
+
+                    <p id="result-message"></p>
                 </div>
 
-                <p id="result-message"></p>
             </div>
 
         </div>
 
     </div>
 
-    <script>$(window).load(function () {
-            $('#loading').hide();
-        });</script>
+    <script>
+    
+            paypal.Buttons({
+                async createOrder() {
+                    try {
+                        const response = await fetch("/create-paypal-order", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
 
-    <script>paypal.Buttons({
-            async createOrder() {
-                try {
-                    const response = await fetch("/create-paypal-order", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
+                        const orderData = await response.json();
 
-                    const orderData = await response.json();
+                        if (orderData.id) {
+                            return orderData.id;
+                        } else {
+                            const errorDetail = orderData?.details?.[0];
+                            const errorMessage = errorDetail
+                                ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+                                : JSON.stringify(orderData);
 
-                    if (orderData.id) {
-                        return orderData.id;
-                    } else {
+                            throw new Error(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+                    }
+                }, async onApprove(data, actions) {
+                    try {
+                        const response = await fetch(`/orders/${data.orderID}/capture`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+
+                        const orderData = await response.json();
+
+                        console.log(orderData?.details?.[0]);
+
                         const errorDetail = orderData?.details?.[0];
-                        const errorMessage = errorDetail
-                            ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
-                            : JSON.stringify(orderData);
 
-                        throw new Error(errorMessage);
-                    }
-                } catch (error) {
-                    console.error(error);
-                    resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
-                }
-            },
-            async onApprove(data, actions) {
-                try {
-                    const response = await fetch(`/orders/${data.orderID}/capture`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
+                        if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+                            return actions.restart();
+                        } else if (errorDetail) {
+                            resultMessage("No se pudo completar la transaccion" + errorDetail)
+                        } else if (!orderData.purchase_units) {
+                            throw new Error(JSON.stringify(orderData));
+                        } else {
+                            // (3) Successful transaction
+                            console.log(
+                                "Capture result",
+                                orderData,
+                                JSON.stringify(orderData, null, 2),
+                            );
 
-                    const orderData = await response.json();
-
-                    console.log(orderData?.details?.[0]);
-
-                    const errorDetail = orderData?.details?.[0];
-
-                    if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
-                        // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                        // recoverable state, per https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
-                        return actions.restart();
-                    } else if (errorDetail) {
-                        resultMessage("No se pudo completar la transaccion")
-                    } else if (!orderData.purchase_units) {
-                        throw new Error(JSON.stringify(orderData));
-                    } else {
-                        // (3) Successful transaction
-                        console.log(
-                            "Capture result",
-                            orderData,
-                            JSON.stringify(orderData, null, 2),
+                            window.location.href = `/Compras/${orderData.id}`;
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        resultMessage(
+                            `Sorry, your transaction could not be processed...<br><br>${error}`,
                         );
-
-                        window.location.href = `/Compras/${orderData.id}`;
                     }
-                } catch (error) {
-                    console.error(error);
-                    resultMessage(
-                        `Sorry, your transaction could not be processed...<br><br>${error}`,
-                    );
+                }, onError(err) {
+                    console.log(err);
                 }
-            },
 
-        }).render('#paypal-button-container');
+            }).render('#paypal-button-container')
+
+
 
         function resultMessage(message) {
             const container = document.querySelector("#result-message");
             container.innerHTML = message;
         }</script>
+
+
+    <script>$(window).on('load', function () {
+            $('#loading').hide();
+        });</script>
+
+
 
     <script>
         function ModificarQty(e) {

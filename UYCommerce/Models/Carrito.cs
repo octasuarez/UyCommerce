@@ -9,9 +9,9 @@ namespace UYCommerce.Models
 		public virtual Usuario? Usuario { get; set; }
 
 
-        public double? GetTotal()
+        public double GetTotal()
         {
-			double? total = Productos!.Sum(p => p.Sku!.Precio * p.Cantidad);
+			double total = Productos!.Sum(p => p.Sku!.Precio * p.Cantidad);
 
 			return total;
 		}
