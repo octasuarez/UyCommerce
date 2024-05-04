@@ -67,6 +67,24 @@ namespace UYCommerce.Resources.Views.Usuario {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Agregar al carrito.
+        /// </summary>
+        internal static string Add_to_cart {
+            get {
+                return ResourceManager.GetString("Add to cart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to En carrito.
+        /// </summary>
+        internal static string In_Cart {
+            get {
+                return ResourceManager.GetString("In Cart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No tiene ningun articulo como favorito.
         /// </summary>
         internal static string No_products_added_to_the_WishList_yet_ {

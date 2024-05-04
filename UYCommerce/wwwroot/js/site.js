@@ -11,7 +11,7 @@ function AgregarAFavoritos(e) {
 
     $.ajax({
         type: 'POST',
-        url: '/Producto/AgregarAFavoritos',
+        url: '/Usuario/AgregarAFavoritos',
         dataType: 'json',
         data: { skuId: skuId },
         success: function (response) {

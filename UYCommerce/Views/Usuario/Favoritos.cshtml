@@ -1,4 +1,4 @@
-﻿@model ICollection<Sku>
+﻿@model ICollection<SkuWishlistVM>
 
 <body class="bg-body-tertiary">
 
@@ -11,29 +11,49 @@
                     <h2>@Localizer["Wishlist"]</h2>
                     <p>@Model.Count @Localizer["Products"]</p>
                 </div>
+
                 <ul class="list-unstyled bg-white col-10 mx-auto">
                     @foreach (var s in Model)
                     {
                         <li class="border mx-auto p-2">
-                            <div class="d-lg-flex align-items-center ">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                    </label>
-                                </div>
-
+                            <div class="d-lg-flex ">
                                 <div class="d-inline ms-5">
                                     <img src="~/Imagenes/Productos/@s.Imagenes!.First().ImagenNombre"
                                          style="height:200px;width:200px;"
                                          class="object-fit-contain " />
                                 </div>
 
-                                <div class="d-inline">
-                                    <a class="text-black fs-3" href="/@s.Key"> @s.Key</a>
-                                    <p class="card-text text-center">
-                                        <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
-                                    </p>
+                                <div class="w-100 h-100 ms-3">
+                                    <div class="mb-4 mt-4">
+                                        <a class="text-black fs-3" href="/@s.Key"> @s.Nombre</a>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <p class="card-text text-center fs-4">
+                                                <b class="card-text text-center"> $@s.Precio</b>
+                                                @(s.PrecioAnterior >0 ? Html.Raw($"<strike class=\"card-text\">${@s.PrecioAnterior}</strike>") : "")
+                                            </p>
+                                        </div>
+
+                                        <div class="ms-auto me-3">
+                                            @if (s.IsInCart)
+                                            {
+                                                <button disabled class="btn btn-primary disabled" style="width:8rem;">
+                                                    <i class="bi bi-cart-fill"></i> @Localizer["In Cart"]
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button data-sku-id="@s.Id" class="btn btn-primary add-to-cart">
+                                            <i class="bi bi-cart-fill"></i> @Localizer["Add to cart"]
+                                                </button>
+                                            }
+                                            <button data-sku-id="@s.Id" class="btn btn-danger me-2 delete-btn"><i class="bi bi-trash3"></i></button>
+                                        </div>
+                                    </div>
+
                                 </div>
+
                             </div>
                         </li>
 
@@ -47,4 +67,39 @@
         }
 
     </section>
+
+    <script>document.querySelectorAll('.add-to-cart').forEach((e) => e.addEventListener('click', (e) => {
+
+            console.log(e.target);
+
+            var element = e.currentTarget;
+            $.ajax({
+                url: '/Carrito/AgregarProductoAlCarrito',
+                method: 'post',
+                data: { skuId: element.dataset.skuId, quantity: "1" },
+                success: (response) => {
+                    location.reload();
+                },
+                error: (response) => {
+                    console.log(response);
+                }
+            })
+        }))</script>
+
+    <script>document.querySelectorAll('.delete-btn').forEach((e) => e.addEventListener('click', (e) => {
+
+            var element = e.currentTarget;
+
+            $.ajax({
+                url: '/Usuario/AgregarAFavoritos',
+                method: 'post',
+                data: { skuId: element.dataset.skuId },
+                success: (response) => {
+                    location.reload();
+                },
+                error: (response) => {
+                    console.log(response);
+                }
+            })
+        }))</script>
 </body>

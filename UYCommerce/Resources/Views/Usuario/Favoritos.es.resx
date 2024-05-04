@@ -22,11 +22,11 @@
 	<data name="Wishlist">
 		<value>Favoritos</value>
     </data>
-	<data name="">
-		<value></value>
+	<data name="Add to cart">
+		<value>Agregar al carrito</value>
     </data>
-	<data name="">
-		<value></value>
+	<data name="In Cart">
+		<value>En carrito</value>
     </data>
 	<data name="">
 		<value></value>

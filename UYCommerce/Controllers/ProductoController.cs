@@ -391,7 +391,7 @@ namespace UYCommerce.Controllers
                 var skus = _context.Skus
                     .Where(s => s.ProductoId == sku.ProductoId)
                     .Include(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
-                    .Include(s => s.Producto.Categoria.Productos)!.ThenInclude(p => p.Skus)!.ThenInclude(s => s.Imagenes)
+                    .Include(s => s.Producto!.Categoria!.Productos)!.ThenInclude(p => p.Skus)!.ThenInclude(s => s.Imagenes)
                     .ToList();
 
                 VerProductoVM result = new()
@@ -441,53 +441,7 @@ namespace UYCommerce.Controllers
             return Json(productos);
         }
 
-        [HttpPost]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> AgregarAFavoritos(string skuId)
-        {
-
-            if (User.Identity is null || User.Identity!.IsAuthenticated == false)
-            {
-                return new BadRequestObjectResult("El usuario no esta autenticado");
-            }
-
-            var sku = await _context.Skus.FirstOrDefaultAsync(s => s.Id.ToString() == skuId);
-
-            if (sku is null)
-            {
-                return new BadRequestObjectResult("El producto no fue encontrado");
-            }
-
-            var usuario = await _context.Usuarios.Include(u => u.Favoritos)
-                .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            string msj = "";
-            if (usuario is null)
-            {
-                return new BadRequestObjectResult("El producto no fue encontrado");
-            }
-            else
-            {
-                if (usuario.Favoritos!.Contains(sku))
-                {
-                    usuario.Favoritos.Remove(sku);
-                    msj = "eliminado";
-                }
-                else
-                {
-                    usuario.Favoritos.Add(sku);
-                    msj = "agregado";
-
-                }
-
-            }
-
-            _context.Update(usuario);
-            await _context.SaveChangesAsync();
-
-            return Json(new { msj });
-
-        }
+        
 
         [HttpPost]
         [Authorize(Policy = "Admin")]

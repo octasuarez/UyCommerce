@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,19 @@ namespace UYCommerce.Controllers
             _emailService = emailService;
         }
 
+        private async Task<Usuario?> GetUserById(int id)
+        {
+
+            var user = await _context.Usuarios
+                .Include(u => u.Carrito).ThenInclude(c => c.Productos)
+                .Include(u => u.Favoritos)!.ThenInclude(f => f.Imagenes)
+                .Include(u => u.Ordenes)
+                .Include(u => u.Preguntas)
+                .Include(u => u.Reviews)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            return user;
+        }
 
         [HttpGet]
         [Route("Compras")]
@@ -65,14 +79,29 @@ namespace UYCommerce.Controllers
         [Route("Favoritos")]
         public async Task<IActionResult> GetFavoritos()
         {
-            var usuario = await _context.Usuarios
-                .Include(u => u.Favoritos)!
-                .Include(u => u.Favoritos)!.ThenInclude(s => s.Imagenes)!
-                .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (usuario is null) { return View("~/Login"); }
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var user = await GetUserById(userId);
 
-            return View("Favoritos", usuario!.Favoritos);
+            if (user is null || user.Favoritos is null)
+                return BadRequest();
+
+            List<SkuWishlistVM> wishlist = new();
+
+            wishlist = user.Favoritos.Select(f => new SkuWishlistVM
+            {
+                Id = f.Id,
+                Key = f.Key,
+                Imagenes = f.Imagenes,
+                Nombre = f.Nombre,
+                Precio = f.Precio,
+                PrecioAnterior = f.PrecioAnterior,
+                Stock = f.Stock,
+                AtributosValores = f.AtributosValores,
+                IsInCart = user.Carrito.Productos!.FirstOrDefault(p => p.SkuId == f.Id) is not null
+            }).ToList();
+
+            return View("Favoritos", wishlist);
         }
 
         [HttpPost]
@@ -193,6 +222,48 @@ namespace UYCommerce.Controllers
             }
 
             return BadRequest("error");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AgregarAFavoritos(string skuId)
+        {
+
+            var sku = await _context.Skus.FirstOrDefaultAsync(s => s.Id.ToString() == skuId);
+
+            if (sku is null)
+            {
+                return new BadRequestObjectResult("El producto no fue encontrado");
+            }
+
+            var usuario = await _context.Usuarios.Include(u => u.Favoritos)
+                .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            string msj = "";
+            if (usuario is null)
+            {
+                return new BadRequestObjectResult("El producto no fue encontrado");
+            }
+            else
+            {
+                if (usuario.Favoritos!.Contains(sku))
+                {
+                    usuario.Favoritos.Remove(sku);
+                    msj = "eliminado";
+                }
+                else
+                {
+                    usuario.Favoritos.Add(sku);
+                    msj = "agregado";
+
+                }
+
+            }
+
+            _context.Update(usuario);
+            await _context.SaveChangesAsync();
+
+            return Json(new { msj });
+
         }
     }
 }
