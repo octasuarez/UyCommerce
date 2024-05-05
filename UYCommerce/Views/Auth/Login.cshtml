@@ -13,9 +13,11 @@
                 <h1 class="mx-auto fw-semibold">@Localizer["Sign in"]</h1>
                 <div class="card-body">
 
-                    <form method="post" asp-controller="Auth" asp-action="Login">
+                    <form method="post" asp-controller="Auth" asp-action="Login" autocomplete="on">
                         <div class="form-floating mb-3">
-                            <input asp-for="Email" type="email" class="form-control" id="email" name="Email" placeholder="" style="box-shadow:none;">
+                            <input asp-for="Email" type="email" name="Email"
+                                   class="form-control" id="email"  placeholder="" style="box-shadow:none;"
+                                   autocomplete="on">
                             <label for="email">Email</label>
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
@@ -34,8 +36,8 @@
                         </div>
                         <div class="d-flex mb-3">
                             <div class="form-check">
-                                <input asp-for="RememberMe" class="form-check-input" type="checkbox" name="RememberMe" />
-                                <label class="form-check-label" for="form2Example31">@Localizer["Stay logged in"]</label>
+                                <input id="check" asp-for="RememberMe" class="form-check-input" type="checkbox" name="RememberMe" />
+                                <label class="form-check-label" for="check">@Localizer["Stay logged in"]</label>
                             </div>
                             <a href="/RecuperarPwd" class="ms-auto">@Localizer["Remember Password"]</a>
                         </div>

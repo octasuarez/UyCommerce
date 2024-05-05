@@ -225,7 +225,7 @@
         @* Preguntas *@
         <div class="mt-5">
 
-            <h3 class="text-center">Preguntas</h3>
+            <h3 class="text-center">@Localizer["Questions"]</h3>
 
             <h5 id="pcount" data-count=@Model.Sku?.Producto?.Preguntas!.Count>
                 @Model.Sku?.Producto?.Preguntas?.Count @Localizer["Questions"]
@@ -329,7 +329,7 @@
                         <div class="scroll-images">
                             @foreach (var s in Model.ProductosRelacionados!)
                             {
-                                <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child" style="height:600px;min-width: 380px;">
+                                <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child" style="height:600px;width: 380px;min-width:380px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
                                         @if (Model.Favoritos is not null && Model.Favoritos.Contains(s))
                                         {

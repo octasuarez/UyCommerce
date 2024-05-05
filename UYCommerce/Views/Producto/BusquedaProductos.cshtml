@@ -96,23 +96,22 @@
                     </ul>
 
 
-                    @if (Model.Categoria != null && Model.Categoria.Atributos != null && Model.Categoria.Atributos.Any())
+                    @if (Model.Categoria is not null && Model.Filtros is not null && Model.Filtros.Any())
                     {
                         <h4 class="fw-bold mb-4">@Localizer["Filters"]</h4>
-
                         <ul class="list-unstyled">
-                            @foreach (var a in Model.Categoria.Atributos)
+                            @foreach (var a in Model.Filtros)
                             {
-                                if (Model.Atributos == null || !Model.Atributos.Select(a => a.Key).Contains(a.Nombre?.ToLower()))
+                                if (Model.Atributos == null || !Model.Atributos.Any(atr => atr.Key == a.Key.Nombre?.ToLower()))
                                 {
                                     <li class="mb-3">
-                                        <p class="fs-5 fw-semibold">@a.Nombre</p>
+                                        <p class="fs-5 fw-semibold">@a.Key.Nombre</p>
                                         <ul class="list-unstyled">
 
-                                            @foreach (var v in a.Valores!)
+                                            @foreach (var v in a)
                                             {
                                                 <li class="atributo">
-                                                    <a data-value="@a.Nombre-@v.Valor" onclick="AgregarFiltro(this)" class="text-decoration-none text-body">@v.Valor</a>
+                                                    <a data-value="@a.Key.Nombre-@v.Valor" onclick="AgregarFiltro(this)" class="text-decoration-none text-body">@v.Valor</a>
                                                 </li>
                                             }
                                         </ul>

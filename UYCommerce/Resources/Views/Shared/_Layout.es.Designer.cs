@@ -58,6 +58,15 @@ namespace UYCommerce.Resources.Views.Shared {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nosotros.
+        /// </summary>
+        internal static string About_Us {
+            get {
+                return ResourceManager.GetString("About Us", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Carrito.
         /// </summary>
         internal static string Cart {
@@ -144,15 +153,6 @@ namespace UYCommerce.Resources.Views.Shared {
         internal static string Sign_out {
             get {
                 return ResourceManager.GetString("Sign out", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Nosotros.
-        /// </summary>
-        internal static string Us {
-            get {
-                return ResourceManager.GetString("Us", resourceCulture);
             }
         }
         

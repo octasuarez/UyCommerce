@@ -100,6 +100,19 @@ public class HomeController : Controller
         return BadRequest(errors);
     }
 
+    [HttpGet]
+    [Route("About")]
+    public IActionResult About() {
+        return View();
+    }
+
+    [HttpGet]
+    [Route("Faq")]
+    public IActionResult Faq()
+    {
+        return View();
+    }
+
     [HttpPost]
     public IActionResult SetLanguage(string culture, string returnUrl)
     {

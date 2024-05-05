@@ -11,6 +11,7 @@ namespace UYCommerce.Models
 		public List<KeyValuePair<string, string>>? Atributos { get; set; }
 		public decimal NumberOfPages { get; set; }
 		public int Pag { get; set; }
+		public IEnumerable<IGrouping<Atributo, AtributoValor>>? Filtros { get; set; }
     }
 }
 

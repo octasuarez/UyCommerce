@@ -278,13 +278,14 @@ namespace UYCommerce.Controllers
                 {
                     result.Skus = result.Skus.Where(s => atributosValores.All(atr => s.AtributosValores!.Any(av => av.Atributo!.Nombre!.ToLower() == atr.Key && av.Valor!.ToLower() == atr.Value))).ToList();
                     result.Atributos = atributosValores;
+                    result.Filtros = result.Skus.SelectMany(s => s.AtributosValores!).Distinct().GroupBy(s => s.Atributo)!;
                 }
                 else
                 {
+                    result.Filtros = result.Skus.SelectMany(s => s.AtributosValores!).Distinct().GroupBy(s => s.Atributo)!;
                     result.Skus = result.Skus.DistinctBy(s => s.ProductoId).ToList();
                 }
 
-                //paginacion
                 result.NumberOfPages = decimal.Divide(result.Skus.Count, qty);
                 var numPag = pag > 0 ? pag - 1 : 0;
 
@@ -298,6 +299,7 @@ namespace UYCommerce.Controllers
                 result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
 
                 result.Pag = numPag + 1;
+
 
                 return View("BusquedaProductos", result);
             }

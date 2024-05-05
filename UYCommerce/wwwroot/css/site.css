@@ -389,7 +389,7 @@ button.accept-policy {
 .scroll-images {
     position: relative;
 /*    width: 1000px;*/
-    padding: 40px 0px;
+    padding: 40px 20px;
     height: auto;
     display: flex;
     flex-wrap: nowrap;
@@ -414,17 +414,6 @@ button.accept-policy {
     
 }
 
-/*    .child img, .child > svg {
-        position: absolute;
-        margin-top: -195px;
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        object-position: center;
-        border-radius: 50%;
-        background: #03A9F4;
-    }*/
-
 .scroll-images::-webkit-scrollbar {
     width: 5px;
     height: 8px;
@@ -440,5 +429,7 @@ button.accept-policy {
     border: none;
     outline: none;
     cursor: pointer;
-    font-size: 25px;
+    font-size: 40px;
+    z-index: 1000;
+    width:0%;
 }

@@ -45,7 +45,7 @@
                                      style="height:150px;width:150px;" />
 
                                 <div class="d-flex flex-column col-8 ps-3">
-                                    <a href="/@p.Sku.Key" class="text-dark fs-4">@p.Sku.Nombre</a>
+                                    <a href="/@p.Sku!.Key" class="text-dark fs-4">@p.Sku.Nombre</a>
                                     <div class="d-flex">
 
                                         @foreach (var a in p.Sku.AtributosValores!)
@@ -83,7 +83,7 @@
                             {
                                 <li class="px-3 py-1 fs-5 d-flex">
                                     <p> @p.Sku!.Nombre x @p.Cantidad</p>
-                                    <p class="ms-auto fw-bold">$@(p.Sku.Precio * p.Cantidad)</p>
+                                    <p class="ms-auto fw-bold">$@p.GetTotalString()</p>
                                 </li>
                             }
                         </ul>
