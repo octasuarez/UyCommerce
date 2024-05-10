@@ -262,10 +262,11 @@ namespace UYCommerce.Controllers
         {
             BusquedaProductoVM result = new()
             {
-                Categoria = _context.Categorias
-                .Include(c => c.CategoriaPadre)
+                Categoria = await _context.Categorias
+                .Include(c => c.CategoriaPadre).ThenInclude(p => p!.SubCategorias!)
                 .Include(c => c.Atributos)!.ThenInclude(a => a.Valores)
-                .Include(c => c.SubCategorias).FirstOrDefault(c => c.Nombre!.ToLower() == categoria.ToLower()),
+                .Include(c => c.SubCategorias)
+                .FirstOrDefaultAsync(c => c.Nombre!.ToLower() == categoria.ToLower())
             };
 
             if (result.Categoria is not null)
@@ -293,13 +294,12 @@ namespace UYCommerce.Controllers
                     result.Skus = OrdenarSkus(result.Skus, orden);
 
                 result.Skus = result.Skus.Skip(numPag * qty).Take(qty).ToList();
-
-                result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
-
+                result.Categorias = await _context.Categorias.Where(c => c.MostrarEnInicio).Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
                 result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
-
                 result.Pag = numPag + 1;
-
+                result.SubCategorias = result.Categoria.SubCategorias!.Any() ?
+                    result.Categoria.SubCategorias?.OrderBy(c=> c.Id).ToList() :
+                    result.Categoria.CategoriaPadre?.SubCategorias?.OrderBy(c => c.Id).ToList();
 
                 return View("BusquedaProductos", result);
             }

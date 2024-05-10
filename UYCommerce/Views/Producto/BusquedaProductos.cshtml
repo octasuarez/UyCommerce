@@ -65,31 +65,31 @@
                         @foreach (var c in Model.Categorias!)
                         {
                             <li class="mb-2">
-                                @if (Model.Categoria != null && c.Id == Model.Categoria.Id)
+                                @if (Model.Categoria is not null)
                                 {
-                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-info">@Localizer[c.Nombre!]</a>
-                                    <div class="ps-3 mt-3">
-                                        <ul class="list-unstyled">
-                                            @foreach (var sc in Model.Categoria.SubCategorias!)
-                                            {
-                                                <li class="mb-3">
-                                                    @if (sc.Id == Model.Categoria.Id)
-                                                    {
-                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-info">@Localizer[sc.Nombre!]</a>
-                                                    }
-                                                    else
-                                                    {
-                                                        <a href="/c/@sc.Nombre" class="fs-5 text-decoration-none text-body">@Localizer[sc.Nombre!]</a>
-                                                    }
-                                                </li>
-                                            }
 
-                                        </ul>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-body">@Localizer[c.Nombre!]</a>
+                                    <a href="/c/@c.Nombre"
+                                       class="fs-5 text-decoration-none @(Model.Categoria.Id == c.Id ? Html.Raw("text-info") : "text-body")">
+                                        @Localizer[c.Nombre!]
+                                    </a>
+
+                                    if (c.Id == Model.Categoria.Id || c.Id == Model.Categoria.CategoriaPadre?.Id)
+                                    {
+
+                                        <div class="ps-3 mt-3">
+                                            <ul class="list-unstyled">
+                                                @foreach (var sc in Model.SubCategorias!)
+                                                {
+                                                    <li class="mb-3">
+                                                        <a href="/c/@sc.Nombre"
+                                                           class="fs-5 text-decoration-none @(Model.Categoria.Id == sc.Id ? Html.Raw("text-info") : "text-body")">
+                                                            @Localizer[sc.Nombre!]
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
                                 }
                             </li>
                         }
