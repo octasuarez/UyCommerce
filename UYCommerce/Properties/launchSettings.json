@@ -35,5 +35,13 @@
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
       }
     }
+  },
+  "EmailConfiguration": {
+    "SmtpServer": "smtp.gmail.com",
+    "Port": 587,
+    "From": "octasuarezp@gmail.com",
+    "Username": "Octavio Suarez",
+    "Password": "",
+    "EnableSsl": true
   }
 }

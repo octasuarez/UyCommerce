@@ -1,16 +1,14 @@
 ﻿
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using UYCommerce;
-using UYCommerce.Controllers;
 using UYCommerce.Data;
 using UYCommerce.Paypal;
 using UYCommerce.Services;
+using UyCommerce.Infrastructure;
+using UyCommerce.Infrastructure.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,10 +39,10 @@ builder.Services.AddSession(options =>
 });
 
 //email config
-var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<UyCommerce.Infrastructure.Services.Email.EmailConfiguration>();
 
 builder.Services.AddSingleton(emailConfig!);
-builder.Services.AddSingleton<IEmailService, EmailService>();
+builder.Services.AddSingleton<UyCommerce.Infrastructure.Services.Email.IEmailService, UyCommerce.Infrastructure.Services.Email.EmailService>();
 builder.Services.AddSingleton<IFileService, FileService>();
 
 //paypal settings
@@ -60,9 +58,13 @@ new PaypalAPI(
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 
-builder.Services.AddDbContext<ShopContext>(options => options.UseMySql(
-    builder.Configuration.GetConnectionString("Default"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default")))
-    );
+//var connectionString = builder.Configuration.GetConnectionString("Default");
+
+//builder.Services.AddDbContext<ShopContext>(options => options.UseMySql(
+//    connectionString, ServerVersion.AutoDetect(connectionString))
+//    );
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -116,7 +118,7 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var ServiceProvider = scope.ServiceProvider;
-    DbInitializer.Initialize(ServiceProvider);
+    UyCommerce.Infrastructure.Persistance.DbInitializer.Initialize(ServiceProvider);
 }
 
 app.MapRazorPages();

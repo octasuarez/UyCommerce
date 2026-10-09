@@ -3,10 +3,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UYCommerce.Data;
 using UYCommerce.DTOs;
-using UYCommerce.Models;
-using UYCommerce.Services;
+using UyCommerce.Domain.Entities;
+//using UYCommerce.Services;
+using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Infrastructure.Services.Email;
 
 namespace UYCommerce.Controllers;
 

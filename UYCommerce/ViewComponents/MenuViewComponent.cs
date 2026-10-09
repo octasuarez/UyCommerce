@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UYCommerce.Data;
+using UyCommerce.Infrastructure.Persistance;
 
 namespace UYCommerce.ViewComponents
 {
