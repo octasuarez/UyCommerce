@@ -13,10 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Asn1.Cms;
-using UYCommerce.Data;
-using UYCommerce.DTOs;
-using UYCommerce.Models;
-using UYCommerce.Services;
+using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Application.DTOs;
+using UyCommerce.Domain.Entities;
+using UyCommerce.Infrastructure.Services.Files;
 using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers

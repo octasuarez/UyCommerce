@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using UYCommerce.Models;
+using UyCommerce.Domain.Entities;
 
 namespace UYCommerce.Data
 {

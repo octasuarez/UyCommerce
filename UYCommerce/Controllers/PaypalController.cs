@@ -5,15 +5,14 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using UYCommerce.Models;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using UYCommerce.Paypal;
-using UYCommerce.Data;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using UyCommerce.Domain.Entities;
+using UyCommerce.Infrastructure.Services.Paypal;
+using UyCommerce.Infrastructure.Persistance;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LoginAndRegister.Controllers
 {
@@ -30,7 +29,6 @@ namespace LoginAndRegister.Controllers
 
         }
 
-        //Crea una orden en Paypal
         [HttpPost]
         [Route("/create-paypal-order")]
         public async Task<IActionResult> CreateOrder()
@@ -65,7 +63,6 @@ namespace LoginAndRegister.Controllers
 
         }
 
-        //Captura la orden del cliente
         [HttpPost]
         [Route("/orders/{orderID}/capture")]
         public async Task<IActionResult> CaptureOrder(string? orderID)

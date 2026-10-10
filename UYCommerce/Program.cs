@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using UYCommerce.Data;
-using UYCommerce.Paypal;
-using UYCommerce.Services;
+using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Infrastructure.Services.Paypal;
 using UyCommerce.Infrastructure;
 using UyCommerce.Infrastructure.Services.Email;
+using UyCommerce.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +43,6 @@ var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<UyC
 
 builder.Services.AddSingleton(emailConfig!);
 builder.Services.AddSingleton<UyCommerce.Infrastructure.Services.Email.IEmailService, UyCommerce.Infrastructure.Services.Email.EmailService>();
-builder.Services.AddSingleton<IFileService, FileService>();
 
 //paypal settings
 builder.Services.AddSingleton(x =>
@@ -58,13 +57,10 @@ new PaypalAPI(
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 
-//var connectionString = builder.Configuration.GetConnectionString("Default");
 
-//builder.Services.AddDbContext<ShopContext>(options => options.UseMySql(
-//    connectionString, ServerVersion.AutoDetect(connectionString))
-//    );
-
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApplicationServices();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

@@ -9,6 +9,12 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <Compile Remove="APIs\**" />
+    <Content Remove="APIs\**" />
+    <EmbeddedResource Remove="APIs\**" />
+    <None Remove="APIs\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Data\" />
     <None Remove="APIs\" />
     <None Remove="Views\Producto\" />
@@ -38,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="APIs\" />
     <Folder Include="Views\Producto\" />
     <Folder Include="Views\Usuario\" />
     <Folder Include="Views\Admin\" />
@@ -46,13 +51,8 @@
     <Folder Include="Views\Shared\Components\" />
     <Folder Include="Views\Shared\Components\Menu\" />
     <Folder Include="Views\Auth\" />
-    <Folder Include="Paypal\" />
     <Folder Include="Views\Pagos\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Services\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Helpers\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Views\Categoria\" />
     <Folder Include="Resources\" />
     <Folder Include="Resources\Views\" />

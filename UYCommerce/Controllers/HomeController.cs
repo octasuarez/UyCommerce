@@ -3,11 +3,13 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UYCommerce.DTOs;
+using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
-//using UYCommerce.Services;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Services.Email;
+using UyCommerce.Application.Contracts.Persistance;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers;
 
@@ -16,21 +18,28 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly ShopContext _context;
     private readonly IEmailService _emailService;
+    private readonly IProductoService _productoService;
+    private readonly ICategoriaRepository _categoriaRepository;
+    private readonly ICarouselImageRepository _carouselImageRepository;
 
-    public HomeController(ILogger<HomeController> logger, ShopContext context, IEmailService emailService)
+    public HomeController(ILogger<HomeController> logger,
+        ShopContext context,
+        IProductoService productoService,
+        ICategoriaRepository categoriaRepository,
+        ICarouselImageRepository carouselImageRepository,
+        IEmailService emailService)
     {
         _logger = logger;
         _context = context;
         _emailService = emailService;
+        _productoService = productoService;
+        _categoriaRepository = categoriaRepository;
+        _carouselImageRepository = carouselImageRepository ;
     }
 
     public async Task<IActionResult> Index()
     {
-        var productos = await _context.Productos
-            .Include(p => p.Reviews)
-            .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-            .Where(p => p.Featured == true)
-            .ToListAsync();
+        var productos = await _productoService.GetFeaturedProductsAsync();
 
         var skus = productos
             .OrderByDescending(p => p.GetPuntuacionPromedio())
@@ -39,8 +48,8 @@ public class HomeController : Controller
         HomeVM homeVM = new()
         {
             Skus = skus,
-            Categorias = await _context.Categorias.Where(c => c.MostrarEnInicio == true).ToListAsync(),
-            Carousel = await _context.CarouselImages.ToListAsync()
+            Categorias = await _categoriaRepository.GetCategoriasInicio(),
+            Carousel = await _carouselImageRepository.GetAllAsync()
         };
 
         var usuario = _context.Usuarios.Include(u => u.Favoritos).FirstOrDefault(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));

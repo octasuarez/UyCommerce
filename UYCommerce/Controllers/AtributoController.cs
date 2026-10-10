@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UYCommerce.Data;
-using UYCommerce.DTOs;
-using UYCommerce.Models;
+using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Application.DTOs;
+using UyCommerce.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

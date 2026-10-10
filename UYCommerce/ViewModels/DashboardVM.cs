@@ -1,5 +1,5 @@
 ﻿using System;
-using UYCommerce.Models;
+using UyCommerce.Domain.Entities;
 
 namespace UYCommerce.ViewModels
 {

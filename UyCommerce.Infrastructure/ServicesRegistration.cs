@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Infrastructure.Persistance.Repositories;
+using UyCommerce.Infrastructure.Services.Files;
 
 namespace UyCommerce.Infrastructure
 {
@@ -13,6 +16,12 @@ namespace UyCommerce.Infrastructure
             services.AddDbContext<ShopContext>(options => options.UseMySql(
             connectionString, ServerVersion.AutoDetect(connectionString)));
 
+            services.AddSingleton<IFileService, FileService>();
+            services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            services.AddScoped<IProductoRepository, ProductoRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            services.AddScoped<ICarouselImageRepository, CarouselImageRepository>();
             return services;
         }
     }
