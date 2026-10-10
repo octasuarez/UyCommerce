@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
+using UyCommerce.Application.Services;
 using UyCommerce.Domain.Entities;
+using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Services.Files;
 using UYCommerce.ViewModels;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace UYCommerce.Controllers
 {
@@ -22,14 +23,15 @@ namespace UYCommerce.Controllers
     {
         private readonly ShopContext _context;
         private readonly IFileService _fileService;
+        private readonly IOrdenService _ordenService;
 
-        public AdminController(ShopContext context, IFileService fileService)
+        public AdminController(ShopContext context, IFileService fileService, IOrdenService ordenService)
         {
             _context = context;
             _fileService = fileService;
+            _ordenService = ordenService;
         }
 
-        // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
@@ -38,13 +40,7 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public async Task<IActionResult> Dashboard(DateTime? fchDesde, DateTime? fchHasta)
         {
-
-            fchDesde = fchDesde is null ? DateTime.Now.AddMonths(-4).Date : fchDesde;
-            fchHasta = fchHasta is null ? DateTime.Now.Date : fchHasta;
-
-            var ordenes = await _context.Ordenes
-                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Imagenes)
-                .Where(o => o.FechaDeCompra > fchDesde && o.FechaDeCompra < fchHasta).ToListAsync();
+            var ordenes = await _ordenService.GetOrdenesByDateAsync(fchDesde, fchHasta);
 
             List<PuntoGrafica> puntos = new();
             List<PuntoGrafica> puntosGanacias = new();

@@ -1,14 +1,15 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Security.Claims;
+using UyCommerce.Application.Contracts.Persistance;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
+using UyCommerce.Application.Services;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Services.Email;
-using UyCommerce.Application.Contracts.Persistance;
-using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers;
@@ -16,44 +17,52 @@ namespace UYCommerce.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly ShopContext _context;
     private readonly IEmailService _emailService;
     private readonly IProductoService _productoService;
-    private readonly ICategoriaRepository _categoriaRepository;
-    private readonly ICarouselImageRepository _carouselImageRepository;
+    private readonly IUsuarioService _usuarioService;
+    private readonly ICategoriaService _categoriaService;
+    private readonly IImagesService _imagesService;
 
     public HomeController(ILogger<HomeController> logger,
         ShopContext context,
         IProductoService productoService,
-        ICategoriaRepository categoriaRepository,
-        ICarouselImageRepository carouselImageRepository,
+        IUsuarioService usuarioService,
+        ICategoriaService categoriaService,
+        IImagesService imagesService,
         IEmailService emailService)
     {
         _logger = logger;
-        _context = context;
         _emailService = emailService;
         _productoService = productoService;
-        _categoriaRepository = categoriaRepository;
-        _carouselImageRepository = carouselImageRepository ;
+        _usuarioService = usuarioService;
+        _categoriaService = categoriaService;
+        _imagesService = imagesService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var productos = await _productoService.GetFeaturedProductsAsync();
-
-        var skus = productos
-            .OrderByDescending(p => p.GetPuntuacionPromedio())
-            .Select(p => p.Skus!.First()).ToList();
-
-        HomeVM homeVM = new()
+        HomeVM homeVM = new HomeVM();
+        try
         {
-            Skus = skus,
-            Categorias = await _categoriaRepository.GetCategoriasInicio(),
-            Carousel = await _carouselImageRepository.GetAllAsync()
-        };
+            var productos = await _productoService.GetFeaturedProductsAsync();
 
-        var usuario = _context.Usuarios.Include(u => u.Favoritos).FirstOrDefault(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-        homeVM.Favoritos = usuario?.Favoritos;
+            var skus = productos
+                .OrderByDescending(p => p.GetPuntuacionPromedio())
+                .Select(p => p.Skus!.First()).ToList();
+
+            homeVM.Skus = skus;
+            homeVM.Categorias = await _categoriaService.GetCategoriasAsync();
+            homeVM.Carousel = await _imagesService.GetCarouselImagesAsync();
+
+            if (User.Identity.IsAuthenticated && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+            {
+                var usuario = await _usuarioService.GetUsuarioFavoritosByIdAsync(userId);
+                homeVM.Favoritos = usuario?.Favoritos;
+            }
+        }
+        catch (Exception)
+        {
+        }
 
         return View(homeVM);
     }
@@ -112,7 +121,8 @@ public class HomeController : Controller
 
     [HttpGet]
     [Route("About")]
-    public IActionResult About() {
+    public IActionResult About()
+    {
         return View();
     }
 
