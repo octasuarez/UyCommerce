@@ -37,6 +37,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 
         public async Task<T?> GetByIdAsync(int id)
         {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task<T?> GetByIdNoTrackingAsync(int id)
+        {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             var result = await _context.Set<T>().FindAsync(id);
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;

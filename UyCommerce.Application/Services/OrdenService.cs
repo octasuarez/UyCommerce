@@ -21,7 +21,17 @@ namespace UyCommerce.Application.Services
             startDate = startDate ?? DateTime.Now.AddMonths(-4).Date;
             endDate = endDate?? DateTime.Now.Date;
 
-            return await _ordenRepository.GetOrdenesPorFecha((DateTime)startDate, (DateTime)endDate);
+            return await _ordenRepository.GetOrdenesByDateAsync((DateTime)startDate, (DateTime)endDate);
+        }
+
+        public async Task<List<Orden>> GetOrdenesAsync()
+        {
+            return await _ordenRepository.GetOrdenesAsync();
+        }
+
+        public Task DeleteOrdenAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

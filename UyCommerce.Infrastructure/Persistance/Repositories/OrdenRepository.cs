@@ -12,12 +12,28 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         public OrdenRepository(ShopContext context):base(context)
         {
         }
-        public async Task<List<Orden>> GetOrdenesPorFecha(DateTime startDate, DateTime endDate)
-        {
-            return await _context.Ordenes
-                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Imagenes)
-                .Where(o => o.FechaDeCompra > startDate && o.FechaDeCompra < endDate).ToListAsync();
 
+        public async Task<List<Orden>> GetOrdenesAsync()
+        {
+            return await GetOrdenesQuery().ToListAsync();
+        }
+
+        public async Task<List<Orden>> GetOrdenesByDateAsync(DateTime startDate, DateTime endDate)
+        {
+            return await GetOrdenesQuery()
+                .Where(o => o.FechaDeCompra > startDate && o.FechaDeCompra < endDate)
+                .ToListAsync();
+        }
+
+        private IQueryable<Orden> GetOrdenesQuery()
+        {
+            return  _context.Ordenes
+                .AsNoTracking()
+                .Include(o => o.Direccion)
+                .Include(o => o.Productos)!
+                .ThenInclude(p => p.Sku)
+                .ThenInclude(s => s.Imagenes)
+                .AsQueryable();
         }
     }
 }

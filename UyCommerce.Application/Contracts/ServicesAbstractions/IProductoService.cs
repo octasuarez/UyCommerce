@@ -8,5 +8,6 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
     public interface IProductoService
     {
         Task<List<Producto>> GetFeaturedProductsAsync();
+        Task<List<Producto>> GetProductosCompleteAsync();
     }
 }

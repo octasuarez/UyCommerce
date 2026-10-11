@@ -19,5 +19,10 @@ namespace UyCommerce.Application.Services
         {
             return await _productoRepository.GetFeaturedProductsAsync();
         }
+
+        public async Task<List<Producto>> GetProductosCompleteAsync()
+        {
+            return await _productoRepository.GetProductosCompleteAsync();
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace UyCommerce.Application.Contracts.Persistance
     public interface IProductoRepository : IGenericRepository<Producto>
     {
         Task<List<Producto>> GetFeaturedProductsAsync();
+        Task<List<Producto>> GetProductosCompleteAsync();
     }
 }

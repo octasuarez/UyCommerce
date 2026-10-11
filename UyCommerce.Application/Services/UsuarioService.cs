@@ -17,6 +17,11 @@ namespace UyCommerce.Application.Services
             _usuarioRepository = usuarioRepository;
         }
 
+        public async Task<List<Usuario>> GetUsuariosClientesAsync()
+        {
+            return await _usuarioRepository.GetUsuariosClientesAsync();
+        }
+
         public async Task<Usuario> GetUsuarioFavoritosByIdAsync(int id)
         {
             var usuario = await _usuarioRepository.GetUsuarioAndFavoritos(id);

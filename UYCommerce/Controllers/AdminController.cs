@@ -11,6 +11,7 @@ using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Application.Services;
 using UyCommerce.Domain.Entities;
+using UyCommerce.Domain.Exceptions;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Services.Files;
 using UYCommerce.ViewModels;
@@ -24,12 +25,33 @@ namespace UYCommerce.Controllers
         private readonly ShopContext _context;
         private readonly IFileService _fileService;
         private readonly IOrdenService _ordenService;
+        private readonly IPreguntaService _preguntaService;
+        private readonly IUsuarioService _usuarioService;
+        private readonly IProductoService _productoService;
+        private readonly IReviewService _reviewService;
+        private readonly IAtributoService _atributoService;
+        private readonly IImagesService _imagesService;
 
-        public AdminController(ShopContext context, IFileService fileService, IOrdenService ordenService)
+        public AdminController(ShopContext context,
+            IFileService fileService
+            , IOrdenService ordenService
+            , IPreguntaService preguntaService
+            , IUsuarioService usuarioService
+            , IProductoService productoService
+            , IReviewService reviewService
+            , IAtributoService atributoService
+            , IImagesService imagesService)
         {
             _context = context;
             _fileService = fileService;
             _ordenService = ordenService;
+            _preguntaService = preguntaService;
+            _usuarioService = usuarioService;
+            _productoService = productoService;
+            this._reviewService = reviewService;
+            this._atributoService = atributoService;
+            this._imagesService = imagesService;
+            
         }
 
         public IActionResult Index()
@@ -84,42 +106,18 @@ namespace UYCommerce.Controllers
         [HttpGet("admin/preguntas/{orden?}")]
         public async Task<IActionResult> GetPreguntas(string? orden)
         {
-
-            IQueryable<Pregunta> preguntas = _context.Preguntas
-                .Include(p => p.Usuario)
-                .Include(p => p.Producto).ThenInclude(pr => pr.Imagenes)
-                .Include(p => p.Respuesta);
-
-            if (orden == "sin responder")
-            {
-                preguntas = preguntas.Where(p => p.Respuesta == null);
-            }
-
-            if (orden == "respondidas")
-            {
-                preguntas = preguntas.Where(p => p.Respuesta != null);
-            }
-
+            var filter = orden.Equals("sin responder") ? false : true;
+            var preguntas = await _preguntaService.GetPreguntas(filter);
             ViewBag.selected = orden;
 
-            var resultado = await preguntas.ToListAsync();
-
-            return View("Preguntas", resultado);
+            return View("Preguntas", preguntas);
         }
 
         [HttpGet]
         [Route("admin/clientes")]
         public async Task<IActionResult> GetClientes()
         {
-
-            var clientes = await _context.Usuarios
-                .Include(u => u.Carrito).ThenInclude(c => c.Productos)
-                .Include(u => u.Preguntas)
-                .Include(u => u.Ordenes)
-                .Include(u => u.Reviews)
-                .Where(u => u.Rol!.Nombre == "User")
-                .ToListAsync();
-
+            var clientes = await _usuarioService.GetUsuariosClientesAsync();
             return View(clientes);
         }
 
@@ -128,15 +126,7 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> GetProductos()
         {
 
-            var result = await _context.Productos
-                .Include(p => p.Imagenes)
-                .Include(p => p.Categoria)
-                .Include(p => p.Marca)
-                .Include(p => p.Preguntas)
-                .Include(p => p.Reviews)
-                .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-                .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .ToListAsync();
+            var result = await _productoService.GetProductosCompleteAsync();
             return View(result);
         }
 
@@ -144,13 +134,7 @@ namespace UYCommerce.Controllers
         [Route("admin/atributos")]
         public async Task<IActionResult> GetAtributos()
         {
-
-            var result = await _context.Atributos
-                .Include(a => a.Categorias)
-                .Include(a => a.Productos)
-                .Include(a => a.Valores)
-                .ToListAsync();
-
+            var result = await _atributoService.GetAtributosAsync();
             return View(result);
         }
 
@@ -159,15 +143,8 @@ namespace UYCommerce.Controllers
         [Route("admin/ordenes")]
         public async Task<IActionResult> GetOrdenes()
         {
-
-            var ordenes = await _context.Ordenes
-                .Include(o => o.Productos)!.ThenInclude(p => p.Sku)
-                .Include(o => o.Direccion)
-                .ToListAsync();
-
+            var ordenes = await _ordenService.GetOrdenesAsync();
             List<OrdenVM> result = ordenes.Join(_context.Usuarios, o => o.UsuarioId, u => u.Id, (o, u) => new OrdenVM { Orden = o, Usuario = u }).ToList();
-
-
             return View(result);
         }
 
@@ -175,25 +152,21 @@ namespace UYCommerce.Controllers
         [Route("admin/reviews")]
         public async Task<IActionResult> GetReviews()
         {
-
-            var result = await _context.Reviews
-                .Include(r => r.Usuario)
-                .Include(r => r.Producto).ThenInclude(p => p!.Imagenes)
-                .ToListAsync();
-
+            var result = await _reviewService.GetReviewAsync();
             return View(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> EliminarReview([FromBody] int reviewId)
         {
-
-            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
-
-            if (review is null) return BadRequest("no existe esa review");
-
-            _context.Remove(review);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var review = await _reviewService.DeleteReviewAsync(reviewId);
+            }
+            catch (NotFoundException e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok("Se elimino exitosamente");
         }
@@ -227,9 +200,7 @@ namespace UYCommerce.Controllers
         [Route("admin/carousel")]
         public async Task<IActionResult> Carousel()
         {
-
-            var carouselImages = await _context.CarouselImages.ToListAsync();
-
+            var carouselImages = await _imagesService.GetCarouselImagesAsync();
             return View(carouselImages);
         }
 
