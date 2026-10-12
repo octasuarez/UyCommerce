@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reflection.Emit;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Asn1.Cms;
 using UyCommerce.Infrastructure.Persistance;
-using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
-using UyCommerce.Infrastructure.Services.Files;
-using UYCommerce.ViewModels;
+using UyCommerce.Application.Contracts.Persistance.Services;
 
 namespace UYCommerce.Controllers
 {
@@ -88,7 +75,14 @@ namespace UYCommerce.Controllers
                 await _context.Productos.AddAsync(productoNuevo);
                 await _context.SaveChangesAsync();
 
-                await _fileService.SaveFile(producto.Imagenes!.ToList(), "Imagenes/Productos");
+                foreach (var img in producto.Imagenes)
+                {
+                    if (img != null)
+                    {
+                        using var imgStream = img.OpenReadStream();
+                        await _fileService.SaveFile(img.Name, imgStream, "Imagenes/Productos");
+                    }
+                }
 
                 return Redirect("/admin/productos");
             }
@@ -164,7 +158,17 @@ namespace UYCommerce.Controllers
                     Stock = skuModel.Stock
                 };
 
-                await _fileService.SaveFile(skuModel.Imagenes!.ToList(), "Imagenes/Productos");
+                if (skuModel.Imagenes is not null)
+                {
+                    foreach (var img in skuModel.Imagenes)
+                    {
+                        if (img is not null)
+                        {
+                            using var imgStream = img.OpenReadStream();
+                            await _fileService.SaveFile(img.Name, imgStream, "Imagenes/Productos");
+                        }
+                    }
+                }
 
                 await _context.AddAsync(nuevoSku);
                 await _context.SaveChangesAsync();
@@ -245,7 +249,8 @@ namespace UYCommerce.Controllers
             return View("BusquedaProductos", result);
         }
 
-        private async Task<ICollection<Sku>> GetSkusByQuery(string query) {
+        private async Task<ICollection<Sku>> GetSkusByQuery(string query)
+        {
 
             IQueryable<Producto> productos = GetProductosQueryable();
 
@@ -298,7 +303,7 @@ namespace UYCommerce.Controllers
                 result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
                 result.Pag = numPag + 1;
                 result.SubCategorias = result.Categoria.SubCategorias!.Any() ?
-                    result.Categoria.SubCategorias?.OrderBy(c=> c.Id).ToList() :
+                    result.Categoria.SubCategorias?.OrderBy(c => c.Id).ToList() :
                     result.Categoria.CategoriaPadre?.SubCategorias?.OrderBy(c => c.Id).ToList();
 
                 return View("BusquedaProductos", result);
@@ -443,7 +448,7 @@ namespace UYCommerce.Controllers
             return Json(productos);
         }
 
-        
+
 
         [HttpPost]
         [Authorize(Policy = "Admin")]

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
-using UyCommerce.Infrastructure.Services.Files;
+using UyCommerce.Application.Contracts.Persistance.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -119,7 +119,11 @@ namespace UYCommerce.Controllers
                 await _context.Categorias.AddAsync(nuevaCategoria);
                 await _context.SaveChangesAsync();
 
-                await _fileService.SaveFile(new List<IFormFile>() { categoria.Imagen! }, "Imagenes/Categorias");
+                if (categoria.Imagen != null)
+                {
+                    using var imgStream = categoria.Imagen.OpenReadStream();
+                    await _fileService.SaveFile(categoria.Imagen!.FileName, imgStream, "Imagenes/Categorias");
+                }
 
                 return Redirect("/admin/categorias");
             }
@@ -129,12 +133,13 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Admin")]
-        public async Task<Categoria?> GetCategoriaById(int categoriaId) {
+        public async Task<Categoria?> GetCategoriaById(int categoriaId)
+        {
 
             var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == categoriaId);
             return categoria;
         }
-        
+
 
         [HttpPost]
         [Authorize(Policy = "Admin")]

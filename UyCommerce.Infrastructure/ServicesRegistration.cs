@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UyCommerce.Application.Contracts.Persistance;
+using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Persistance.Repositories;
 using UyCommerce.Infrastructure.Services.Files;

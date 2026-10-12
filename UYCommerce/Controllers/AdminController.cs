@@ -1,19 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
+using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
-using UyCommerce.Application.Services;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 using UyCommerce.Infrastructure.Persistance;
-using UyCommerce.Infrastructure.Services.Files;
 using UYCommerce.ViewModels;
 
 
@@ -51,7 +45,7 @@ namespace UYCommerce.Controllers
             this._reviewService = reviewService;
             this._atributoService = atributoService;
             this._imagesService = imagesService;
-            
+
         }
 
         public IActionResult Index()
@@ -161,14 +155,14 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                var review = await _reviewService.DeleteReviewAsync(reviewId);
+                await _reviewService.DeleteReviewAsync(reviewId);
             }
             catch (NotFoundException e)
             {
-                return BadRequest(e.Message);
+                return NotFound(e.Message);
             }
 
-            return Ok("Se elimino exitosamente");
+            return Ok("Review eliminada exitosamente");
         }
 
         [HttpPost]
@@ -207,29 +201,32 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteCarouselImage(int imageId)
         {
+            try
+            {
+                await _imagesService.DeleteCarouselImage(imageId);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
-            var image = await _context.CarouselImages.FirstOrDefaultAsync(i => i.Id == imageId);
-
-            if (image is null)
-                return BadRequest();
-
-            _context.CarouselImages.Remove(image);
-            await _context.SaveChangesAsync();
-
-            _fileService.DeleteFile(new List<string>() { image.Name }, "Imagenes/Carousel");
-
-            return Ok();
+            return Ok("Imagen borrada existosamente");
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCarouselImage(IFormFile file)
         {
+            if (file is null || file.Length == 0)
+            {
+                return BadRequest("Imagen invalida.");
+            }
 
-            CarouselImage image = new() { Name = file.FileName };
-            _context.CarouselImages.Add(image);
-            await _context.SaveChangesAsync();
-
-            await _fileService.SaveFile(new List<IFormFile>() { file }, "Imagenes/Carousel");
+            using var fileStream = file.OpenReadStream();
+            await _imagesService.AddCarouselImageAsync(file.Name, fileStream);
 
             return Ok();
         }
@@ -247,8 +244,8 @@ namespace UYCommerce.Controllers
 
             _context.Update(image);
             await _context.SaveChangesAsync();
-
-            await _fileService.SaveFile(new List<IFormFile>() { file }, "Imagenes/Carousel");
+            using var imgStream = file.OpenReadStream();
+            await _fileService.SaveFile(file.Name, imgStream , "Imagenes/Carousel");
             _fileService.DeleteFile(new List<string>() { image.Name }, "Imagenes/Carousel");
 
             return Ok();
