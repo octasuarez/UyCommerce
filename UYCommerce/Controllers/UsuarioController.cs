@@ -51,7 +51,7 @@ namespace UYCommerce.Controllers
             List<Orden>? compras = null;
 
             var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            compras = await _context.Ordenes.Where(o => o.UsuarioId == usuarioId)
+            compras = await _context.Ordenes.Where(o => o.Usuario.Id == usuarioId)
                 .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
                 .ToListAsync();
 

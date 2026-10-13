@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
@@ -14,11 +15,12 @@ namespace UyCommerce.Application.Services
     {
         private readonly ICarouselImageRepository _carouselImageRepository;
         private readonly IFileService _fileService;
-
+        private readonly string _carouselImagePath;
         public ImagesService(ICarouselImageRepository carouselImageRepository, IFileService fileService)
         {
             _carouselImageRepository = carouselImageRepository;
             _fileService = fileService;
+            _carouselImagePath = "Imagenes/Carousel";
         }
 
         #region carouselImages
@@ -28,12 +30,8 @@ namespace UyCommerce.Application.Services
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if (!await _fileService.SaveFile(name, stream, "Imagenes/Carousel"))
-            {
-                throw new ArgumentOutOfRangeException(nameof(name));
-            }
-
-            CarouselImage newImage = new CarouselImage() { Name = name };
+            await this.SaveImageFile(name, stream, this._carouselImagePath);
+            CarouselImage newImage = new() { Name = name };
             await _carouselImageRepository.CreateAsync(newImage);
         }
 
@@ -41,7 +39,13 @@ namespace UyCommerce.Application.Services
         {
             var carImage = await _carouselImageRepository.GetByIdAsync(id) ?? throw new NotFoundException(nameof(CarouselImage), id);
             await _carouselImageRepository.DeleteAsync(carImage);
-            _fileService.DeleteFile([carImage.Name], "Imagenes/Carousel");
+            _fileService.DeleteFile([carImage.Name], this._carouselImagePath);
+        }
+
+        public async Task<CarouselImage> GetCarouselImageByIdAsync(int id)
+        {
+            return await _carouselImageRepository.GetByIdAsync(id)
+                ?? throw new NotFoundException(nameof(CarouselImage), id);
         }
 
         public async Task<List<CarouselImage>> GetCarouselImagesAsync()
@@ -49,12 +53,28 @@ namespace UyCommerce.Application.Services
             return await _carouselImageRepository.GetAllAsync();
         }
 
+        public async Task UpdateCarouselImageAsync(int id, string imgName, Stream stream)
+        {
+            var imageDb = await GetCarouselImageByIdAsync(id);
+            string imageToDelete = imageDb.Name.ToString();
+            if (stream.Length <= 0) throw new Exception($"Imagen {imgName} invalida.");
+            await this.SaveImageFile(imgName, stream, this._carouselImagePath);
+            imageDb.Name = imgName;
+            await _carouselImageRepository.UpdateAsync(imageDb);
+            _fileService.DeleteFile([imageToDelete], this._carouselImagePath);
+        }
+
         #endregion carouselImages
 
-        #region categoriaImages
+        #region private methods
+        private async Task SaveImageFile(string imgName, Stream stream, string path)
+        {
+            if (!await _fileService.SaveFile(imgName, stream, path))
+            {
+                throw new ArgumentOutOfRangeException($"No se pudo guardar la imagen {imgName}");
+            }
+        }
+        #endregion private methods
 
-
-
-        #endregion categoriaImages
     }
 }

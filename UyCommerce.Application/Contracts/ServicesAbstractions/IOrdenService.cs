@@ -10,5 +10,6 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<List<Orden>> GetOrdenesByDateAsync(DateTime? startDate, DateTime? endDate);
         Task<List<Orden>> GetOrdenesAsync();
         Task DeleteOrdenAsync();
+        Task<List<Orden>> GetOrdenesUsuariosAsync();
     }
 }

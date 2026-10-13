@@ -14,6 +14,13 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
             
         }
 
+        public async Task<Pregunta?> GetPreguntaByRespuestaId(int respuestaId)
+        {
+            return await _context.Preguntas
+                .Where(p => p.Respuesta != null && p.Respuesta.Id == respuestaId)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<List<Pregunta>> GetPreguntas(bool answered)
         {
             return await _context.Preguntas

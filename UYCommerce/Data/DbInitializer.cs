@@ -630,7 +630,7 @@ namespace UYCommerce.Data
                     {
                         Id = "1",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "Entregado",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -662,7 +662,7 @@ namespace UYCommerce.Data
                     {
                         Id = "2",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "En camino",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -702,7 +702,7 @@ namespace UYCommerce.Data
                     {
                         Id = "3",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "En camino",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -732,7 +732,7 @@ namespace UYCommerce.Data
                     {
                         Id = "4",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "En camino",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -763,7 +763,7 @@ namespace UYCommerce.Data
                     {
                         Id = "5",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "En camino",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -793,7 +793,7 @@ namespace UYCommerce.Data
                     {
                         Id = "6",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "Entregado",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -824,7 +824,7 @@ namespace UYCommerce.Data
                     {
                         Id = "7",
                         NombreComprador = "Juan",
-                        UsuarioId = 1,
+                        Usuario = usuarios[0],
                         Estado = "Entregado",
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
@@ -861,7 +861,7 @@ namespace UYCommerce.Data
                         ProductoId = 1,
                         Puntuacion = 5,
                         Texto = "Excelente!",
-                        UsuarioId = 1
+                        Usuario = usuarios[0]
                     },
                     new Review {
                         ProductoId = 1,
@@ -873,7 +873,7 @@ namespace UYCommerce.Data
                         ProductoId = 2,
                         Puntuacion = 4,
                         Texto = "Bien",
-                        UsuarioId = 1
+                        Usuario = usuarios[0]
                     },
                     new Review {
                         ProductoId = 2,
@@ -885,13 +885,13 @@ namespace UYCommerce.Data
                         ProductoId = 3,
                         Puntuacion = 4,
                         Texto = "No tan rapida pero bien",
-                        UsuarioId = 1
+                        Usuario = usuarios[0]
                     },
                     new Review {
                         ProductoId = 4,
                         Puntuacion = 5,
                         Texto = "Genial para mtb",
-                        UsuarioId = 1
+                        Usuario = usuarios[0]
                     },
                 };
 

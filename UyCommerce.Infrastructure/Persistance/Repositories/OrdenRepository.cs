@@ -25,6 +25,13 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Orden>> GetOrdenesUsuariosAsync()
+        {
+            return await _context.Ordenes
+                .Include(o => o.Usuario)
+                .ToListAsync();
+        }
+
         private IQueryable<Orden> GetOrdenesQuery()
         {
             return  _context.Ordenes

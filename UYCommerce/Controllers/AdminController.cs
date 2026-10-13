@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
-using UyCommerce.Infrastructure.Persistance;
 using UYCommerce.ViewModels;
 
 
@@ -16,7 +14,6 @@ namespace UYCommerce.Controllers
     [Authorize(Policy = "Admin")]
     public class AdminController : Controller
     {
-        private readonly ShopContext _context;
         private readonly IFileService _fileService;
         private readonly IOrdenService _ordenService;
         private readonly IPreguntaService _preguntaService;
@@ -26,7 +23,7 @@ namespace UYCommerce.Controllers
         private readonly IAtributoService _atributoService;
         private readonly IImagesService _imagesService;
 
-        public AdminController(ShopContext context,
+        public AdminController(
             IFileService fileService
             , IOrdenService ordenService
             , IPreguntaService preguntaService
@@ -36,7 +33,6 @@ namespace UYCommerce.Controllers
             , IAtributoService atributoService
             , IImagesService imagesService)
         {
-            _context = context;
             _fileService = fileService;
             _ordenService = ordenService;
             _preguntaService = preguntaService;
@@ -56,42 +52,49 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public async Task<IActionResult> Dashboard(DateTime? fchDesde, DateTime? fchHasta)
         {
+            fchDesde ??= DateTime.Now.AddYears(-1);
+            fchHasta ??= DateTime.Now;
+            List<PuntoGrafica> puntos = [];
+            List<PuntoGrafica> puntosGanacias = [];
+            List<ProductoOrden> productos = [];
             var ordenes = await _ordenService.GetOrdenesByDateAsync(fchDesde, fchHasta);
 
-            List<PuntoGrafica> puntos = new();
-            List<PuntoGrafica> puntosGanacias = new();
-
-            int i = 0;
-            while (fchDesde.Value.AddMonths(i) < fchHasta.Value)
+            if (ordenes != null && ordenes.Count > 0)
             {
-                var fecha = fchDesde.Value.AddMonths(i);
+                productos = [.. ordenes.Where(o => o.Productos != null).SelectMany(o => o.Productos)];
 
-                puntos.Add(new PuntoGrafica
+                int i = 0;
+                DateTime fecha = fchDesde.Value;
+                while (fecha < fchHasta.Value)
                 {
-                    x = DateTimeFormatInfo.CurrentInfo.GetMonthName(fecha.Month) + " " + fecha.Year,
-                    y = ordenes.Where(o => o.FechaDeCompra.Month == fchDesde.Value.AddMonths(i).Month
-                    && o.FechaDeCompra.Year == fecha.Year).SelectMany(o => o.Productos).Count()
-                });
+                    fecha = fchDesde.Value.AddMonths(i);
 
-                puntosGanacias.Add(new PuntoGrafica
-                {
-                    x = DateTimeFormatInfo.CurrentInfo.GetMonthName(fecha.Month) + " " + fecha.Year,
-                    y = (double)ordenes.Where(o => o.FechaDeCompra.Month == fchDesde.Value.AddMonths(i).Month
-                    && o.FechaDeCompra.Year == fecha.Year).Sum(o => o.Total)!
-                });
+                    puntos.Add(new PuntoGrafica
+                    {
+                        x = DateTimeFormatInfo.CurrentInfo.GetMonthName(fecha.Month) + " " + fecha.Year,
+                        y = ordenes.Where(o => o.FechaDeCompra.Month == fecha.Month
+                        && o.FechaDeCompra.Year == fecha.Year)
+                        .Where(o => o.Productos != null).SelectMany(o => o.Productos).Count()
+                    });
 
-                i += 1;
+                    puntosGanacias.Add(new PuntoGrafica
+                    {
+                        x = DateTimeFormatInfo.CurrentInfo.GetMonthName(fecha.Month) + " " + fecha.Year,
+                        y = (double)ordenes.Where(o => o.FechaDeCompra.Month == fecha.Month
+                        && o.FechaDeCompra.Year == fecha.Year).Sum(o => o.Total)!
+                    });
+
+                    i += 1;
+                }
             }
-
-
             DashboardVM result = new()
             {
                 FechaDesde = (DateTime)fchDesde,
                 FechaHasta = (DateTime)fchHasta,
-                Productos = ordenes.SelectMany(o => o.Productos).ToList(),
+                Productos = productos,
                 PuntosVentas = puntos,
                 PuntosGanacias = puntosGanacias,
-                Ordenes = ordenes,
+                Ordenes = ordenes ?? [],
             };
 
             return View(result);
@@ -120,16 +123,16 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> GetProductos()
         {
 
-            var result = await _productoService.GetProductosCompleteAsync();
-            return View(result);
+            var productos = await _productoService.GetProductosCompleteAsync();
+            return View(productos);
         }
 
         [HttpGet]
         [Route("admin/atributos")]
         public async Task<IActionResult> GetAtributos()
         {
-            var result = await _atributoService.GetAtributosAsync();
-            return View(result);
+            var atributos = await _atributoService.GetAtributosAsync();
+            return View(atributos);
         }
 
 
@@ -137,8 +140,8 @@ namespace UYCommerce.Controllers
         [Route("admin/ordenes")]
         public async Task<IActionResult> GetOrdenes()
         {
-            var ordenes = await _ordenService.GetOrdenesAsync();
-            List<OrdenVM> result = ordenes.Join(_context.Usuarios, o => o.UsuarioId, u => u.Id, (o, u) => new OrdenVM { Orden = o, Usuario = u }).ToList();
+            var ordenes = await _ordenService.GetOrdenesUsuariosAsync();
+            List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario }).ToList();
             return View(result);
         }
 
@@ -146,8 +149,8 @@ namespace UYCommerce.Controllers
         [Route("admin/reviews")]
         public async Task<IActionResult> GetReviews()
         {
-            var result = await _reviewService.GetReviewAsync();
-            return View(result);
+            var reviews = await _reviewService.GetReviewAsync();
+            return View(reviews);
         }
 
         [HttpPost]
@@ -168,25 +171,19 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> AgregarRespuesta([FromBody] RespuestaDTO respuesta)
         {
-
-            var pregunta = await _context.Preguntas.Include(p => p.Respuesta).FirstOrDefaultAsync(p => p.Id == respuesta.PreguntaId);
-
-            if (pregunta is null || string.IsNullOrEmpty(respuesta.Contenido) || pregunta.Respuesta is not null)
-                return new BadRequestObjectResult("No se pudo adjuntar la respuesta");
-
-            Respuesta respuestaNueva = new()
+            try
             {
-                Contenido = respuesta.Contenido,
-                Fecha = DateTime.Now,
-                PreguntaId = pregunta.Id
-            };
-
-            pregunta.Respuesta = respuestaNueva;
-
-            _context.Update(pregunta);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { respuestaNueva.Contenido, respuestaNueva.PreguntaId, respuestaNueva.Fecha });
+                await _preguntaService.UpdatePreguntaRespuestaAsync(respuesta);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok(new { respuesta.Contenido, respuesta.PreguntaId, DateTime.Now });
 
         }
 
@@ -220,34 +217,36 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCarouselImage(IFormFile file)
         {
-            if (file is null || file.Length == 0)
+            if (file is null || file.Length <= 0) return BadRequest("Imagen invalida");
+            try
             {
-                return BadRequest("Imagen invalida.");
+                using var fileStream = file.OpenReadStream();
+                await _imagesService.AddCarouselImageAsync(file.Name, fileStream);
             }
-
-            using var fileStream = file.OpenReadStream();
-            await _imagesService.AddCarouselImageAsync(file.Name, fileStream);
-
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> ChangeCarouselImage(IFormFile file, int imageId)
         {
-
-            var image = await _context.CarouselImages.FirstOrDefaultAsync(i => i.Id == imageId);
-
-            if (image is null)
-                return BadRequest();
-
-            image.Name = file.FileName;
-
-            _context.Update(image);
-            await _context.SaveChangesAsync();
-            using var imgStream = file.OpenReadStream();
-            await _fileService.SaveFile(file.Name, imgStream , "Imagenes/Carousel");
-            _fileService.DeleteFile(new List<string>() { image.Name }, "Imagenes/Carousel");
-
+            if (file is null || file.Length <= 0) return BadRequest("Imagen invalida");
+            try
+            {
+                var stream = file.OpenReadStream();
+                await _imagesService.UpdateCarouselImageAsync(imageId, file.Name, stream);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
     }

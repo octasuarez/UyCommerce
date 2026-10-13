@@ -2,9 +2,10 @@
 
 namespace UyCommerce.Application.Contracts.Persistance
 {
-    public interface IOrdenRepository
+    public interface IOrdenRepository : IGenericRepository<Orden>
     {
         Task<List<Orden>> GetOrdenesByDateAsync(DateTime startDate, DateTime endDate);
         Task<List<Orden>> GetOrdenesAsync();
+        Task<List<Orden>> GetOrdenesUsuariosAsync();
     }
 }

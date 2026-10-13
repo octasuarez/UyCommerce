@@ -7,7 +7,7 @@ namespace UyCommerce.Domain.Entities
 	{
 		[Key]
 		public required string Id { get; set; }
-		public int? UsuarioId { get; set; }
+		public Usuario? Usuario { get; set; }
 		public string? NombreComprador { get; set; }
 		public OrdenDireccion? Direccion { get; set; }
 		public DateTime FechaDeCompra { get; set; }

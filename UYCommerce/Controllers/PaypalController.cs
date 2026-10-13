@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Infrastructure.Services.Paypal;
 using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Domain.Exceptions;
 
 
 namespace LoginAndRegister.Controllers
@@ -20,41 +22,37 @@ namespace LoginAndRegister.Controllers
     {
         private readonly PaypalAPI _paypalAPI;
         private readonly ShopContext _context;
+        private readonly ICarritoService _carritoService;
 
-        public PaypalController(PaypalAPI PaypalAPI, ShopContext context)
+        public PaypalController(PaypalAPI PaypalAPI, ShopContext context, ICarritoService carritoService)
         {
 
             this._paypalAPI = PaypalAPI;
             this._context = context;
-
+            this._carritoService = carritoService;
         }
 
         [HttpPost]
         [Route("/create-paypal-order")]
         public async Task<IActionResult> CreateOrder()
         {
+            var userIdentifier = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (User.Identity is null || !User.Identity.IsAuthenticated || userIdentifier is null 
+                || !int.TryParse(userIdentifier.Value, out int userId))
+            {
+                return BadRequest();
+            }
             try
             {
-                Carrito? carrito = new();
-
-                if (User.Identity is not null && User.Identity.IsAuthenticated)
-                {
-
-                    var usuarioID = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
-                    carrito = _context.Carritos
-                        .Include(c => c.Productos)!
-                        .ThenInclude(pC => pC.Sku)
-                        .FirstOrDefault(c => c.UsuarioId.ToString() == usuarioID);
-                }
-
-                var total = carrito!.GetTotal().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-
-                var response = await _paypalAPI.CreateOrder(carrito.Productos, total.ToString());
-
+                var carrito = await _carritoService.GetCarritoByUserIdAsync(userId);
+                var total = carrito.GetTotal().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                var response = await _paypalAPI.CreateOrder(carrito.Productos, total);
 
                 return Ok(response);
-
+            }
+            catch(NotFoundException e)
+            {
+                return NotFound(e.Message);
             }
             catch (Exception ex)
             {
@@ -120,7 +118,7 @@ namespace LoginAndRegister.Controllers
             Orden orden = new()
             {
                 Id = response.id!,
-                UsuarioId = usuario?.Id,
+                Usuario = usuario,
                 FechaDeCompra = DateTime.Now,
                 Estado = "en camino",
                 NombreComprador = usuario?.Nombre,
@@ -145,7 +143,8 @@ namespace LoginAndRegister.Controllers
             return orden;
         }
 
-        private async Task DeleteCartProducts() {
+        private async Task DeleteCartProducts()
+        {
 
             var cartId = int.Parse(User.FindFirstValue("CarritoId")!);
             await _context.ProductosCarritos.Where(p => p.CarritoId == cartId).ExecuteDeleteAsync();

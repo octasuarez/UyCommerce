@@ -33,5 +33,10 @@ namespace UyCommerce.Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<List<Orden>> GetOrdenesUsuariosAsync()
+        {
+            return await _ordenRepository.GetOrdenesUsuariosAsync();
+        }
     }
 }
