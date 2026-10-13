@@ -7,8 +7,8 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IImagesService
     {
+        Task AddCarouselImageAsync(string name, Stream stream);
         Task DeleteCarouselImage(int id);
         Task<List<CarouselImage>> GetCarouselImagesAsync();
-        Task AddCarouselImageAsync(string name, Stream stream);
     }
 }

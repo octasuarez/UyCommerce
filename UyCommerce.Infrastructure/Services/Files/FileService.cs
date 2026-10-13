@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System;
 using UyCommerce.Application.Contracts.Persistance.Services;
 
 namespace UyCommerce.Infrastructure.Services.Files
@@ -9,11 +7,7 @@ namespace UyCommerce.Infrastructure.Services.Files
     {
         private readonly IWebHostEnvironment _environment;
 
-
-        public FileService(IWebHostEnvironment environment)
-        {
-            _environment = environment;
-        }
+        public FileService(IWebHostEnvironment environment) => _environment = environment;
 
         public async Task<bool> SaveFile(string name, Stream stream, string folder)
         {

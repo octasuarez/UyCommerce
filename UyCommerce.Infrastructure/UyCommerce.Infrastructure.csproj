@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UyCommerce.Application\UyCommerce.Application.csproj" />
-    <ProjectReference Include="..\UyCommerce.Domain\UyCommerce.Domain.csproj" />
   </ItemGroup>
 
 </Project>

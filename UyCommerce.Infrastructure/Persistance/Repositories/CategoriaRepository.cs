@@ -12,6 +12,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         public CategoriaRepository(ShopContext context) : base(context)
         {}
 
+        public async Task<Categoria> GetCategoriaByNameAsync(string name)
+        {
+            return await _context.Categorias.Where(c => c.Nombre == name).FirstOrDefaultAsync();
+        }
+
         public async Task<List<Categoria>> GetCategoriasInicio()
         {
             return await _context.Categorias

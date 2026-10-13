@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UyCommerce.Infrastructure.Persistance;
+using UyCommerce.Application.Contracts.Persistance.Services;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
-using UyCommerce.Application.Contracts.Persistance.Services;
+using UyCommerce.Infrastructure.Persistance;
+using UYCommerce.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,11 +21,13 @@ namespace UYCommerce.Controllers
     {
         private readonly ShopContext _context;
         private readonly IFileService _fileService;
+        private readonly ICategoriaService _categoriaService;
 
-        public CategoriaController(ShopContext context, IFileService fileService)
+        public CategoriaController(ShopContext context, IFileService fileService, ICategoriaService categoriaService)
         {
             _context = context;
             _fileService = fileService;
+            this._categoriaService = categoriaService;
         }
 
         // GET: /<controller>/
@@ -72,60 +76,37 @@ namespace UYCommerce.Controllers
 
         [HttpPost]
         [Route("admin/categorias/create")]
-        public async Task<IActionResult> CrearCategoria(CategoriaDTO categoria)
+        public async Task<IActionResult> CrearCategoria(CreateCategoriaModel categoria)
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var categoriaDb = await _context.Categorias.FirstOrDefaultAsync(c => c.Nombre!.ToLower() == categoria.Nombre!.ToLower());
-
-                if (categoriaDb is not null)
-                    return BadRequest("Categoria ya existe");
-
-                if (!categoria.EsCategoriaPadre && categoria.CategoriaPadreId <= 0)
-                    return BadRequest("Elige una categoria Padre!");
-
-                if (categoria.EsCategoriaPadre && categoria.CategoriaPadreId > 0)
-                    return BadRequest("Una categoria padre no puede tener otra categoria padre");
-
-                Categoria? categoriaPadre = new();
-
-                if (!categoria.EsCategoriaPadre && categoria.CategoriaPadreId > 0)
-                    categoriaPadre = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == categoria.CategoriaPadreId);
-
-
-                List<Atributo> atributos = new();
-
-                if (categoria.Atributos is not null && categoria.Atributos.Count > 0)
-                {
-                    foreach (var a in categoria.Atributos)
-                    {
-                        var atributo = await _context.Atributos.FirstOrDefaultAsync(x => x.Id == a);
-                        if (atributo is not null)
-                            atributos.Add(atributo);
-                    }
-                }
-
-                Categoria nuevaCategoria = new()
+                return BadRequest("Categoria invalida.");
+            }
+            try
+            {
+                CategoriaDTO newCategoria = new CategoriaDTO
                 {
                     Nombre = categoria.Nombre,
+                    Atributos = categoria.Atributos,
+                    CategoriaPadreId = categoria.CategoriaPadreId,
                     EsCategoriaPadre = categoria.EsCategoriaPadre,
                     MostrarEnInicio = categoria.MostrarEnInicio,
-                    ImagenNombre = categoria.Imagen?.FileName,
-                    Atributos = atributos,
-                    CategoriaPadre = categoriaPadre
                 };
 
-                await _context.Categorias.AddAsync(nuevaCategoria);
-                await _context.SaveChangesAsync();
-
-                if (categoria.Imagen != null)
+                Stream? imgStream = null;
+                
+                if (categoria.Imagen is not null && categoria.Imagen.Length > 0)
                 {
-                    using var imgStream = categoria.Imagen.OpenReadStream();
-                    await _fileService.SaveFile(categoria.Imagen!.FileName, imgStream, "Imagenes/Categorias");
+                    newCategoria.ImagenNombre = categoria.Imagen.Name;
+                    imgStream = categoria.Imagen.OpenReadStream();
                 }
 
+                await _categoriaService.AddCategoriaAsync(newCategoria, imgStream);
                 return Redirect("/admin/categorias");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
             return View(categoria);
@@ -135,8 +116,7 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<Categoria?> GetCategoriaById(int categoriaId)
         {
-
-            var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == categoriaId);
+            var categoria = await _categoriaService.GetCategoriaByIdAsync(categoriaId);
             return categoria;
         }
 
@@ -145,7 +125,6 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> Feature(int categoriaId, bool featured)
         {
-
             var categoria = await GetCategoriaById(categoriaId);
 
             if (categoria is null)

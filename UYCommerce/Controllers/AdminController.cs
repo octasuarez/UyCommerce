@@ -42,9 +42,9 @@ namespace UYCommerce.Controllers
             _preguntaService = preguntaService;
             _usuarioService = usuarioService;
             _productoService = productoService;
-            this._reviewService = reviewService;
-            this._atributoService = atributoService;
-            this._imagesService = imagesService;
+            _reviewService = reviewService;
+            _atributoService = atributoService;
+            _imagesService = imagesService;
 
         }
 

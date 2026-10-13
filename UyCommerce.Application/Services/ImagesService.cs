@@ -21,6 +21,7 @@ namespace UyCommerce.Application.Services
             _fileService = fileService;
         }
 
+        #region carouselImages
         public async Task AddCarouselImageAsync(string name, Stream stream)
         {
             if (string.IsNullOrEmpty(name) || stream.Length <= 0)
@@ -47,5 +48,13 @@ namespace UyCommerce.Application.Services
         {
             return await _carouselImageRepository.GetAllAsync();
         }
+
+        #endregion carouselImages
+
+        #region categoriaImages
+
+
+
+        #endregion categoriaImages
     }
 }

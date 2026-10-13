@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Persistance.Repositories;
 using UyCommerce.Infrastructure.Services.Files;
@@ -18,11 +19,17 @@ namespace UyCommerce.Infrastructure
             connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services.AddSingleton<IFileService, FileService>();
-            services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-            services.AddScoped<IProductoRepository, ProductoRepository>();
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+
+            services.AddScoped<IAtributoRepository, AtributoRepository>();
             services.AddScoped<ICarouselImageRepository, CarouselImageRepository>();
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+            services.AddScoped<IOrdenRepository, OrdenRepository>();
+            services.AddScoped<IPreguntaRepository, PreguntaRepository>();
+            services.AddScoped<IProductoRepository, ProductoRepository>();
+            services.AddScoped<IReviewRepository,ReviewRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
             return services;
         }
     }

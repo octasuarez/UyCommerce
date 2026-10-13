@@ -11,11 +11,15 @@ namespace UyCommerce.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IProductoService,ProductoService>();
-            services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IImagesService, ImagesService>();
+            services.AddScoped<IAtributoService, AtributoService>();
             services.AddScoped<ICategoriaService, CategoriaService>();
+            services.AddScoped<IProductoService,ProductoService>();
+            services.AddScoped<IImagesService, ImagesService>();
             services.AddScoped<IOrdenService, OrdenService>();
+            services.AddScoped<IPreguntaService,PreguntaService>();
+            services.AddScoped<IProductoService,ProductoService>();
+            services.AddScoped<IReviewService,ReviewService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
             return services;
         }
     }
