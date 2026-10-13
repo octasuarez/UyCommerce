@@ -74,12 +74,6 @@ namespace UyCommerce.Application.Services
 
             await _categoriaRepository.CreateAsync(newCategoria);
         }
-
-        public Task FeatureCategoria(CategoriaDTO categoriaDto)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Categoria?> GetCategoriaByIdAsync(int id)
         {
             return await _categoriaRepository.GetByIdNoTrackingAsync(id);
@@ -88,6 +82,25 @@ namespace UyCommerce.Application.Services
         public async Task<List<Categoria>> GetCategoriasAsync()
         {
             return await _categoriaRepository.GetAllAsync();
+        }
+        public async Task FeatureCategoria(int categoriaId, bool feature)
+        {
+            var categoria = await _categoriaRepository.GetByIdAsync(categoriaId) 
+                ?? throw new NotFoundException(nameof(Categoria), categoriaId);
+
+            categoria.MostrarEnInicio = feature;
+            await _categoriaRepository.UpdateAsync(categoria);
+        }
+
+        public async Task<List<Atributo>?> GetCategoriaAtributosAsync(int id)
+        {
+            var categoria = await _categoriaRepository.GetByIdAsync(id) ?? throw new NotFoundException(nameof(Categoria), id);
+            return await _atributoRepository.GetAtributosByCategoriaAsync(categoria);
+        }
+
+        public async Task<List<Categoria>> GetCategoriasCompleteAsync()
+        {
+            return await _categoriaRepository.GetCategoriasCompleteAsync();
         }
     }
 }

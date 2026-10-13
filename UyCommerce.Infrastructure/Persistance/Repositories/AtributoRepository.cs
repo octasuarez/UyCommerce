@@ -9,9 +9,9 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 {
     public class AtributoRepository : GenericRepository<Atributo>, IAtributoRepository
     {
-        public AtributoRepository(ShopContext context): base(context)
+        public AtributoRepository(ShopContext context) : base(context)
         {
-            
+
         }
         public async Task<List<Atributo>> GetAtributosAsync()
         {
@@ -21,6 +21,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Include(a => a.Productos)
                 .Include(a => a.Valores)
                 .ToListAsync();
+        }
+
+        public async Task<List<Atributo>?> GetAtributosByCategoriaAsync(Categoria categoria)
+        {
+            return await _context.Atributos.Where(a => a.Categorias != null && a.Categorias.Contains(categoria)).ToListAsync();
         }
     }
 }

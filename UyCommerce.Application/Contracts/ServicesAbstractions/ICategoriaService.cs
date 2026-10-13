@@ -11,6 +11,8 @@ public interface ICategoriaService
         Task<List<Categoria>> GetCategoriasAsync();
         Task<Categoria?> GetCategoriaByIdAsync(int id);
         Task AddCategoriaAsync(CategoriaDTO categoriaDto, Stream? imgStream);
-        Task FeatureCategoria(CategoriaDTO categoriaDto);
+        Task FeatureCategoria(int categoriaId, bool feature);
+        Task<List<Atributo>?> GetCategoriaAtributosAsync(int id);
+        Task<List<Categoria>> GetCategoriasCompleteAsync();
     }
 }
