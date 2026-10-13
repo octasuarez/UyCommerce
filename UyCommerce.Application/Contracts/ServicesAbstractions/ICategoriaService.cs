@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UyCommerce.Application.DTOs;
+﻿using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Contracts.ServicesAbstractions

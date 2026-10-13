@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace UyCommerce.Application.DTOs
+﻿namespace UyCommerce.Application.DTOs
 {
 	public class CategoriaDTO
 	{
