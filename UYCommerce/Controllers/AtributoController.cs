@@ -1,29 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Application.DTOs;
-using UyCommerce.Domain.Entities;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Domain.Exceptions;
 
 namespace UYCommerce.Controllers
 {
     public class AtributoController : Controller
     {
-        private readonly ShopContext _context;
-
-        public AtributoController(ShopContext context)
-        {
-
-            _context = context;
-        }
-
+        private readonly IAtributoService _atributoService;
+        public AtributoController(IAtributoService atributoService) => this._atributoService = atributoService;
         public IActionResult Index()
         {
             return View();
@@ -32,65 +18,60 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public IActionResult CrearAtributo()
         {
-
             return View();
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> GetAtributosJson()
+        {
+            return Ok(await _atributoService.GetAtributosAsync());
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CrearAtributo([FromBody] string nombre)
         {
-
-            if (string.IsNullOrEmpty(nombre))
-                return BadRequest("Escriba un nombre");
-
-            var atributo = await _context.Atributos.FirstOrDefaultAsync(a => a.Nombre!.ToLower() == nombre.ToLower());
-
-            if (atributo is not null)
-                return BadRequest("Ya existe un atributo con ese nombre");
-
-            Atributo nuevoAtributo = new() { Nombre = nombre };
-
-            await _context.AddAsync(nuevoAtributo);
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            if (string.IsNullOrEmpty(nombre)) 
+                return BadRequest("Atributo invalido.");
+            try
+            {
+                await _atributoService.AddAtributoAsync(nombre);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, "No se pudo dar de alta el atributo.");
+            }
+            return Ok("Atributo creado exitosamente.");
         }
 
         [HttpPost]
         public async Task<IActionResult> AgregarValor([FromBody] AgregarValorDTO atributoValor)
         {
 
-            if (string.IsNullOrEmpty(atributoValor.Valor))
-                return BadRequest(new { status = 400, error = "escriba un valor" });
+            if (string.IsNullOrEmpty(atributoValor.Valor) || atributoValor.atributoId < 0)
+                return BadRequest("escriba un valor");
+            try
+            {
+                await _atributoService.AddAtributoValorAsync(atributoValor);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-            var atributo = await _context.Atributos
-                .Include(a => a.Valores)
-                .FirstOrDefaultAsync(a => a.Id == atributoValor.atributoId);
-
-            if (atributo is null)
-                return BadRequest(new { status = 400, error = "Error, no se econtro el atributo" });
-
-            var valorExiste = atributo.Valores?.FirstOrDefault(v => v.Valor?.ToLower() == atributoValor.Valor.ToLower());
-
-            if (valorExiste is not null)
-                return BadRequest(new { status = 400, error = "Ese valor ya existe" });
-
-            atributo.Valores?.Add(new AtributoValor { Valor = atributoValor.Valor });
-
-            _context.Update(atributo);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { status = 200 });
+            return Ok("Se agrego el valor exitosamente.");
         }
 
 
-        [HttpGet]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> GetAtributosJson()
-        {
-            return Ok(await _context.Atributos.ToListAsync());
-        }
     }
 }
 
