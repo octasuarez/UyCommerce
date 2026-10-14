@@ -102,5 +102,10 @@ namespace UyCommerce.Application.Services
         {
             return await _categoriaRepository.GetCategoriasCompleteAsync();
         }
+
+        public async Task<List<Categoria>> GetCategoriasInicioAsync()
+        {
+            return await _categoriaRepository.GetCategoriasInicioAsync();
+        }
     }
 }

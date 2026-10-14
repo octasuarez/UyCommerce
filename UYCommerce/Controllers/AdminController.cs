@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
-using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
@@ -14,7 +13,6 @@ namespace UYCommerce.Controllers
     [Authorize(Policy = "Admin")]
     public class AdminController : Controller
     {
-        private readonly IFileService _fileService;
         private readonly IOrdenService _ordenService;
         private readonly IPreguntaService _preguntaService;
         private readonly IUsuarioService _usuarioService;
@@ -24,8 +22,7 @@ namespace UYCommerce.Controllers
         private readonly IImagesService _imagesService;
 
         public AdminController(
-            IFileService fileService
-            , IOrdenService ordenService
+             IOrdenService ordenService
             , IPreguntaService preguntaService
             , IUsuarioService usuarioService
             , IProductoService productoService
@@ -33,7 +30,6 @@ namespace UYCommerce.Controllers
             , IAtributoService atributoService
             , IImagesService imagesService)
         {
-            _fileService = fileService;
             _ordenService = ordenService;
             _preguntaService = preguntaService;
             _usuarioService = usuarioService;
@@ -48,6 +44,8 @@ namespace UYCommerce.Controllers
         {
             return View();
         }
+
+        #region [HttpGet]
 
         [HttpGet]
         public async Task<IActionResult> Dashboard(DateTime? fchDesde, DateTime? fchHasta)
@@ -153,40 +151,6 @@ namespace UYCommerce.Controllers
             return View(reviews);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EliminarReview([FromBody] int reviewId)
-        {
-            try
-            {
-                await _reviewService.DeleteReviewAsync(reviewId);
-            }
-            catch (NotFoundException e)
-            {
-                return NotFound(e.Message);
-            }
-
-            return Ok("Review eliminada exitosamente");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AgregarRespuesta([FromBody] RespuestaDTO respuesta)
-        {
-            try
-            {
-                await _preguntaService.UpdatePreguntaRespuestaAsync(respuesta);
-            }
-            catch (NotFoundException e)
-            {
-                return NotFound(e.Message);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok(new { respuesta.Contenido, respuesta.PreguntaId, DateTime.Now });
-
-        }
-
         [HttpGet]
         [Route("admin/carousel")]
         public async Task<IActionResult> Carousel()
@@ -194,6 +158,9 @@ namespace UYCommerce.Controllers
             var carouselImages = await _imagesService.GetCarouselImagesAsync();
             return View(carouselImages);
         }
+        #endregion [HttpGet]
+
+        #region [HttpPost]
 
         [HttpPost]
         public async Task<IActionResult> DeleteCarouselImage(int imageId)
@@ -212,6 +179,39 @@ namespace UYCommerce.Controllers
             }
 
             return Ok("Imagen borrada existosamente");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarReview([FromBody] int reviewId)
+        {
+            try
+            {
+                await _reviewService.DeleteReviewAsync(reviewId);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+
+            return Ok("Review eliminada exitosamente");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AgregarRespuesta([FromBody] RespuestaDTO respuesta)
+        {
+            try
+            {
+                await _preguntaService.UpdatePreguntaRespuestaAsync(respuesta);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok(new { respuesta.Contenido, respuesta.PreguntaId, DateTime.Now });
+
         }
 
         [HttpPost]
@@ -249,6 +249,8 @@ namespace UYCommerce.Controllers
             }
             return Ok();
         }
+
+        #endregion [HttpPost]
     }
 }
 

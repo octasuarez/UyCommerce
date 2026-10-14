@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
-using UyCommerce.Infrastructure.Services.Email;
 using UYCommerce.ViewModels;
+using UyCommerce.Application.Contracts.Persistance.Services;
 
 namespace UYCommerce.Controllers
 {

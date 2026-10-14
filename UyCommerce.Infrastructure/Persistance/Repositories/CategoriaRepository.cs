@@ -21,8 +21,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Include(c => c.Productos)
                 .ToListAsync();
         }
-
-        public async Task<List<Categoria>> GetCategoriasInicio()
+        public async Task<List<Categoria>> GetCategoriasInicioAsync()
         {
             return await _context.Categorias
                 .AsNoTracking()

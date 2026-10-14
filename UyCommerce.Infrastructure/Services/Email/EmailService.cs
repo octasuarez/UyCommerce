@@ -1,5 +1,6 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
+using UyCommerce.Application.Contracts.Persistance.Services;
 
 namespace UyCommerce.Infrastructure.Services.Email
 {
@@ -23,8 +24,9 @@ namespace UyCommerce.Infrastructure.Services.Email
             return emailMessage;
         }
 
-        public void SendEmail(Message message)
+        public void SendEmail(string toAddress, string subject, string content)
         {
+            Message message = new(toAddress, subject, content);
             var emailMessage = CreateEmailMessage(message);
             Send(emailMessage);
         }

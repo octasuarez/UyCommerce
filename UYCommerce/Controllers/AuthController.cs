@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Infrastructure.Services.Email;
+using UyCommerce.Application.Contracts.Persistance.Services;
 
 namespace UYCommerce.Controllers
 {
@@ -212,12 +213,8 @@ namespace UYCommerce.Controllers
                 }
 
                 var content = "Tu codigo es: " + codigo.CodigoRecuperacion;
-                Message message = new(email, "UyCommerce Recuperacion Contraseña", content);
-
-                _emailService.SendEmail(message);
-
+                _emailService.SendEmail(email, "UyCommerce Recuperacion Contraseña", content);
                 await _context.SaveChangesAsync();
-
                 return View("CodigoRecuperacion", usuario.Id);
             }
 

@@ -6,10 +6,12 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 public interface ICategoriaService
     {
         Task<List<Categoria>> GetCategoriasAsync();
+        Task<List<Categoria>> GetCategoriasInicioAsync();
         Task<Categoria?> GetCategoriaByIdAsync(int id);
         Task AddCategoriaAsync(CategoriaDTO categoriaDto, Stream? imgStream);
         Task FeatureCategoria(int categoriaId, bool feature);
         Task<List<Atributo>?> GetCategoriaAtributosAsync(int id);
         Task<List<Categoria>> GetCategoriasCompleteAsync();
+        
     }
 }

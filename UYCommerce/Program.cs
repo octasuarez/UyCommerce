@@ -7,8 +7,8 @@ using Microsoft.Extensions.Options;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Infrastructure.Services.Paypal;
 using UyCommerce.Infrastructure;
-using UyCommerce.Infrastructure.Services.Email;
 using UyCommerce.Application;
+using UyCommerce.Application.Contracts.Persistance.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +42,7 @@ builder.Services.AddSession(options =>
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<UyCommerce.Infrastructure.Services.Email.EmailConfiguration>();
 
 builder.Services.AddSingleton(emailConfig!);
-builder.Services.AddSingleton<UyCommerce.Infrastructure.Services.Email.IEmailService, UyCommerce.Infrastructure.Services.Email.EmailService>();
+builder.Services.AddSingleton<IEmailService, UyCommerce.Infrastructure.Services.Email.EmailService>();
 
 //paypal settings
 builder.Services.AddSingleton(x =>

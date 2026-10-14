@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
-using UyCommerce.Application.Contracts.Persistance;
+using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
-using UyCommerce.Application.Services;
 using UyCommerce.Domain.Entities;
-using UyCommerce.Infrastructure.Persistance;
-using UyCommerce.Infrastructure.Services.Email;
 using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers;
@@ -24,7 +20,6 @@ public class HomeController : Controller
     private readonly IImagesService _imagesService;
 
     public HomeController(ILogger<HomeController> logger,
-        ShopContext context,
         IProductoService productoService,
         IUsuarioService usuarioService,
         ICategoriaService categoriaService,
@@ -51,10 +46,11 @@ public class HomeController : Controller
                 .Select(p => p.Skus!.First()).ToList();
 
             homeVM.Skus = skus;
-            homeVM.Categorias = await _categoriaService.GetCategoriasAsync();
+            homeVM.Categorias = await _categoriaService.GetCategoriasInicioAsync();
             homeVM.Carousel = await _imagesService.GetCarouselImagesAsync();
 
-            if (User.Identity.IsAuthenticated && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+            if (User.Identity is not null && User.Identity.IsAuthenticated
+                && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
             {
                 var usuario = await _usuarioService.GetUsuarioFavoritosByIdAsync(userId);
                 homeVM.Favoritos = usuario?.Favoritos;
@@ -89,34 +85,28 @@ public class HomeController : Controller
     [Route("/Contacto")]
     public IActionResult Contacto()
     {
-
         return View();
     }
 
     [HttpPost]
     public IActionResult Contacto([FromBody] ContactoDTO contacto)
     {
-
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-
-            Message message = new()
-            {
-                Content = contacto.Mensaje,
-                Subject = contacto.Asunto,
-                To = new MimeKit.MailboxAddress("octasuarezp@gmail.com", "octasuarezp@gmail.com")
-            };
-
-            _emailService.SendEmail(message);
-
-            return Ok("Se envió correctamente");
+            var errors = string.Join("\n", ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage));
+            return BadRequest(errors);
         }
-
-        var errors = string.Join("\n", ModelState.Values
-        .SelectMany(v => v.Errors)
-        .Select(e => e.ErrorMessage));
-
-        return BadRequest(errors);
+        try
+        {
+            _emailService.SendEmail("octasuarezp@gmail.com", contacto.Asunto!, contacto.Mensaje!);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, "No se pudo enviar el mail");
+        }
+        return Ok("Se envió correctamente");
     }
 
     [HttpGet]
