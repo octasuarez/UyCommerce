@@ -1,42 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace UYCommerce.Controllers
 {
     [Authorize(Policy = "User")]
     public class CarritoController : Controller
     {
-
-
         private readonly ShopContext _context;
 
         public CarritoController(ShopContext context)
         {
-
             _context = context;
         }
-
         public IActionResult Index()
         {
             return View();
         }
 
-        /// <summary>
-        /// Agrega un producto al carrito si no existe. Aumenta o disminuye la cantidad del producto si ya existe.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [HttpPost]
         public JsonResult AgregarProductoAlCarrito(AddToCartModel request)
         {
@@ -78,10 +61,6 @@ namespace UYCommerce.Controllers
 
         }
 
-        /// <summary>
-        /// Elimina un producto del carrito.
-        /// </summary>
-        /// <param name="skuId"></param>
         [HttpPost]
         public void EliminarProductoCarrito(string skuId)
         {
@@ -103,10 +82,6 @@ namespace UYCommerce.Controllers
             }
         }
 
-        /// <summary>
-        /// Retorna el carrito del usuario sea que este logueado o no.
-        /// </summary>
-        /// <returns></returns>
         private Carrito? GetCarrito()
         {
             var carrito = new Carrito() { Productos = new List<ProductoCarrito>() };
