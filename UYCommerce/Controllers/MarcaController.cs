@@ -7,21 +7,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using UyCommerce.Domain.Exceptions;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
 
 namespace UYCommerce.Controllers
 {
     public class MarcaController : Controller
     {
-        private readonly ShopContext _context;
+        private readonly IMarcaService _marcaService;
 
-        public MarcaController(ShopContext context)
+        public MarcaController(IMarcaService marcaService)
         {
-            _context = context;
+            _marcaService = marcaService;
         }
 
-        // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
@@ -31,16 +30,15 @@ namespace UYCommerce.Controllers
         [Route("admin/marcas")]
         public async Task<IActionResult> GetMarcas()
         {
-            var marcas = await _context.Marcas
-                .Include(m => m.Productos)
-                .ToListAsync();
+            var marcas = await _marcaService.GetMarcasWithProductosAsync();
             return View("../Admin/GetMarcas", marcas);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMarcasApi()
         {
-            return Ok(await _context.Marcas.ToListAsync());
+            var marcas = _marcaService.GetMarcasAsync();
+            return Ok(marcas);
         }
 
         [HttpGet]
@@ -53,60 +51,36 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateMarca(string nombre)
         {
-
-            var error = await MarcaIsValid(nombre);
-            if (error is not null) {
-                return BadRequest(new { error });
+            try
+            {
+                await _marcaService.AddMarcaAsync(nombre);
             }
-
-            _context.Marcas.Add(new Marca { Nombre = nombre });
-            await _context.SaveChangesAsync();
-
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
-        }
-
-        private async Task<string?> MarcaIsValid(string nombre)
-        {
-
-            if (string.IsNullOrEmpty(nombre))
-            {
-                return "Campo obligatorio";
-            }
-
-            var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.Nombre!.ToLower() == nombre.ToLower());
-
-            if (marca is not null)
-            {
-                return "Marca ya existe";
-            }
-
-            return null;
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteMarca(int marcaId) {
 
-
-            var marca = await GetMarcaById(marcaId);
-
-            if(marca is null) {
-                return BadRequest("Marca no econtrada");
+            try
+            {
+                await _marcaService.DeleteMarcaAsync(marcaId);
             }
-
-            _context.Remove(marca);
-            await _context.SaveChangesAsync();
-
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
             return Ok();
         }
 
         [HttpGet]
         public async Task<Marca?> GetMarcaById(int id) {
 
-            var marca = await _context.Marcas
-                .Include(m => m.Productos)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var marca = await _marcaService.GetMarcaAndProductosByIdAsync(id);
             return marca;
         }
     }
