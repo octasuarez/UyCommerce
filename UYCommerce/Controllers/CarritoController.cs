@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
+using UyCommerce.Domain.Exceptions;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using System.Security.Claims;
 
 namespace UYCommerce.Controllers
 {
     [Authorize(Policy = "User")]
     public class CarritoController : Controller
     {
-        private readonly ShopContext _context;
+        private readonly ICarritoService _carritoService;
 
-        public CarritoController(ShopContext context)
+        public CarritoController(ICarritoService carritoService)
         {
-            _context = context;
+            this._carritoService = carritoService;
         }
         public IActionResult Index()
         {
@@ -21,78 +22,59 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public JsonResult AgregarProductoAlCarrito(AddToCartModel request)
+        public async Task<JsonResult> AgregarProductoAlCarrito(AddToCartModel request)
         {
-            Carrito? carrito = GetCarrito();
-
-            if (carrito is not null)
+            if (!int.TryParse(request.skuId, out int skuId) 
+                || !int.TryParse(request.quantity, out int quantity))
             {
-                var sku = _context.Skus.FirstOrDefault(s => s.Id == int.Parse(request.skuId));
-
-                var productoCarrito = carrito.Productos!.FirstOrDefault(p => p.SkuId == int.Parse(request.skuId));
-                int qty = 0;
-                var cantidad = int.Parse(request.quantity);
-
-                if (productoCarrito is null && cantidad > 0 && cantidad <= sku?.Stock)
-                {
-                    ProductoCarrito nuevoProductoCarrito = new() { Cantidad = cantidad, SkuId = int.Parse(request.skuId) };
-                    carrito.Productos!.Add(nuevoProductoCarrito);
-                }
-                else if (productoCarrito is not null && (cantidad + productoCarrito.Cantidad) <= sku?.Stock)
-                {
-                    carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad += cantidad;
-                    qty = carrito.Productos!.FirstOrDefault(p => p.Equals(productoCarrito))!.Cantidad;
-                    if (qty == 0)
-                        carrito.Productos!.Remove(carrito.Productos!.FirstOrDefault(p => p.SkuId == productoCarrito.SkuId)!);
-                }
-                else
-                {
-                    return new JsonResult(new EmptyResult());
-                }
-
-                _context.Update(carrito);
-                _context.SaveChanges();
-                HttpContext.Session.SetString("cartItems", carrito.Productos!.Count.ToString());
-
+                Response.StatusCode = StatusCodes.Status400BadRequest;
+                return Json(new { success = false, error = "invalid numbers" });
+            }
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var qty = await _carritoService.AddProductoAlCarritoAsync(userId, skuId, quantity);
+                HttpContext.Session.SetString("cartItems", qty.ToString());
                 return new JsonResult(new { qty });
             }
-
-            return new JsonResult(new EmptyResult());
-
+            catch (NotFoundException e)
+            {
+                Response.StatusCode = StatusCodes.Status404NotFound;
+                return Json(new { success = false, error = e.Message });
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Response.StatusCode = StatusCodes.Status400BadRequest;
+                return Json(new { success = false, error = e.Message });
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCodes.Status500InternalServerError;
+                return Json(new { success = false, error = e.Message });
+            }
         }
 
         [HttpPost]
-        public void EliminarProductoCarrito(string skuId)
+        public async Task EliminarProductoCarrito(string skuId)
         {
-
-            Carrito? carrito = GetCarrito();
-
-            if (carrito != null && carrito.Productos != null)
+            if (!int.TryParse(skuId, out int sku))
+                Response.StatusCode = StatusCodes.Status400BadRequest;
+            try
             {
-                var productoCarrito = carrito.Productos.FirstOrDefault(p => p.SkuId == int.Parse(skuId));
-
-                if (productoCarrito != null)
-                {
-                    carrito.Productos.Remove(productoCarrito);
-                    _context.Update(carrito);
-                    _context.SaveChanges();
-                    HttpContext.Session.SetString("cartItems", carrito.Productos!.Count.ToString());
-
-                }
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                await _carritoService.DeleteProductoCarritoAsync(userId, sku);
+                var carritoItemsCount = HttpContext.Session.GetInt32("cartItems") -1 ?? 0;
+                HttpContext.Session.SetString("cartItems", carritoItemsCount.ToString());
+            }
+            catch (NotFoundException e)
+            {
+                Response.StatusCode = StatusCodes.Status404NotFound;
+            }
+            catch(Exception e)
+            {
+                Response.StatusCode = StatusCodes.Status500InternalServerError;
             }
         }
-
-        private Carrito? GetCarrito()
-        {
-            var carrito = new Carrito() { Productos = new List<ProductoCarrito>() };
-
-            carrito = _context.Carritos
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s.Imagenes)
-                .FirstOrDefault(c => c.UsuarioId == int.Parse(User.FindFirst("CarritoId")!.Value));
-
-            return carrito;
-        }
-
     }
 }
 

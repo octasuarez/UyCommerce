@@ -30,6 +30,7 @@ namespace UyCommerce.Infrastructure
             services.AddScoped<IReviewRepository,ReviewRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<ICarritoRepository,CarritoRepository>();
+            services.AddScoped<ISkuRepository,SkuRepository>();
 
             return services;
         }

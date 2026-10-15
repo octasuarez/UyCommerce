@@ -9,5 +9,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
     public interface ICarritoService
     {
         Task<Carrito> GetCarritoByUserIdAsync(int userId);
+        Task<int> AddProductoAlCarritoAsync(int userId, int skuId, int quantity);
+        Task DeleteProductoCarritoAsync(int userId, int skuId);
     }
 }

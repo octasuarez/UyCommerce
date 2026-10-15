@@ -18,5 +18,6 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                         .ThenInclude(pC => pC.Sku)
                         .FirstOrDefaultAsync(c => c.UsuarioId == userId);
         }
+
     }
 }
