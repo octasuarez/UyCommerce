@@ -12,5 +12,6 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task DeleteCarouselImage(int id);
         Task<List<CarouselImage>> GetCarouselImagesAsync();
         Task<CarouselImage> GetCarouselImageByIdAsync(int id);
+        Task SaveImageFile(string imgName, Stream stream, string path);
     }
 }

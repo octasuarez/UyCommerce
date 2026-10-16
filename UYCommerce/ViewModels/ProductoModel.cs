@@ -18,7 +18,7 @@ namespace UyCommerce.Domain.Entities
 
         public int MarcaId { get; set; }
         [Required(ErrorMessage = "Sube al menos 1 imagen")]
-        public IFormFileCollection Imagenes { get; set; }
+        public IFormFileCollection Imagenes { get; set; } = new FormFileCollection();
 
         public List<int>? Atributos { get; set; }
 	}

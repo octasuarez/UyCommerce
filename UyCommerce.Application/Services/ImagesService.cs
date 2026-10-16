@@ -66,15 +66,13 @@ namespace UyCommerce.Application.Services
 
         #endregion carouselImages
 
-        #region private methods
-        private async Task SaveImageFile(string imgName, Stream stream, string path)
+        public async Task SaveImageFile(string imgName, Stream stream, string path)
         {
             if (!await _fileService.SaveFile(imgName, stream, path))
             {
                 throw new ArgumentOutOfRangeException($"No se pudo guardar la imagen {imgName}");
             }
         }
-        #endregion private methods
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using System.Xml.Linq;
 using UyCommerce.Application.Contracts.Persistance.Services;
 
 namespace UyCommerce.Infrastructure.Services.Files
@@ -24,6 +25,8 @@ namespace UyCommerce.Infrastructure.Services.Files
             return Directory.Exists(path);
         }
 
+
+
         public void DeleteFile(List<string> fileNames, string folder)
         {
 
@@ -36,6 +39,15 @@ namespace UyCommerce.Infrastructure.Services.Files
             }
         }
 
+        public bool FilesExists(List<string> fileNames, string folder)
+        {
+            foreach(var fn in fileNames)
+            {
+                if (Directory.Exists(Path.Combine(_environment.WebRootPath, folder) + "/" + fn))
+                    return true;
+            }
+            return false;
+        }
     }
 }
 

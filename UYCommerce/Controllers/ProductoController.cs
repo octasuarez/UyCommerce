@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Application.Contracts.Persistance.Services;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Application.DTOs;
+using UyCommerce.Domain.Exceptions;
+using UyCommerce.Application.Common.Enums;
 
 namespace UYCommerce.Controllers
 {
@@ -12,11 +16,13 @@ namespace UYCommerce.Controllers
     {
         private readonly ShopContext _context;
         private readonly IFileService _fileService;
+        private readonly IProductoService _productoService;
 
-        public ProductoController(ShopContext context, IFileService fileService)
+        public ProductoController(ShopContext context, IFileService fileService, IProductoService productoService)
         {
             _context = context;
             _fileService = fileService;
+            this._productoService = productoService;
         }
 
         public IActionResult Index()
@@ -40,48 +46,38 @@ namespace UYCommerce.Controllers
 
             if (ModelState.IsValid)
             {
-
-                var productoDb = await _context.Productos.FirstOrDefaultAsync(p => p.Nombre!.ToLower() == producto.Nombre.ToLower());
-
-                if (productoDb is not null)
+                try
                 {
-                    ViewBag.msj = "Ese producto ya existe";
-                    return View(producto);
-                }
-
-                var categoria = await _context.Categorias.Include(c => c.Atributos).FirstOrDefaultAsync(c => c.Id == producto.CategoriaId);
-                var marca = await _context.Marcas.FirstOrDefaultAsync(m => m.Id == producto.MarcaId);
-
-                if (categoria is null)
-                {
-                    ViewBag.msj = "Error";
-                    return View(producto);
-                }
-
-                var atributos = producto.Atributos is not null ?
-                    categoria.Atributos?.Where(a => producto.Atributos.Any(x => a.Id == x)).ToList()! : null;
-
-                Producto productoNuevo = new()
-                {
-                    Nombre = producto.Nombre,
-                    NombreClave = producto.Nombre.ToLower().Replace(" ", "-"),
-                    Descripcion = producto.Descripcion,
-                    Imagenes = producto.Imagenes.Select(i => new ProductoImagen { ImagenNombre = i.FileName }).ToList(),
-                    Categoria = categoria,
-                    Marca = marca,
-                    Atributos = atributos
-                };
-
-                await _context.Productos.AddAsync(productoNuevo);
-                await _context.SaveChangesAsync();
-
-                foreach (var img in producto.Imagenes)
-                {
-                    if (img != null)
+                    AddProductoDto newProducto = new AddProductoDto()
                     {
-                        using var imgStream = img.OpenReadStream();
-                        await _fileService.SaveFile(img.Name, imgStream, "Imagenes/Productos");
+                        Nombre = producto.Nombre,
+                        Descripcion = producto.Descripcion,
+                        CategoriaId = producto.CategoriaId,
+                        MarcaId = producto.MarcaId,
+                        Atributos = producto.Atributos ?? []
+                    };
+
+                    if (producto.Imagenes.Any())
+                    {
+                        var imagenes = producto.Imagenes
+                            .Select(i => new CreateImageDto() { ImageName = i.Name, Stream = i.OpenReadStream() })
+                            .ToList();
+                        newProducto.Imagenes = imagenes;
                     }
+
+                    await _productoService.AddProductoAsync(newProducto);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Response.StatusCode = 400;
+                }
+                catch (NotFoundException e)
+                {
+                    Response.StatusCode = 404;
+                }
+                catch (Exception e)
+                {
+                    Response.StatusCode = 500;
                 }
 
                 return Redirect("/admin/productos");
@@ -97,9 +93,9 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> AgregarSku(int productoId)
         {
 
-            var producto = await GetProductoById(productoId);
+            var producto = await _productoService.GetProductoCompleteByIdAsync(productoId);
 
-            if (producto is null || !producto.Atributos!.Any() && producto.Skus!.Any())
+            if (producto is null || producto.Atributos!.Count == 0 && producto.Skus!.Count != 0)
             {
                 return Redirect("/productos");
             }
@@ -223,29 +219,32 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("/search")]
-        public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 0, int pag = 0, int qty = 3)
+        public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 1, int pag = 1, int qty = 3)
         {
             BusquedaProductoVM result = new();
 
-            result.Skus = await GetSkusByQuery(query);
+            if (pag < 1 || string.IsNullOrEmpty(query) || orden < 1 || orden > 3 || qty < 3)
+            {
+                Response.StatusCode = 400;
+                return View("BusquedaProductos", result);
+            }
+            try
+            {
+                var queryResult = await _productoService.GetProductosByQuery(query, (ProductsOrderBy)orden, pag - 1, qty);
+                result.Skus = queryResult.Items;
+                result.NumberOfPages = (queryResult.TotalItems + qty -1) / qty;
+                result.Pag = pag;
 
-            //paginacion
-            result.NumberOfPages = decimal.Divide(result.Skus.Count, qty);
-            int numPag = pag > 0 ? pag - 1 : 0;
+                result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
+                    .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
 
-            if (orden > 0)
-                result.Skus = OrdenarSkus(result.Skus, orden);
-
-            result.Skus = result.Skus.Skip(numPag * qty).Take(qty).ToList();
-
-            result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
-                .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
-
-            if (User.Identity!.IsAuthenticated)
-                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
-
-            result.Pag = numPag + 1;
-
+                if (User.Identity!.IsAuthenticated)
+                    result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = 500;
+            }
             return View("BusquedaProductos", result);
         }
 

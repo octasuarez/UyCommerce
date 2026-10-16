@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using UyCommerce.Application.Common.Enums;
+using UyCommerce.Application.Common.Models;
+using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Contracts.ServicesAbstractions
@@ -9,5 +9,8 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
     {
         Task<List<Producto>> GetFeaturedProductsAsync();
         Task<List<Producto>> GetProductosCompleteAsync();
+        Task AddProductoAsync(AddProductoDto addProductoDto);
+        Task<Producto?> GetProductoCompleteByIdAsync(int id);
+        Task<GetProductsByQuery> GetProductosByQuery(string query, ProductsOrderBy orderBy, int pag, int qty);
     }
 }
