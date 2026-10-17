@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace UyCommerce.Domain.Entities
+namespace UYCommerce.ViewModels
 {
 	public class ProductoModel
 	{

@@ -8,8 +8,10 @@ namespace UyCommerce.Application.Contracts.Persistance
     {
         Task<List<Producto>> GetFeaturedProductsAsync();
         Task<List<Producto>> GetProductosCompleteAsync();
+        Task<Producto?> GetProductoCompleteByIdNoTrackingAsync(int id);
         Task<Producto?> GetProductoCompleteByIdAsync(int id);
         Task<Producto?> GetProductoByNombreAsync(string nombre);
         Task<GetProductsByQuery> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty);
+        Task<List<Producto>> GetProductosByQueryNameAsync(string query);
     }
 }

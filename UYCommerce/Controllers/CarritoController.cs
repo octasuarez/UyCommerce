@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using System.Security.Claims;
+using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers
 {

@@ -8,5 +8,6 @@ namespace UyCommerce.Application.Contracts.Persistance
         public Task<Categoria?> GetCategoriaByNameAsync(string name);
         Task<List<Categoria>> GetCategoriasCompleteAsync();
         Task<Categoria?> GetCategoriaByIdCompleteAsync(int id);
+        Task<List<Categoria>> GetCategoriasPadreAsync();
     }
 }

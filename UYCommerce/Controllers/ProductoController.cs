@@ -9,6 +9,7 @@ using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Exceptions;
 using UyCommerce.Application.Common.Enums;
+using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers
 {
@@ -93,7 +94,7 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> AgregarSku(int productoId)
         {
 
-            var producto = await _productoService.GetProductoCompleteByIdAsync(productoId);
+            var producto = await _productoService.GetProductoCompleteByIdNoTrackingAsync(productoId);
 
             if (producto is null || producto.Atributos!.Count == 0 && producto.Skus!.Count != 0)
             {
@@ -114,92 +115,41 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AgregarSku(AgregarSkuModel skuModel)
         {
-
-            Producto? producto = null;
-
             if (ModelState.IsValid)
             {
-                producto = await GetProductoById(skuModel.ProductoId);
-
-                if (producto is null)
-                    return View(skuModel);
-
-                var puedeAgregarSku = ValidarAgregarSku(producto, skuModel);
-
-                if (!puedeAgregarSku)
+                try
                 {
-                    ViewBag.error = "Algo salio mal";
-                    return View(skuModel);
-                }
+                    List<CreateImageDto> imagenes = [];
+                    skuModel.AtributoValores ??= [];
 
-                string key = producto.NombreClave!;
-
-                List<AtributoValor> atributos = new();
-
-                if (skuModel.AtributoValores is not null && skuModel.AtributoValores!.Any() && producto.Atributos is not null)
-                    atributos = producto.Atributos.SelectMany(a => a.Valores!).Where(a => skuModel.AtributoValores.Any(av => av == a.Id)).ToList();
-
-                if (atributos.Any()) atributos.ForEach(a => key += "-" + a.Valor);
-
-                Sku nuevoSku = new()
-                {
-                    ProductoId = producto.Id,
-                    Key = key.ToLower(),
-                    Nombre = skuModel.Nombre,
-                    Precio = skuModel.Precio,
-                    Imagenes = skuModel.Imagenes is not null ?
-                    skuModel.Imagenes.Select(i => new SkuImagen { ImagenNombre = i.FileName }).ToList() :
-                    producto.Imagenes?.Select(i => new SkuImagen { ImagenNombre = i.ImagenNombre }).ToList(),
-                    AtributosValores = atributos,
-                    Stock = skuModel.Stock
-                };
-
-                if (skuModel.Imagenes is not null)
-                {
-                    foreach (var img in skuModel.Imagenes)
+                    if (skuModel.Imagenes != null)
                     {
-                        if (img is not null)
-                        {
-                            using var imgStream = img.OpenReadStream();
-                            await _fileService.SaveFile(img.Name, imgStream, "Imagenes/Productos");
-                        }
+                        imagenes = [.. skuModel.Imagenes.Select(i => new CreateImageDto() { ImageName = i.Name, Stream = i.OpenReadStream() })];
                     }
+
+                    AddSkuAProductoDto skuDto = new()
+                    {
+                        AtributoValores = (List<int>)skuModel.AtributoValores,
+                        Imagenes = imagenes,
+                        Nombre = skuModel.Nombre,
+                        Precio = skuModel.Precio,
+                        ProductoId = skuModel.ProductoId,
+                        Stock = skuModel.Stock
+                    };
+
+                    await _productoService.AddSkuAProductoAsync(skuDto);
+                    var producto = await _productoService.GetProductoCompleteByIdNoTrackingAsync(skuModel.ProductoId);
+                    skuModel.Atributos = producto?.Atributos;
                 }
-
-                await _context.AddAsync(nuevoSku);
-                await _context.SaveChangesAsync();
-
+                catch (Exception e)
+                {
+                    Response.StatusCode = 400;
+                    ViewBag.error = e.Message;
+                    return View(skuModel);
+                }
                 return Redirect("/admin/productos");
-
             }
-
-            skuModel.Atributos = producto?.Atributos;
-
             return View(skuModel);
-
-        }
-
-        private static bool ValidarAgregarSku(Producto producto, AgregarSkuModel sku)
-        {
-
-            if (producto.Atributos!.Any() && sku.AtributoValores is null)
-            {
-                return false;
-            }
-
-            bool skuAtributosExisten = producto.Skus!.Any(s => s.AtributosValores!.All(a => sku.AtributoValores!.Any(av => av == a.Id)));
-
-            if (skuAtributosExisten)
-            {
-                return false;
-            }
-
-            if (producto.Skus!.Any(s => s.Nombre.ToLower() == sku.Nombre.ToLower()))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private async Task<Producto?> GetProductoById(int id)
@@ -216,7 +166,6 @@ namespace UYCommerce.Controllers
             return producto;
         }
 
-
         [HttpGet]
         [Route("/search")]
         public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 1, int pag = 1, int qty = 3)
@@ -230,34 +179,18 @@ namespace UYCommerce.Controllers
             }
             try
             {
-                var queryResult = await _productoService.GetProductosByQuery(query, (ProductsOrderBy)orden, pag - 1, qty);
+                int? userId = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int id) ? id : null;
+                var queryResult = await _productoService.GetProductosByQueryAsync(query, (ProductsOrderBy)orden, pag - 1, qty, userId);
                 result.Skus = queryResult.Items;
-                result.NumberOfPages = (queryResult.TotalItems + qty -1) / qty;
+                result.NumberOfPages = (queryResult.TotalItems + qty - 1) / qty;
                 result.Pag = pag;
-
-                result.Categorias = await _context.Categorias.Where(c => c.CategoriaPadre == null)
-                    .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre }).ToListAsync();
-
-                if (User.Identity!.IsAuthenticated)
-                    result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
+                result.Categorias = queryResult.Categorias;
             }
             catch (Exception e)
             {
                 Response.StatusCode = 500;
             }
             return View("BusquedaProductos", result);
-        }
-
-        private async Task<ICollection<Sku>> GetSkusByQuery(string query)
-        {
-
-            IQueryable<Producto> productos = GetProductosQueryable();
-
-            productos = productos.Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower()));
-
-            var skus = await productos.SelectMany(p => p.Skus!).ToListAsync();
-
-            return skus;
         }
 
         [HttpGet]
@@ -431,61 +364,28 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<JsonResult> Autocomplete(string query)
         {
-
-            var productos = await _context.Productos
-                .Include(p => p.Imagenes)
-                .Where(p => p.Nombre!.ToLower().StartsWith(query.ToLower())
-                || p.Nombre.ToLower().Contains(query.ToLower()))
-                .Select(p => new
-                {
-                    id = p.Id,
-                    nombre = p.Nombre,
-                    nombreclave = p.NombreClave,
-                    img = p.Imagenes!.First().ImagenNombre
-                }).ToListAsync();
-
+            var productos = await _productoService.GetProductosByQueryNameAsync(query);
             return Json(productos);
         }
-
-
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> EliminarSkuProducto([FromBody] int skuId)
         {
-
-            var sku = await GetSkuById(skuId);
-
-            if (sku is null)
-                return BadRequest(new { error = "Error sku not found" });
-
-            if (await SkuInUse(skuId))
-                return BadRequest(new { error = "Error sku in use" });
-
             try
             {
-                _context.Remove(sku);
-                await _context.SaveChangesAsync();
-
+                await _productoService.DeleteSkuAsync(skuId);
+            }
+            catch (NotFoundException e)
+            {
+                Response.StatusCode = 400;
             }
             catch (Exception e)
             {
-                return StatusCode(500);
+                Response.StatusCode = 500;
             }
 
             return Ok();
-        }
-
-        private async Task<Sku?> GetSkuById(int skuId)
-        {
-
-            var sku = await _context.Skus
-                .Include(s => s.Imagenes)
-                .Include(s => s.Usuarios)
-                .Include(s => s.AtributosValores)
-                .FirstOrDefaultAsync(s => s.Id == skuId);
-
-            return sku;
         }
 
         private async Task<bool> SkuInUse(int skuId)
@@ -534,19 +434,19 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> Feature(int productId, bool featured)
         {
-
-
-            var product = await GetProductoById(productId);
-
-            if (product is null)
-                return BadRequest(new { msg = "Product not found" });
-
-            product.Featured = featured;
-
-            _context.Update(product);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { msg = featured == true ? "Featured" : "Not featured" });
+            try
+            {
+                await _productoService.FeatureProductAsync(productId, featured);
+            }
+            catch (NotFoundException e)
+            {
+                Response.StatusCode = 400;
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = 500;
+            }
+            return Ok(new { msg = $"Producto cambio su estado a {featured}."});
         }
     }
 }

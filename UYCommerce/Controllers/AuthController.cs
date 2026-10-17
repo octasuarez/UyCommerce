@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Application.Contracts.Persistance.Services;
+using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers
 {

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace UyCommerce.Domain.Entities
+namespace UYCommerce.ViewModels
 {
 	public class AddToCartModel
 	{

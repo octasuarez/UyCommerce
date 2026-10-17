@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
+using UyCommerce.Domain.Entities;
 
-namespace UyCommerce.Domain.Entities
+namespace UYCommerce.ViewModels
 {
 	public class AgregarSkuModel
 	{

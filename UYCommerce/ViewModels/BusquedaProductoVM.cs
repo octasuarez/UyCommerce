@@ -1,5 +1,7 @@
 ﻿using System;
-namespace UyCommerce.Domain.Entities
+using UyCommerce.Domain.Entities;
+
+namespace UYCommerce.ViewModels
 {
 	public class BusquedaProductoVM
 	{

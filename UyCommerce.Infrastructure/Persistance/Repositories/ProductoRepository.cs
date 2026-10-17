@@ -30,13 +30,22 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 
         public async Task<Producto?> GetProductoCompleteByIdAsync(int id)
         {
-            return await GetQueryProductosComplete().FirstOrDefaultAsync(p => p.Id == id);
+            return await GetQueryProductosComplete()
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Producto?> GetProductoCompleteByIdNoTrackingAsync(int id)
+        {
+            return await GetQueryProductosComplete()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<GetProductsByQuery> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
         {
             GetProductsByQuery result = new();
             var items = GetQueryProductosComplete()
+                .AsNoTracking()
                 .Where(p => p.Nombre.ToLower().StartsWith(query.ToLower()))
                 .SelectMany(p => p.Skus)
                 .Include(s => s.Producto).ThenInclude(p => p.Reviews);
@@ -61,15 +70,25 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
             return result;
         }
 
+        public async Task<List<Producto>> GetProductosByQueryNameAsync(string query)
+        {
+            return await _context.Productos
+                .AsNoTracking()
+                .Include(p => p.Imagenes)
+                .Where(p => p.Nombre.ToLower().Contains(query.ToLower()))
+                .ToListAsync();
+        }
+
         public async Task<List<Producto>> GetProductosCompleteAsync()
         {
-            return await GetQueryProductosComplete().ToListAsync();
+            return await GetQueryProductosComplete()
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         private IQueryable<Producto> GetQueryProductosComplete()
         {
             return _context.Productos
-                .AsNoTracking()
                 .Include(p => p.Imagenes)
                 .Include(p => p.Categoria)
                 .Include(p => p.Marca)
