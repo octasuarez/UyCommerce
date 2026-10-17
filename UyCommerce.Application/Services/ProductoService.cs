@@ -100,6 +100,7 @@ namespace UyCommerce.Application.Services
 
             if (addSkuAProductoDto.AtributoValores.Count > 0 && producto.Atributos != null && producto.Atributos.Count > 0)
             {
+                key += "/";
                 atributos = producto.Atributos
                     .SelectMany(a => a.Valores!)
                     .Where(a => addSkuAProductoDto.AtributoValores
@@ -157,7 +158,7 @@ namespace UyCommerce.Application.Services
         public async Task FeatureProductAsync(int id, bool feature)
         {
             var producto = await _productoRepository.GetByIdAsync(id)
-                ?? throw new NotFoundException(nameof(Producto),id);
+                ?? throw new NotFoundException(nameof(Producto), id);
             producto.Featured = feature;
             await _productoRepository.UpdateAsync(producto);
         }
@@ -194,13 +195,105 @@ namespace UyCommerce.Application.Services
                 NombreClave = p.NombreClave,
                 ImagenNombre = p.Imagenes!.First().ImagenNombre
             }).ToList();
-            
+
             return result ??= [];
         }
 
         public async Task<List<Producto>> GetProductosCompleteAsync()
         {
             return await _productoRepository.GetProductosCompleteAsync();
+        }
+
+        public async Task<GetSkuByKeyDto> GetSkuByKeyAsync(string key, int? usuarioId)
+        {
+            GetSkuByKeyDto result = new();
+            var sku = await _skuRepository.GetSkuByKeyAsync(key)
+                ?? throw new NotFoundException(nameof(Sku), key);
+
+
+
+            var skus = await _skuRepository.GetSkusByProductoIdAsync(sku.ProductoId);
+
+            var reviews = sku.Producto.Reviews.Select(r => new Review()
+            {
+                Puntuacion = r.Puntuacion,
+                Texto = r.Texto,
+                Usuario = new Usuario() { Nombre = r.Usuario.Nombre }
+            });
+            var preguntas = sku.Producto.Preguntas.Select(p => new Pregunta()
+            {
+                Contenido = p.Contenido,
+                Fecha = p.Fecha,
+                Usuario = new Usuario() { Nombre = p.Usuario.Nombre },
+                Respuesta = new Respuesta() { Contenido = p.Respuesta.Contenido, Fecha = p.Respuesta.Fecha }
+            });
+            sku.Producto.Reviews = [.. reviews];
+            sku.Producto.Preguntas = [.. preguntas];
+
+            SkuDto skuDto = new SkuDto()
+            {
+                AtributosValores = sku.AtributosValores,
+                Id = sku.Id,
+                Imagenes = sku.Imagenes,
+                Key = sku.Key,
+                Nombre = sku.Nombre,
+                Precio = sku.Precio,
+                PrecioAnterior = sku.PrecioAnterior,
+                Producto = sku.Producto,
+                ProductoId = sku.ProductoId,
+                Stock = sku.Stock,
+            };
+
+            result.Sku = skuDto;
+            result.Reviews = sku.Producto!.Reviews;
+            result.Categoria = sku.Producto.Categoria;
+            result.ProductosRelacionados = [.. sku.Producto.Categoria!.Productos!.SelectMany(p => p.Skus!)];
+            result.PuntuacionPromedio = reviews != null && reviews.Count() > 0 ? reviews.Average(r => r.Puntuacion) : 0;
+
+            if (usuarioId != null)
+            {
+                var usuario = await _usuarioRepository.GetUsuarioAndFavoritos((int)usuarioId)
+                ?? throw new NotFoundException(nameof(Usuario), usuarioId);
+                result.Favoritos = usuario.Favoritos;
+            }
+
+            if (sku.AtributosValores != null && sku.AtributosValores.Count > 0)
+            {
+                List<AtributoValor> opciones = skus
+                                               .SelectMany(s => s.AtributosValores)
+                                               .Select(a => new AtributoValor()
+                                               {
+                                                   Id = a.Id,
+                                                   Valor = a.Valor,
+                                                   Atributo = new Atributo()
+                                                   {
+                                                       Id = a.Atributo.Id,
+                                                       Nombre = a.Atributo.Nombre,
+                                                   }
+                                               }).ToList();
+                opciones = [.. opciones.Distinct()];
+                var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo.Id)
+                                                  .Select(g => new AtributoDto
+                                                  {
+                                                      Nombre = g.First(a => a.Atributo.Id == g.Key).Atributo.Nombre,
+                                                      Valores = g.GroupBy(g => g.Id).Select(v => v.First().Valor).ToList()
+                                                  }).ToList();
+                result.Opciones = opcionesPorAtributo;
+            }
+
+            return result;
+        }
+
+        public async Task<string> FindSkuKeyMatchAsync(string productoClave, string filters)
+        {
+            string skuKey = $"{productoClave}/{filters}";
+            var skuKeyExists = await _skuRepository.CheckSkuKeyExists(skuKey);
+            if (!skuKeyExists)
+            {
+                string[] skuParts = [productoClave, filters.Split("-").Last()];
+                skuKey = await _skuRepository.FindSkyKeyByParts(skuParts) ?? string.Empty;
+            }
+            return skuKey;
         }
     }
 }

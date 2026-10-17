@@ -311,53 +311,25 @@ namespace UYCommerce.Controllers
         /// <param name="options"></param>
         /// <returns>verProductoViewModel</returns>
         [HttpGet]
-        [Route("/{key}")]
-        public async Task<IActionResult> GetProductoPorKey(string key)
+        [Route("/{key}/{filters}")]
+        public async Task<IActionResult> GetProductoPorKey(string key, string filters)
         {
-
-            var sku = await _context.Skus
-                .Include(s => s.AtributosValores)!.ThenInclude(av => av.Atributo)
-                .Include(s => s.Producto).ThenInclude(p => p!.Reviews)!.ThenInclude(r => r.Usuario)
-                .Include(s => s.Producto).ThenInclude(p => p!.Preguntas)
-                .Include(s => s.Producto).ThenInclude(p => p!.Reviews)
-                .Include(s => s.Producto).ThenInclude(p => p!.Marca)
-                .Include(s => s.Producto).ThenInclude(p => p!.Categoria).ThenInclude(c => c!.CategoriaPadre)
-                .Include(s => s.Imagenes)
-                .FirstOrDefaultAsync(s => s.Key.ToLower().Contains(key.ToLower()));
-
-            if (sku is not null)
+            try
             {
-                var skus = _context.Skus
-                    .Where(s => s.ProductoId == sku.ProductoId)
-                    .Include(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
-                    .Include(s => s.Producto!.Categoria!.Productos)!.ThenInclude(p => p.Skus)!.ThenInclude(s => s.Imagenes)
-                    .ToList();
-
-                VerProductoVM result = new()
-                {
-                    Sku = sku,
-                    Reviews = sku.Producto!.Reviews,
-                    Categoria = sku.Producto.Categoria,
-                    ProductosRelacionados = sku.Producto.Categoria!.Productos!.SelectMany(p => p.Skus!).ToList(),
-                };
-
-                result.Favoritos = _context.Usuarios.Where(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)).SelectMany(u => u.Favoritos!).ToList();
-
-                if (sku.AtributosValores != null && sku.AtributosValores.Any())
-                {
-                    List<AtributoValor> opciones = skus.SelectMany(s => s.AtributosValores!.Where(a => a.Atributo!.Id == sku.AtributosValores!.First().Atributo!.Id)).ToList();
-
-                    opciones.AddRange(skus.Where(s => s.AtributosValores!.Contains(sku.AtributosValores!.First())).SelectMany(s => s.AtributosValores!).ToList());
-
-                    opciones = opciones.Distinct().ToList();
-                    var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo);
-
-                    result.Opciones = opcionesPorAtributo!;
-                }
+                var correctSkuKey = _productoService.FindSkuKeyMatchAsync(key, filters);
+                var userAuthenticated = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId);
+                var result = await _productoService.GetSkuByKeyAsync(key, userAuthenticated ? userId : null);
 
                 return View("VerProducto", result);
             }
-
+            catch (NotFoundException e)
+            {
+                Response.StatusCode = 400;
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = 500;
+            }
             return Redirect("/NotFound");
         }
 

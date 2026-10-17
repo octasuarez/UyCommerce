@@ -12,10 +12,10 @@ namespace UyCommerce.Domain.Entities
         public int VecesComprado { get; set; } = 0;
         public virtual Categoria? Categoria { get; set; }
         public virtual Marca? Marca { get; set; }
-        public virtual ICollection<Pregunta>? Preguntas { get; set; }
+        public virtual ICollection<Pregunta> Preguntas { get; set; } = [];
         public ICollection<ProductoImagen>? Imagenes { get; set; }
         public ICollection<Sku>? Skus { get; set; }
-        public ICollection<Review>? Reviews { get; set; }
+        public ICollection<Review> Reviews { get; set; } = [];
         public ICollection<Atributo>? Atributos { get; set; }
         public bool Featured { get; set; } = false;
 

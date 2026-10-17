@@ -1,4 +1,4 @@
-﻿@model VerProductoVM
+﻿@model GetSkuByKeyDto
 
 <body>
     <div class="container-lg-fluid p-3 col-lg-10 mx-lg-auto">
@@ -129,19 +129,19 @@
                     <div class="my-5">
                         @for (int i = 0; i < Model.Opciones!.Count(); i++)
                         {
-                            <h6 style="font-weight:bold;margin-top:1em;">@Model.Opciones.ElementAt(i).Key.Nombre:</h6>
+                            <h6 style="font-weight:bold;margin-top:1em;">@Model.Opciones.ElementAt(i).Nombre:</h6>
 
-                            <select class="form-select" name="@Model.Opciones.ElementAt(i).Key.Nombre" id="@i" onchange="cambioAtributo(this)">
+                            <select class="form-select" name="@Model.Opciones.ElementAt(i).Nombre" id="@i" onchange="cambioAtributo(this)">
 
-                                @foreach (var atributo in Model.Opciones.ElementAt(i))
+                                @foreach (var valor in Model.Opciones.ElementAt(i).Valores)
                                 {
-                                    if (Model.Sku!.AtributosValores!.Contains(atributo))
+                                    if (Model.Sku!.AtributosValores!.FirstOrDefault(v => v.Valor == valor) != null)
                                     {
-                                        <option value="@atributo.Valor" selected>@atributo.Valor</option>
+                                        <option value="@valor" selected>@valor</option>
                                     }
                                     else
                                     {
-                                        <option value="@atributo.Valor">@atributo.Valor</option>
+                                        <option value="@valor">@valor</option>
                                     }
                                 }
                             </select>
@@ -283,7 +283,7 @@
             {
                 <h3 class="text-center mb-3">@Model.Reviews.Count() Reviews</h3>
 
-                <h5 class="text-center">@Localizer["Average rating"] @Model.GetPuntuacionPromedio()</h5>
+                <h5 class="text-center">@Localizer["Average rating"] @Model.PuntuacionPromedio</h5>
 
                 <ul class="list-unstyled">
                     @foreach (var r in Model.Reviews)

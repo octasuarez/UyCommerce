@@ -9,7 +9,7 @@ namespace UyCommerce.Domain.Entities
 		public int ProductoId {get;set;}
 		public virtual Producto? Producto { get; set; }
 		public int UsuarioId { get; set; }
-		public virtual Usuario? Usuario { get; set; }
+		public virtual Usuario Usuario { get; set; }
 		public int Puntuacion { get; set; }
 		public string? Texto { get; set; }
 	}

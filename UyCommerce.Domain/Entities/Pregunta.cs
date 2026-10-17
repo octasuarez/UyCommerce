@@ -7,7 +7,7 @@
         public required virtual Usuario Usuario { get; set; }
         public required string Contenido { get; set; }
         public DateTime Fecha { get; set; }
-        public virtual Respuesta? Respuesta { get; set; }
+        public virtual Respuesta Respuesta { get; set; } = new();
 
     }
 }

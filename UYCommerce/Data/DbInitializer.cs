@@ -159,7 +159,7 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Key="iphone-11-azul-64gb",
+                                    Key="iphone-11/azul-64gb",
                                     Nombre = "Iphone 11 Azul 64gb",
                                     Stock = 4,
                                     Precio = 759.99,
@@ -177,7 +177,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key="iphone-11-rojo-64gb",
+                                    Key="iphone-11/rojo-64gb",
                                     Nombre = "Iphone 11 Rojo 64gb",
                                     Stock = 4,
                                     Precio = 800,
@@ -193,7 +193,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key="iphone-11-rojo-128gb",
+                                    Key="iphone-11-rojo/128gb",
                                     Nombre = "Iphone 11 Rojo 128gb",
                                     Stock = 10,
                                     Precio = 999,
@@ -231,7 +231,7 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Key="remera-vlone-violeta",
+                                    Key="remera-vlone/violeta",
                                     Nombre = "Remera Vlone Violeta",
                                     Stock = 4,
                                     Precio = 135,
@@ -246,7 +246,7 @@ namespace UYCommerce.Data
                                     },
                                 },
                                 new Sku{
-                                    Key="remera-vlone-azul",
+                                    Key="remera-vlone/azul",
                                     Nombre = "Remera Vlone Azul",
                                     Stock = 4,
                                     Precio = 140,
@@ -260,7 +260,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key="remera-vlone-rojo",
+                                    Key="remera-vlone/rojo",
                                     Nombre = "Remera Vlone Rojo",
                                     Stock = 4,
                                     Precio = 300,
@@ -274,7 +274,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key="remera-vlone-naranja",
+                                    Key="remera-vlone/naranja",
                                     Nombre = "Remera Vlone Naranja",
                                     Stock = 4,
                                     Precio = 399.99,
@@ -311,7 +311,7 @@ namespace UYCommerce.Data
                             Skus = new Sku[]
                             {
                                 new Sku{
-                                    Key="macbook-m2-8gb",
+                                    Key="macbook-m2/8gb",
                                     Nombre = "Macbook m2 8gb",
                                     Stock = 1,
                                     Precio = 1250,
@@ -328,7 +328,7 @@ namespace UYCommerce.Data
                                     },
                                 },
                                 new Sku{
-                                    Key="macbook-m2-16gb",
+                                    Key="macbook-m2/16gb",
                                     Nombre = "Macbook m2 16gb",
                                     Stock = 5,
                                     Precio = 1689,
@@ -367,7 +367,7 @@ namespace UYCommerce.Data
                             Skus= new Sku[]{
 
                                 new Sku {
-                                    Key = "bicicleta-scott-negra-R26",
+                                    Key = "bicicleta-scott-negra/R26",
                                     Nombre = "Bicicleta Scott Negra R26",
                                     Stock = 10,
                                     Precio=839,
@@ -383,7 +383,7 @@ namespace UYCommerce.Data
 
                                 },
                                 new Sku {
-                                    Key = "bicicleta-scott-negra-R29",
+                                    Key = "bicicleta-scott-negra/R29",
                                     Nombre = "Bicicleta Scott Negra R29",
                                     Stock = 5,
                                     Precio=949,
@@ -444,7 +444,7 @@ namespace UYCommerce.Data
                             Skus= new Sku[]{
 
                                 new Sku{
-                                    Key = "iphone-13-azul",
+                                    Key = "iphone-13/azul",
                                     Nombre = "Iphone 13 Azul",
                                     Stock = 3,
                                     Precio=969,
@@ -457,7 +457,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key = "iphone-13-negro",
+                                    Key = "iphone-13/negro",
                                     Nombre = "Iphone 13 Negro",
                                     Stock = 0,
                                     Precio=969,
@@ -489,7 +489,7 @@ namespace UYCommerce.Data
                             Skus= new Sku[]{
 
                                 new Sku{
-                                    Key = "joggers-adidas-blanco",
+                                    Key = "joggers-adidas/blanco",
                                     Nombre = "Joggers Adidas Blanco",
                                     Stock = 10,
                                     Precio=46,
@@ -501,7 +501,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key = "joggers-adidas-negro",
+                                    Key = "joggers-adidas/negro",
                                     Nombre = "Joggers Adidas Negro",
                                     Stock = 3,
                                     Precio=52,
@@ -533,7 +533,7 @@ namespace UYCommerce.Data
                             Skus= new Sku[]{
 
                                 new Sku{
-                                    Key = "remera-nike-blanco-m",
+                                    Key = "remera-nike/blanco-m",
                                     Nombre = "Remera Nike Blanca",
                                     Stock = 3,
                                     Precio=43,
@@ -546,7 +546,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key = "remera-nike-blanco-l",
+                                    Key = "remera-nike/blanco-l",
                                     Nombre = "Remera Nike Blanca",
                                     Stock = 3,
                                     Precio=43,
@@ -559,7 +559,7 @@ namespace UYCommerce.Data
                                     }
                                 },
                                 new Sku{
-                                    Key = "remera-nike-negro-xl",
+                                    Key = "remera-nike/negro-xl",
                                     Nombre = "Remera Nike Negro",
                                     Stock = 3,
                                     Precio=46,

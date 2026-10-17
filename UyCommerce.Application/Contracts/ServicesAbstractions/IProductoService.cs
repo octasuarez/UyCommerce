@@ -16,5 +16,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task AddSkuAProductoAsync(AddSkuAProductoDto addSkuAProductoDto);
         Task DeleteSkuAsync(int skuId);
         Task FeatureProductAsync(int id, bool feature);
+        Task<GetSkuByKeyDto> GetSkuByKeyAsync(string key, int? userId);
+        Task<string> FindSkuKeyMatchAsync(string productoClave, string filters);
     }
 }
