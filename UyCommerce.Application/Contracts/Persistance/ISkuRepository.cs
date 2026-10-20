@@ -9,7 +9,8 @@ namespace UyCommerce.Application.Contracts.Persistance
     {
         Task<Sku?> GetSkuByKeyAsync(string key);
         Task<List<Sku>> GetSkusByProductoIdAsync(int productoId);
-        Task<bool> CheckSkuKeyExists(string skuKey);
-        Task<string?> FindSkyKeyByParts(string[] keyParts);
+        Task<string?> FindSkuKeyByKey(string skuKey);
+        Task<string?> FindSkuKeyByParts(string[] keyParts);
+        Task<List<Sku>> GetSkusByCategoriaId(int categoriaId);
     }
 }

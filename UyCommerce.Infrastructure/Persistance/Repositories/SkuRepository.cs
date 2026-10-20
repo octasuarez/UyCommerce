@@ -13,19 +13,15 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
         }
 
-        public async Task<bool> CheckSkuKeyExists(string skuKey)
+        public async Task<string?> FindSkuKeyByKey(string skuKey)
         {
-            return await _context.Skus.AnyAsync(s => s.Key.Equals(skuKey));
+            return await _context.Skus.Select(s => s.Key).FirstOrDefaultAsync(k => k.StartsWith(skuKey));
         }
 
-        public async Task<string?> FindSkyKeyByParts(string[] keyParts)
+        public async Task<string?> FindSkuKeyByParts(string[] keyParts)
         {
-            var skus = _context.Skus.AsQueryable();
-            foreach (var part in keyParts)
-            {
-                skus.Where(s => s.Key.Contains(part));
-            }
-            return await skus.Select(s => s.Key).FirstOrDefaultAsync();
+            var skus = await _context.Skus.Where(s => keyParts.All(k => s.Key.Contains(k))).ToListAsync();
+            return skus.FirstOrDefault().Key;
         }
 
         public async Task<Sku?> GetSkuByKeyAsync(string key)
@@ -42,6 +38,15 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Include(s => s.Imagenes)
                 .FirstOrDefaultAsync(s => s.Key.ToLower().Contains(key.ToLower()));
 
+        }
+
+        public async Task<List<Sku>> GetSkusByCategoriaId(int categoriaId)
+        {
+            return await _context.Skus
+                .AsNoTracking()
+                .Include(s => s.Imagenes)
+                .Include(s => s.Producto).ThenInclude(p => p.Reviews)
+                .Where(s => s.Producto.Categoria.Id == categoriaId).ToListAsync();
         }
 
         public async Task<List<Sku>> GetSkusByProductoIdAsync(int productoId)

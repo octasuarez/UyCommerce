@@ -210,8 +210,6 @@ namespace UyCommerce.Application.Services
             var sku = await _skuRepository.GetSkuByKeyAsync(key)
                 ?? throw new NotFoundException(nameof(Sku), key);
 
-
-
             var skus = await _skuRepository.GetSkusByProductoIdAsync(sku.ProductoId);
 
             var reviews = sku.Producto.Reviews.Select(r => new Review()
@@ -247,8 +245,8 @@ namespace UyCommerce.Application.Services
             result.Sku = skuDto;
             result.Reviews = sku.Producto!.Reviews;
             result.Categoria = sku.Producto.Categoria;
-            result.ProductosRelacionados = [.. sku.Producto.Categoria!.Productos!.SelectMany(p => p.Skus!)];
-            result.PuntuacionPromedio = reviews != null && reviews.Count() > 0 ? reviews.Average(r => r.Puntuacion) : 0;
+            result.ProductosRelacionados = await _skuRepository.GetSkusByCategoriaId(sku.Producto.Categoria!.Id);
+            result.PuntuacionPromedio = reviews != null && reviews.Any() ? reviews.Average(r => r.Puntuacion) : 0;
 
             if (usuarioId != null)
             {
@@ -284,16 +282,15 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task<string> FindSkuKeyMatchAsync(string productoClave, string filters)
+        public async Task<string> FindSkuKeyMatchAsync(string productoClave, string? filters)
         {
-            string skuKey = $"{productoClave}/{filters}";
-            var skuKeyExists = await _skuRepository.CheckSkuKeyExists(skuKey);
-            if (!skuKeyExists)
+            var result = await _skuRepository.FindSkuKeyByKey($"{productoClave}/{filters}");
+            if (result is null)
             {
-                string[] skuParts = [productoClave, filters.Split("-").Last()];
-                skuKey = await _skuRepository.FindSkyKeyByParts(skuParts) ?? string.Empty;
+                string[] skuParts = string.IsNullOrEmpty(filters) ? [productoClave] : [productoClave, filters.Split("-").Last()];
+                result = await _skuRepository.FindSkuKeyByParts(skuParts) ?? string.Empty;
             }
-            return skuKey;
+            return result;
         }
     }
 }

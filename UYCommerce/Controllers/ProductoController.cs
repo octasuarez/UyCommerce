@@ -311,14 +311,19 @@ namespace UYCommerce.Controllers
         /// <param name="options"></param>
         /// <returns>verProductoViewModel</returns>
         [HttpGet]
-        [Route("/{key}/{filters}")]
-        public async Task<IActionResult> GetProductoPorKey(string key, string filters)
+        [Route("/{key}/{filters?}")]
+        public async Task<IActionResult> GetProductoPorKey(string key, string? filters)
         {
             try
             {
-                var correctSkuKey = _productoService.FindSkuKeyMatchAsync(key, filters);
+                var correctSkuKey = await _productoService.FindSkuKeyMatchAsync(key, filters);
+                string searchSku = filters != null ? $"{key}/{filters}" : key;
+                if (!string.IsNullOrEmpty(correctSkuKey) && correctSkuKey != searchSku)
+                {
+                    return Redirect("/" + correctSkuKey);
+                }
                 var userAuthenticated = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId);
-                var result = await _productoService.GetSkuByKeyAsync(key, userAuthenticated ? userId : null);
+                var result = await _productoService.GetSkuByKeyAsync(correctSkuKey, userAuthenticated ? userId : null);
 
                 return View("VerProducto", result);
             }
