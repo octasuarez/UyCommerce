@@ -539,7 +539,7 @@ namespace UyCommerce.Infrastructure.Persistance
                                     Stock = 3,
                                     Precio=43,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "remera-nike/comun-blanca.jpg"},
+                                        new SkuImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Blanco")!,
@@ -552,7 +552,7 @@ namespace UyCommerce.Infrastructure.Persistance
                                     Stock = 3,
                                     Precio=43,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "remera-nike/comun-blanca.jpg"},
+                                        new SkuImagen{ImagenNombre = "remera-nike-comun-blanca.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Blanco")!,
@@ -565,7 +565,7 @@ namespace UyCommerce.Infrastructure.Persistance
                                     Stock = 3,
                                     Precio=46,
                                     Imagenes = new SkuImagen[]{
-                                        new SkuImagen{ImagenNombre = "remera-nike/comun-negra.jpg"},
+                                        new SkuImagen{ImagenNombre = "remera-nike-comun-negra.jpg"},
                                     },
                                     AtributosValores = new AtributoValor[]{
                                         atributoValores.FirstOrDefault(a=>a.Valor == "Negro")!,

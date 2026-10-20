@@ -43,7 +43,6 @@
     <None Remove="Resources\Views\Usuario\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Views\Producto\" />
     <Folder Include="Views\Usuario\" />
     <Folder Include="Views\Admin\" />
