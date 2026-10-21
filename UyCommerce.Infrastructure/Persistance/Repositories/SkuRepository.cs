@@ -20,8 +20,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 
         public async Task<string?> FindSkuKeyByParts(string[] keyParts)
         {
-            var skus = await _context.Skus.Where(s => keyParts.All(k => s.Key.Contains(k))).ToListAsync();
-            return skus.FirstOrDefault().Key;
+            var sku = await _context.Skus
+                .Where(s => keyParts.All(k => s.Key.Contains(k)))
+                .FirstOrDefaultAsync();
+
+            return sku != null ? sku.Key : null;
         }
 
         public async Task<Sku?> GetSkuByKeyAsync(string key)

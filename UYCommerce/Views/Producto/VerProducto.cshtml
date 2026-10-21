@@ -77,7 +77,11 @@
 
             @*Detalles del producto y sus atributos*@
 
-            <div id="detalles" class="col-auto col-lg-6 border p-3" style="height:fit-content;position:relative;">
+            <div id="detalles" 
+                class="col-auto col-lg-6 border p-3" 
+                style="height:fit-content;position:relative;"
+                data-sku-key="@Model.Sku.Producto.NombreClave"    
+            >
                 <p class="text-secondary p-0 m-0">@Model.Sku.Producto?.VecesComprado @Localizer["Sold"]</p>
                 <h1 class="mb-2">@Model.Sku.Nombre</h1>
                 @if (Model.Sku.Producto?.Reviews is not null)
@@ -376,78 +380,7 @@
 
     </div>
 
-
-    <script>
-            function cambioAtributo(e) {
-
-                let loading =
-                `<div class="overlay">
-                <div class="overlay bg-light fadein50" style="z-index:100;"></div>
-                     <div class="d-flex justify-content-center h-100 overlay">
-                        <div class="spinner-border mx-auto my-auto" role="status">
-                             <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>`;
-
-                let detalles = document.getElementById('detalles');
-                detalles.innerHTML += loading;
-
-                let key = "/@Model.Sku?.Producto?.NombreClave" + "/";
-
-                if (e.id == 0) {
-
-                    key += `${e.value}`;
-
-                } else {
-
-                    let selects = e.parentElement.querySelectorAll('select');
-                    for (i = 0; i < selects.length; i++) {
-                        key += `${selects[i].value}-`;
-                    }
-
-                    key = key.slice(0,-1);
-                }
-
-                let url = key.toLowerCase();
-                window.location.href = url;
-            }
-    </script>
-
-    <script>
-            function AgregarProductoAlCarrito(e) {
-
-                if ("@Model.Sku" != null) {
-
-                    let qty = document.getElementById("qty");
-
-                    let loading =
-                        `<div class="overlay">
-            <div class="overlay bg-light fadein50" style="z-index:100;"></div>
-                 <div class="d-flex justify-content-center h-100 overlay">
-                    <div class="spinner-border mx-auto my-auto" role="status">
-                         <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>`;
-
-                    let detalles = document.getElementById('detalles');
-                    detalles.innerHTML += loading;
-
-
-
-                    $.ajax({
-                        type: 'POST',
-                        url: "/Carrito/AgregarProductoAlCarrito",
-                        data: { skuId: e.value, quantity: qty.value},
-                        success: function (response) {
-                            location.reload();
-                        }
-
-                    })
-                }
-            }
-    </script>
+    <script type="text/javascript" src="~/js/pages/producto/ver-producto.js"></script>
 
     <script>
             function AgregarPregunta() {
