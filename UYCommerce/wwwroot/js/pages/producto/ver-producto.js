@@ -14,14 +14,14 @@ function cambioAtributo(e) {
     let detalles = document.getElementById('detalles');
     detalles.innerHTML += loading;
 
-    let key = "/" + detalles.dataset.skuKey + "/";
+    let key = "/" + detalles.dataset.skuKey;
 
     if (e.id == 0) {
 
-        key += `${e.value}`;
+        key += `_${e.value}`;
 
     } else {
-
+        key += "_";
         let selects = e.parentElement.querySelectorAll('select');
         for (i = 0; i < selects.length; i++) {
             key += `${selects[i].value}-`;

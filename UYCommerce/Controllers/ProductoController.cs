@@ -304,23 +304,16 @@ namespace UYCommerce.Controllers
             return atributosValores;
         }
 
-        /// <summary>
-        /// Encuentra el producto segun su NombreClave (key) y segun las opciones seleccionadas del cliente.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="options"></param>
-        /// <returns>verProductoViewModel</returns>
         [HttpGet]
-        [Route("/{key}/{filters?}")]
-        public async Task<IActionResult> GetProductoPorKey(string key, string? filters)
+        [Route("/{key}")]
+        public async Task<IActionResult> GetProductoPorKey(string key)
         {
             try
             {
-                var correctSkuKey = await _productoService.FindSkuKeyMatchAsync(key, filters);
-                string searchSku = filters != null ? $"{key}/{filters}" : key;
-                if (!string.IsNullOrEmpty(correctSkuKey) && correctSkuKey != searchSku)
+                var correctSkuKey = await _productoService.FindSkuKeyMatchAsync(key);
+                if (!string.IsNullOrEmpty(correctSkuKey) && correctSkuKey != key)
                 {
-                    return Redirect("/" + correctSkuKey);
+                    return Redirect($"/{correctSkuKey}");
                 }
                 var userAuthenticated = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId);
                 var result = await _productoService.GetSkuByKeyAsync(correctSkuKey, userAuthenticated ? userId : null);

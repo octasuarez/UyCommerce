@@ -282,13 +282,15 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task<string> FindSkuKeyMatchAsync(string productoClave, string? filters)
+        public async Task<string> FindSkuKeyMatchAsync(string key)
         {
-            var result = await _skuRepository.FindSkuKeyByKey($"{productoClave}/{filters}");
+            var result = await _skuRepository.FindSkuKeyByKey(key);
             if (result is null)
             {
-                string[] skuParts = string.IsNullOrEmpty(filters) ? [productoClave] : [productoClave, filters.Split("-").Last()];
-                result = await _skuRepository.FindSkuKeyByParts(skuParts) ?? string.Empty;
+                var keyParts = key.Split('_');
+                var lastPickedFilter = keyParts.Length > 1 ? keyParts[1].Split('-').LastOrDefault() : null ;
+                string[] filters = lastPickedFilter != null ? [keyParts[0],lastPickedFilter] : [keyParts[0]];
+                result = await _skuRepository.FindSkuKeyByParts(filters) ?? string.Empty;
             }
             return result;
         }
