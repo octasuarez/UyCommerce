@@ -12,10 +12,7 @@ namespace UYCommerce.Controllers
     public class CategoriaController : Controller
     {
         private readonly ICategoriaService _categoriaService;
-        public CategoriaController(ICategoriaService categoriaService)
-        {
-            this._categoriaService = categoriaService;
-        }
+        public CategoriaController(ICategoriaService categoriaService) => this._categoriaService = categoriaService;
 
         public IActionResult Index()
         {

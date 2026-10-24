@@ -5,6 +5,7 @@ using System.Text;
 using UyCommerce.Application.Common.Enums;
 using UyCommerce.Application.Common.Models;
 using UyCommerce.Application.Contracts.Persistance;
+using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Infrastructure.Persistance.Repositories
@@ -41,9 +42,9 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<GetProductsByQuery> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
+        public async Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
         {
-            GetProductsByQuery result = new();
+            GetProductosDto result = new();
             var items = GetQueryProductosComplete()
                 .AsNoTracking()
                 .Where(p => p.Nombre.ToLower().StartsWith(query.ToLower()))
@@ -66,7 +67,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 default:
                     break;
             }
-            result.Items = await items.Skip(pag * qty).Take(qty).ToListAsync();
+            result.Skus = await items.Skip(pag * qty).Take(qty).ToListAsync();
             return result;
         }
 

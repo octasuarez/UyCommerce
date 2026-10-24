@@ -25,6 +25,14 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId)
+        {
+            return await _context.Ordenes
+                .AsNoTracking()
+                .Where(o => o.Productos.Any(p => p.Sku.Producto.Id == productoId))
+                .ToListAsync();
+        }
+
         public async Task<List<Orden>> GetOrdenesUsuariosAsync()
         {
             return await _context.Ordenes

@@ -11,5 +11,6 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<List<Orden>> GetOrdenesAsync();
         Task DeleteOrdenAsync();
         Task<List<Orden>> GetOrdenesUsuariosAsync();
+        Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId);
     }
 }

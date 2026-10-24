@@ -43,13 +43,15 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 
         }
 
-        public async Task<List<Sku>> GetSkusByCategoriaId(int categoriaId)
+        public async Task<List<Sku>> GetSkusByCategoriaOrCategoriaPadreIdAsync(int categoriaId)
         {
             return await _context.Skus
-                .AsNoTracking()
                 .Include(s => s.Imagenes)
+                .Include(s => s.AtributosValores).ThenInclude(a => a.Atributo)
                 .Include(s => s.Producto).ThenInclude(p => p.Reviews)
-                .Where(s => s.Producto.Categoria.Id == categoriaId).ToListAsync();
+                .Include(s => s.Producto).ThenInclude(p => p.Categoria).ThenInclude(c => c.CategoriaPadre)
+                .Where(s => s.Producto.Categoria.Id == categoriaId || s.Producto.Categoria.CategoriaPadre.Id == categoriaId)
+                .ToListAsync();
         }
 
         public async Task<List<Sku>> GetSkusByProductoIdAsync(int productoId)

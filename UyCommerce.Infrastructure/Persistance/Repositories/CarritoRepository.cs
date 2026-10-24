@@ -11,6 +11,13 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
     {
         public CarritoRepository(ShopContext context): base(context)
         {}
+
+        public async Task DeleteProductosCarritoAsync(List<ProductoCarrito> productosCarrito)
+        {
+            _context.RemoveRange(productosCarrito);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Carrito?> GetCarritoByUserIdAsync(int userId)
         {
             return await _context.Carritos
@@ -19,5 +26,10 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                         .FirstOrDefaultAsync(c => c.UsuarioId == userId);
         }
 
+        public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)
+        {
+            return await _context.ProductosCarritos
+                .Where(p => p.Sku.Producto.Id == productoId).ToListAsync();
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<List<Orden>> GetOrdenesByDateAsync(DateTime startDate, DateTime endDate);
         Task<List<Orden>> GetOrdenesAsync();
         Task<List<Orden>> GetOrdenesUsuariosAsync();
+        Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId);
     }
 }

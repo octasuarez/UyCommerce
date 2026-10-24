@@ -67,11 +67,21 @@ namespace UyCommerce.Application.Services
             await _carritoRepository.UpdateAsync(carrito);
         }
 
+        public async Task DeleteProductosCarritoAsync(List<ProductoCarrito> productosCarrito)
+        {
+            await _carritoRepository.DeleteProductosCarritoAsync(productosCarrito);
+        }
+
         public async Task<Carrito> GetCarritoByUserIdAsync(int userId)
         {
             var carrito = await _carritoRepository.GetCarritoByUserIdAsync(userId) 
                 ?? throw new NotFoundException(nameof(Carrito), userId);
             return carrito;
+        }
+
+        public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)
+        {
+            return await _carritoRepository.GetProductosCarritoByProductoIdAsync(productoId);
         }
     }
 }

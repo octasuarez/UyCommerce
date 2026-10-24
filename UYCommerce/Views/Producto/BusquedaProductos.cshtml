@@ -1,4 +1,4 @@
-﻿@model BusquedaProductoVM
+﻿@model GetProductosDto
 
 <body>
 
@@ -194,18 +194,18 @@
                                 <ul class="pagination">
                                     @if (Model.NumberOfPages > 1)
                                     {
-                                        if (Model.Pag > 1)
+                                        if (Model.Page > 1)
                                         {
-                                            <li class="page-item"><a data-pag="@(Model.Pag -1)" class="page-link">Previous</a> </li>
+                                            <li class="page-item"><a data-pag="@(Model.Page -1)" class="page-link">Previous</a> </li>
                                         }
                                         for (int i = 0; i < Model.NumberOfPages; i++)
                                         {
                                             var p = i + 1;
-                                            <li class="page-item @(Model.Pag == p ? "active" : "")"><a data-pag="@p" class="page-link">@p</a> </li>
+                                            <li class="page-item @(Model.Page == p ? "active" : "")"><a data-pag="@p" class="page-link">@p</a> </li>
                                         }
-                                        if (Model.NumberOfPages > Model.Pag)
+                                        if (Model.NumberOfPages > Model.Page)
                                         {
-                                            <li class="page-item"><a data-pag="@(Model.Pag + 1)" class="page-link">Next</a> </li>
+                                            <li class="page-item"><a data-pag="@(Model.Page + 1)" class="page-link">Next</a> </li>
                                         }
                                     }
                                 </ul>

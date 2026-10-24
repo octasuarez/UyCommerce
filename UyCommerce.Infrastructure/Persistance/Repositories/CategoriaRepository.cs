@@ -19,7 +19,10 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 
         public async Task<Categoria?> GetCategoriaByNameAsync(string name)
         {
-            return await _context.Categorias.Where(c => c.Nombre == name).FirstOrDefaultAsync();
+            return await _context.Categorias
+                .Include(c => c.SubCategorias)
+                .Include(c => c.CategoriaPadre).ThenInclude(p => p.SubCategorias)
+                .FirstOrDefaultAsync(c => c.Nombre.ToLower() == name.ToLower());
         }
 
         public async Task<List<Categoria>> GetCategoriasCompleteAsync()

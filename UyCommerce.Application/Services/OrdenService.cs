@@ -38,5 +38,10 @@ namespace UyCommerce.Application.Services
         {
             return await _ordenRepository.GetOrdenesUsuariosAsync();
         }
+
+        public async Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId)
+        {
+            return await _ordenRepository.GetOrdenesByProductoIdAsync(productoId);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UyCommerce.Application.Common.Enums;
 using UyCommerce.Application.Common.Models;
+using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Contracts.Persistance
@@ -11,7 +12,7 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<Producto?> GetProductoCompleteByIdNoTrackingAsync(int id);
         Task<Producto?> GetProductoCompleteByIdAsync(int id);
         Task<Producto?> GetProductoByNombreAsync(string nombre);
-        Task<GetProductsByQuery> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty);
+        Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty);
         Task<List<Producto>> GetProductosByQueryNameAsync(string query);
     }
 }
