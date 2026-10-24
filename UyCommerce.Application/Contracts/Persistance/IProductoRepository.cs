@@ -1,5 +1,4 @@
 ﻿using UyCommerce.Application.Common.Enums;
-using UyCommerce.Application.Common.Models;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Common.Enums;
-using UyCommerce.Application.Common.Models;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
