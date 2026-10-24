@@ -24,34 +24,39 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<JsonResult> AgregarProductoAlCarrito(AddToCartModel request)
         {
+            string errorMsg;
             if (!int.TryParse(request.skuId, out int skuId)
                 || !int.TryParse(request.quantity, out int quantity))
             {
                 Response.StatusCode = StatusCodes.Status400BadRequest;
-                return Json(new { success = false, error = "invalid numbers" });
+                errorMsg = "invalid numbers";
             }
-            try
+            else
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                var qty = await _carritoService.AddProductoAlCarritoAsync(userId, skuId, quantity);
-                HttpContext.Session.SetString("cartItems", qty.ToString());
-                return new JsonResult(new { qty });
+                try
+                {
+                    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                    var qty = await _carritoService.AddProductoAlCarritoAsync(userId, skuId, quantity);
+                    HttpContext.Session.SetString("cartItems", qty.ToString());
+                    return new JsonResult(new { qty });
+                }
+                catch (NotFoundException e)
+                {
+                    Response.StatusCode = StatusCodes.Status404NotFound;
+                    errorMsg = e.Message;
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Response.StatusCode = StatusCodes.Status400BadRequest;
+                    errorMsg = e.Message;
+                }
+                catch (Exception e)
+                {
+                    Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    errorMsg = e.Message;
+                }
             }
-            catch (NotFoundException e)
-            {
-                Response.StatusCode = StatusCodes.Status404NotFound;
-                return Json(new { success = false, error = e.Message });
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Response.StatusCode = StatusCodes.Status400BadRequest;
-                return Json(new { success = false, error = e.Message });
-            }
-            catch (Exception e)
-            {
-                Response.StatusCode = StatusCodes.Status500InternalServerError;
-                return Json(new { success = false, error = e.Message });
-            }
+            return Json(new { success = false, error = errorMsg });
         }
 
         [HttpPost]
