@@ -18,8 +18,10 @@
                 <ol class="breadcrumb p-3 bg-white rounded-3 fs-5">
                     <li class="breadcrumb-item">
                         <a class="link-body-emphasis" href="/">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
-                                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                 class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                                <path
+                                d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
                             </svg>
                             <span class="visually-hidden">Home</span>
                         </a>
@@ -27,7 +29,8 @@
                     @if (Model.Categoria != null && Model.Categoria.CategoriaPadre != null)
                     {
                         <li class="breadcrumb-item" aria-current="page">
-                            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Localizer[Model.Categoria.CategoriaPadre.Nombre!]</a>
+                            <a class="link-body-emphasis fw-semibold text-decoration-none"
+                               href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Localizer[Model.Categoria.CategoriaPadre.Nombre!]</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">@Localizer[Model.Categoria!.Nombre!]</li>
                     }
@@ -93,8 +96,7 @@
                                 }
                                 else
                                 {
-                                    <a href="/c/@c.Nombre"
-                                       class="fs-5 text-decoration-none text-body">
+                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-body">
                                         @Localizer[c.Nombre!]
                                     </a>
                                 }
@@ -118,7 +120,8 @@
                                             @foreach (var v in a)
                                             {
                                                 <li class="atributo">
-                                                    <a data-value="@a.Key.Nombre-@v.Valor" onclick="AgregarFiltro(this)" class="text-decoration-none text-body">@v.Valor</a>
+                                                    <a data-value="@a.Key.Nombre-@v.Valor" onclick="AgregarFiltro(this)"
+                                                       class="text-decoration-none text-body">@v.Valor</a>
                                                 </li>
                                             }
                                         </ul>
@@ -163,8 +166,7 @@
                                         }
                                     </a>
                                     <a href="/@s.Key" class="text-decoration-none text-reset">
-                                        <img class="card-img-top"
-                                             style="height:400px;min-width:100%;object-fit:contain;"
+                                        <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;"
                                              src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                                     </a>
                                     <div class="card-body">
@@ -173,7 +175,8 @@
                                             @for (int i = 0; i < 5; i++)
                                             {
                                                 <li class="d-inline text-warning p-0 me-1">
-                                                    <i class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star" )"></i>
+                                                    <i
+                                                    class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star" )"></i>
                                                 </li>
                                             }
                                         </ul>
@@ -201,76 +204,26 @@
                                         for (int i = 0; i < Model.NumberOfPages; i++)
                                         {
                                             var p = i + 1;
-                                            <li class="page-item @(Model.Page == p ? "active" : "")"><a data-pag="@p" class="page-link">@p</a> </li>
+                                            <li class="page-item @(Model.Page == p ? "active" : "")"><a data-pag="@p"
+                                                                                                            class="page-link">@p</a> </li>
+                                            }
+                                            if (Model.NumberOfPages > Model.Page)
+                                            {
+                                                <li class="page-item"><a data-pag="@(Model.Page + 1)" class="page-link">Next</a> </li>
+                                            }
                                         }
-                                        if (Model.NumberOfPages > Model.Page)
-                                        {
-                                            <li class="page-item"><a data-pag="@(Model.Page + 1)" class="page-link">Next</a> </li>
-                                        }
-                                    }
-                                </ul>
-                            </nav>
-                        </div>
-                    }
+                                    </ul>
+                                </nav>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
 
+            }
+
+        </div>
+
+        @section Scripts {
+            <script src="~/js/pages/producto/busqueda-producto.js"></script>
         }
-
-    </div>
-
-
-    <script>function AgregarFiltro(e) {
-
-            var atr = e.getAttribute('data-value');
-            var query = window.location.href.indexOf("?") !== -1 ? window.location.href + `&filtros=${atr}` : window.location.href + `?filtros=${atr}`;
-
-            window.location.href = query;
-        }</script>
-    <script>function QuitarFiltro(e) {
-
-            var urlBase = window.location.href.split("?")[0],
-                param,
-                query = window.location.href.indexOf("?") !== -1 ? window.location.href.split("?")[1] : "",
-                atributos = [],
-                atributo = encodeURI(e.getAttribute('data-value'));
-
-            console.log(atributo);
-
-            if (query !== "") {
-                atributos = query.split("&");
-                for (i = atributos.length - 1; i >= 0; i -= 1) {
-                    param = atributos[i].split("=")[1];
-                    if (param.toLowerCase() === atributo) {
-                        atributos.splice(i, 1);
-                    }
-                }
-                if (atributos.length) urlBase = urlBase + "?" + atributos.join("&");
-            }
-            window.location.href = urlBase;
-            console.log(urlBase);
-
-
-        }</script>
-    <script>function OrdenarProductos(e) {
-
-            var url = window.location.href,
-                index = url.indexOf("orden");
-            if (index !== -1) {
-                var param = url.slice(index, index + 7);
-                window.location.href = url.replace(param, `orden=${e}`)
-            } else {
-                window.location.href += url.indexOf("filtros") !== -1 || url.indexOf("query") !== -1 ? `&orden=${e}` : `?orden=${e}`
-            }
-        }</script>
-
-    <script>document.querySelectorAll('.page-link').forEach((a) => a.addEventListener('click', function (e) {
-
-            const url = new URLSearchParams(location.search);
-            url.set('pag', e.target.dataset.pag);
-            var href = `${location.pathname}?${url.toString()}`
-            e.target.setAttribute('href', href);
-
-        }))</script>
-
-</body>
+    </body>

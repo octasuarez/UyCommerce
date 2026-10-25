@@ -19,8 +19,7 @@
                             <div class="d-lg-flex ">
                                 <div class="d-inline ms-5">
                                     <img src="~/Imagenes/Productos/@s.Imagenes!.First().ImagenNombre"
-                                         style="height:200px;width:200px;"
-                                         class="object-fit-contain " />
+                                         style="height:200px;width:200px;" class="object-fit-contain " />
                                 </div>
 
                                 <div class="w-100 h-100 ms-3">
@@ -45,61 +44,57 @@
                                             else
                                             {
                                                 <button data-sku-id="@s.Id" class="btn btn-primary add-to-cart">
-                                            <i class="bi bi-cart-fill"></i> @Localizer["Add to cart"]
+                                                    <i class="bi bi-cart-fill"></i> @Localizer["Add to cart"]
                                                 </button>
                                             }
-                                            <button data-sku-id="@s.Id" class="btn btn-danger me-2 delete-btn"><i class="bi bi-trash3"></i></button>
+                                            <button data-sku-id="@s.Id" class="btn btn-danger me-2 delete-btn"><i
+                                                class="bi bi-trash3"></i></button>
+                                            </div>
                                         </div>
+
                                     </div>
 
                                 </div>
+                            </li>
 
-                            </div>
-                        </li>
-
-                    }
-                </ul>
-            </div>
-        }
+                        }
+                    </ul>
+                </div>
+            }
         else
-        {
-            <h1>@Localizer["No products added to the WishList yet."]</h1>
-        }
+            {
+                <h1>@Localizer["No products added to the WishList yet."]</h1>
+            }
 
-    </section>
+        </section>
 
-    <script>document.querySelectorAll('.add-to-cart').forEach((e) => e.addEventListener('click', (e) => {
+        <script>document.querySelectorAll('.add-to-cart').forEach((e) => e.addEventListener('click', (e) => {
+                    var element = e.currentTarget;
+                    $.ajax({
+                        url: '/Carrito/AgregarProductoAlCarrito',
+                        method: 'post',
+                        data: { skuId: element.dataset.skuId, quantity: "1" },
+                        success: (response) => {
+                            location.reload();
+                        },
+                        error: (response) => {
+                        }
+                    })
+            }))</script>
 
-            console.log(e.target);
+            <script>document.querySelectorAll('.delete-btn').forEach((e) => e.addEventListener('click', (e) => {
 
-            var element = e.currentTarget;
-            $.ajax({
-                url: '/Carrito/AgregarProductoAlCarrito',
-                method: 'post',
-                data: { skuId: element.dataset.skuId, quantity: "1" },
-                success: (response) => {
-                    location.reload();
-                },
-                error: (response) => {
-                    console.log(response);
-                }
-            })
-        }))</script>
+                        var element = e.currentTarget;
 
-    <script>document.querySelectorAll('.delete-btn').forEach((e) => e.addEventListener('click', (e) => {
-
-            var element = e.currentTarget;
-
-            $.ajax({
-                url: '/Usuario/AgregarAFavoritos',
-                method: 'post',
-                data: { skuId: element.dataset.skuId },
-                success: (response) => {
-                    location.reload();
-                },
-                error: (response) => {
-                    console.log(response);
-                }
-            })
-        }))</script>
-</body>
+                        $.ajax({
+                            url: '/Usuario/AgregarAFavoritos',
+                            method: 'post',
+                            data: { skuId: element.dataset.skuId },
+                            success: (response) => {
+                                location.reload();
+                            },
+                            error: (response) => {
+                            }
+                        })
+                }))</script>
+            </body>

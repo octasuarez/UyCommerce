@@ -181,11 +181,11 @@ namespace UYCommerce.Controllers
                 var result = await _productoService.GetProductosByCategoriaAsync(categoria, filtros, userId, orden, pag, qty);
                 return View("BusquedaProductos", result);
             }
-            catch (NotFoundException e)
+            catch (NotFoundException)
             {
                 Response.StatusCode = 404;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Response.StatusCode = 500;
             }

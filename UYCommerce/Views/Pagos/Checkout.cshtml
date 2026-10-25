@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,8 @@
 </head>
 
 <body>
-    <script src="https://www.paypal.com/sdk/js?client-id=Ab3oHLrxl1Go9442dLDXSZTUtPQC-HPiO5LAPZrDvSFxu2ONgG8pjKmpUcq7goOJRUVp7VaXPWJ_svGU"></script>
+    <script
+    src="https://www.paypal.com/sdk/js?client-id=Ab3oHLrxl1Go9442dLDXSZTUtPQC-HPiO5LAPZrDvSFxu2ONgG8pjKmpUcq7goOJRUVp7VaXPWJ_svGU"></script>
 
 
     <div class="container-fluid" style="background-color: whitesmoke; position: relative;">
@@ -56,9 +58,12 @@
 
                                     <div class="d-flex align-items-center">
                                         <div class="qty-btn me-2 me-lg-0 d-flex flex-nowrap w-auto" style="">
-                                            <button data-value="@p.SkuId" data-qty=-1 onclick="ModificarQty(this)" style="color:red;">-</button>
-                                            <input id="@p.SkuId" disabled type="number" value="@p.Cantidad" readonly="readonly">
-                                            <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)" style="color: green;">+</button>
+                                            <button data-value="@p.SkuId" data-qty=-1 onclick="ModificarQty(this)"
+                                                    style="color:red;">-</button>
+                                            <input id="@p.SkuId" disabled type="number" value="@p.Cantidad"
+                                                   readonly="readonly">
+                                            <button data-value="@p.SkuId" data-qty=1 onclick="ModificarQty(this)"
+                                                    style="color: green;">+</button>
                                         </div>
                                         <button data-value="@p.SkuId" onclick="EliminarProductoCarrito(this)" class="btn">
                                             <i class="bi bi-trash3 fs-5" style="color:gray;"></i>
@@ -141,9 +146,6 @@
                         });
 
                         const orderData = await response.json();
-
-                        console.log(orderData?.details?.[0]);
-
                         const errorDetail = orderData?.details?.[0];
 
                         if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
@@ -154,12 +156,6 @@
                             throw new Error(JSON.stringify(orderData));
                         } else {
                             // (3) Successful transaction
-                            console.log(
-                                "Capture result",
-                                orderData,
-                                JSON.stringify(orderData, null, 2),
-                            );
-
                             window.location.href = `/Compras/${orderData.id}`;
                         }
                     } catch (error) {
@@ -169,61 +165,59 @@
                         );
                     }
                 }, onError(err) {
-                    console.log(err);
                 }
 
             }).render('#paypal-button-container')
 
 
 
-        function resultMessage(message) {
-            const container = document.querySelector("#result-message");
-            container.innerHTML = message;
+            function resultMessage(message) {
+                const container = document.querySelector("#result-message");
+                container.innerHTML = message;
         }</script>
 
 
-    <script>$(window).on('load', function () {
-            $('#loading').hide();
-        });</script>
+        <script>$(window).on('load', function () {
+                    $('#loading').hide();
+            });</script>
 
 
 
-    <script>
-        function ModificarQty(e) {
+            <script>
+                    function ModificarQty(e) {
 
-        let formData = {
-                skuId: e.getAttribute('data-value'),
-                quantity: e.getAttribute('data-qty')
-            }
-            console.log(formData)
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("AgregarProductoAlCarrito", "Carrito")',
-                data: formData,
-                success: function (response) {
-                    location.reload();
-                }
+                        let formData = {
+                            skuId: e.getAttribute('data-value'),
+                            quantity: e.getAttribute('data-qty')
+                        }
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("AgregarProductoAlCarrito", "Carrito")',
+                            data: formData,
+                            success: function (response) {
+                                location.reload();
+                            }
 
-            })
-        }
-    </script>
-    <script>
-        function EliminarProductoCarrito(e) {
+                        })
+                    }
+            </script>
+            <script>
+                    function EliminarProductoCarrito(e) {
 
-        let formData = {
-                skuId: e.getAttribute('data-value'),
-            }
-            console.log(formData)
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("EliminarProductoCarrito", "Carrito")',
-                data: formData,
-                success: function (response) {
-                    location.reload();
-                }
+                        let formData = {
+                            skuId: e.getAttribute('data-value'),
+                        }
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("EliminarProductoCarrito", "Carrito")',
+                            data: formData,
+                            success: function (response) {
+                                location.reload();
+                            }
 
-            })
-        }
-    </script>
-</body>
-</html>
+                        })
+                    }
+            </script>
+        </body>
+
+    </html>

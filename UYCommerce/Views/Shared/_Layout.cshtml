@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,9 +21,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 </head>
+
 <body style="min-height:100%;padding:0;">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-primary bg-gradient pt-0 pb-2 shadow-sm border-bottom border-dark-subtle text-light">
+        <nav
+            class="navbar navbar-expand-lg navbar-light bg-primary bg-gradient pt-0 pb-2 shadow-sm border-bottom border-dark-subtle text-light">
 
             <div class="mx-auto col-12 col-lg-9 d-flex flex-column">
 
@@ -35,150 +38,164 @@
                     @*Este es el Search input*@
 
                     <div class="d-flex col-lg-5 mx-lg-5">
-                        <form class="w-100" role="search" asp-controller="Producto" asp-action="BuscarProductosPorQuery" method="get">
+                        <form class="w-100" role="search" asp-controller="Producto" asp-action="BuscarProductosPorQuery"
+                              method="get">
                             <div class="input-group shadow ui-widget">
-                                <input name="query" id="search" class="form-control d-flex py-2" type="search" placeholder="@Localizer["Search"]" aria-label="Search">
-                                <button class="btn btn-light d-flex border" type="submit"><i class="bi bi-search text-dark "></i></button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="d-flex w-100 ms-lg-1">
-
-                        @* Carrito *@
-
-                        <ul class="ms-auto ms-lg-0 navbar-nav d-flex" onclick="window.location.href='/checkout'">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link d-flex flex-nowrap" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <p class="d-inline text-white my-auto d-lg-none">@Localizer["Cart"]</p>
-                                    <i class="bi bi-cart-fill text-white fs-4 m-2" style="color:white;"></i>
-                                    <p class="d-inline fw-bold text-white">@Context.Session.GetString("cartItems")</p>
-                                </a>
-                            </li>
-                        </ul>
-
-                        @if (Context.Request.HttpContext.User.Identity!.IsAuthenticated)
-                        {
-                            @* Cuenta *@
-                            <ul class="navbar-nav d-flex mx-2">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link text-light d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-person-circle text-white fs-4 m-2"></i> <p class="d-inline m-0 text-nowrap">@User.FindFirst("FullName")?.Value</p>
-                                    </a>
-                                    <ul class="dropdown-menu fadein100">
-                                        <li><a class="dropdown-item" href="/Compras">@Localizer["My Purchases"]</a></li>
-                                        <li><a class="dropdown-item" href="/Reviews">@Localizer["My Reviews"]</a></li>
-                                        <li><a class="dropdown-item" href="/Favoritos">@Localizer["WishList"]</a></li>
-                                        <li style="border-top:solid 1px lightgray;">
-                                            <a class="dropdown-item" asp-controller="Auth" asp-action="Logout">@Localizer["Sign out"]</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-
-                        }
-                        else
-                        {
-                            <div class="my-auto me-3 text-nowrap">
-                                <a class="text-light me-4 text-decoration-none" href="/Register">@Localizer["Register"]</a>
-                                <a class="text-light me-4 text-decoration-none" asp-controller="Auth" asp-action="Login">@Localizer["Sign in"]</a>
-                            </div>
-
-                        }
-
-                        <div class=" align-content-center">
-                            @await Html.PartialAsync("_SelectLanguagePartial")
+                                <input name="query" id="search" class="form-control d-flex py-2" type="search"
+                                       placeholder="@Localizer["Search"]" aria-label="Search">
+                                <button class="btn btn-light d-flex border" type="submit"><i
+                                    class="bi bi-search text-dark "></i></button>
+                                </div>
+                            </form>
                         </div>
-                    </div>
 
-                </div>
+                        <div class="d-flex w-100 ms-lg-1">
 
-                <div class="flex-column flex-lg-auto d-flex mx-auto">
-                    <button class="navbar-toggler d-block d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#barra" aria-controls="barra" aria-expanded="true" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <ul class="list-unstyled navbar-nav d-lg-flex">
-                        @await Component.InvokeAsync("Menu")
-                        <li>
-                            <ul id="barra" class="list-unstyled navbar-nav collapse d-lg-flex">
-                                <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="/Contacto">@Localizer["Contact"]</a>
-                                </li>
-                                <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="/About">@Localizer["About Us"]</a>
-                                </li>
-                                <li class="me-4">
-                                    <a class="text-light text-decoration-none" href="/Faq">FAQ</a>
+                            @* Carrito *@
+
+                            <ul class="ms-auto ms-lg-0 navbar-nav d-flex" onclick="window.location.href='/checkout'">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link d-flex flex-nowrap" role="button" data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+                                        <p class="d-inline text-white my-auto d-lg-none">@Localizer["Cart"]</p>
+                                        <i class="bi bi-cart-fill text-white fs-4 m-2" style="color:white;"></i>
+                                        <p class="d-inline fw-bold text-white">@Context.Session.GetString("cartItems")</p>
+                                    </a>
                                 </li>
                             </ul>
-                        </li>
 
-                    </ul>
+                            @if (Context.Request.HttpContext.User.Identity!.IsAuthenticated)
+                            {
+                                @* Cuenta *@
+                                <ul class="navbar-nav d-flex mx-2">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link text-light d-flex align-items-center" href="#" role="button"
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-person-circle text-white fs-4 m-2"></i>
+                                            <p class="d-inline m-0 text-nowrap">@User.FindFirst("FullName")?.Value</p>
+                                        </a>
+                                        <ul class="dropdown-menu fadein100">
+                                            <li><a class="dropdown-item" href="/Compras">@Localizer["My Purchases"]</a></li>
+                                            <li><a class="dropdown-item" href="/Reviews">@Localizer["My Reviews"]</a></li>
+                                            <li><a class="dropdown-item" href="/Favoritos">@Localizer["WishList"]</a></li>
+                                            <li style="border-top:solid 1px lightgray;">
+                                                <a class="dropdown-item" asp-controller="Auth"
+                                                   asp-action="Logout">@Localizer["Sign out"]</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                            }
+                            else
+                            {
+                                <div class="my-auto me-3 text-nowrap">
+                                    <a class="text-light me-4 text-decoration-none" href="/Register">@Localizer["Register"]</a>
+                                    <a class="text-light me-4 text-decoration-none" asp-controller="Auth"
+                                       asp-action="Login">@Localizer["Sign in"]</a>
+                                </div>
+
+                            }
+
+                            <div class=" align-content-center">
+                                @await Html.PartialAsync("_SelectLanguagePartial")
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="flex-column flex-lg-auto d-flex mx-auto">
+                        <button class="navbar-toggler d-block d-lg-none mb-3" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#barra" aria-controls="barra" aria-expanded="true"
+                                aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <ul class="list-unstyled navbar-nav d-lg-flex">
+                            @await Component.InvokeAsync("Menu")
+                            <li>
+                                <ul id="barra" class="list-unstyled navbar-nav collapse d-lg-flex">
+                                    <li class="me-4">
+                                        <a class="text-light text-decoration-none"
+                                           href="/Contacto">@Localizer["Contact"]</a>
+                                    </li>
+                                    <li class="me-4">
+                                        <a class="text-light text-decoration-none" href="/About">@Localizer["About Us"]</a>
+                                    </li>
+                                    <li class="me-4">
+                                        <a class="text-light text-decoration-none" href="/Faq">FAQ</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
 
-    </header>
+        </header>
 
-    <div class="">
-        <main role="main" class="pb-5">
-            @RenderBody()
-        </main>
-    </div>
+        <div class="">
+            <main role="main" class="pb-5">
+                @RenderBody()
+            </main>
+        </div>
 
-    <div class="container">
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-            <div class="col-md-4 d-flex align-items-center">
-                <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
-                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-                </a>
-                <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
-            </div>
+        <div class="container">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                <div class="col-md-4 d-flex align-items-center">
+                    <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+                        <svg class="bi" width="30" height="24">
+                            <use xlink:href="#bootstrap"></use>
+                        </svg>
+                    </a>
+                    <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
+                </div>
 
-            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-                <li class="ms-3"><a class="text-body-secondary" target=”_blank” href="https://www.linkedin.com/in/octavio-su%C3%A1rez-pamparatto/"><i class="bi bi-linkedin fs-4"></i></a></li>
-                <li class="ms-3"><a class="text-body-secondary" target=”_blank” href="https://github.com/octasuarez/UyCommerce"><i class="bi bi-github fs-4"></i></a></li>
-                <li class="ms-3"><a class="text-body-secondary" target=”_blank” href="https://instagram.com/octasuarez22"><i class="bi bi-instagram fs-4"></i></a></li>
-            </ul>
-        </footer>
-    </div>
+                <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                    <li class="ms-3"><a class="text-body-secondary" target=”_blank”
+                                        href="https://www.linkedin.com/in/octavio-su%C3%A1rez-pamparatto/"><i
+                        class="bi bi-linkedin fs-4"></i></a></li>
+                        <li class="ms-3"><a class="text-body-secondary" target=”_blank”
+                                                href="https://github.com/octasuarez/UyCommerce"><i class="bi bi-github fs-4"></i></a></li>
+                            <li class="ms-3"><a class="text-body-secondary" target=”_blank”
+                                                    href="https://instagram.com/octasuarez22"><i class="bi bi-instagram fs-4"></i></a></li>
+                            </ul>
+                        </footer>
+                    </div>
 
 
-    <script type="text/javascript">$(document).ready(function () {
-            $("#search").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/Producto/Autocomplete",
-                        type: "POST",
-                        dataType: "json",
-                        data: { query: request.term },
-                        success: function (data) {
+                    <script type="text/javascript">$(document).ready(function () {
+                                $("#search").autocomplete({
+                                    source: function (request, response) {
+                                        $.ajax({
+                                            url: "/Producto/Autocomplete",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: { query: request.term },
+                                            success: function (data) {
 
-                            response($.map(data, function (item) {
-                                return {
-                                    label: item.nombre,
-                                    value: item.nombre,
-                                    link: item.nombreClave,
-                                    img: "/Imagenes/Productos/" + item.imagenNombre
+                                                response($.map(data, function (item) {
+                                                    return {
+                                                        label: item.nombre,
+                                                        value: item.nombre,
+                                                        link: item.nombreClave,
+                                                        img: "/Imagenes/Productos/" + item.imagenNombre
+                                                    };
+                                                }))
+                                            }
+                                        })
+                                    },
+                                    select: function (event, ui) {
+                                        location.href = "/" + ui.item.link
+                                    }
+                                }).autocomplete("instance")._renderItem = function (ul, item) {
+                                    return $("<li><div><img src='" + item.img + "'><span>" + item.value + "</span></div></li>").appendTo(ul);
                                 };
-                            }))
-                        }
-                    })
-                },
-                select: function (event, ui) {
+                        })</script>
 
-                    console.log(ui.item.img)
-                    location.href = "/" + ui.item.link
-                }
-            }).autocomplete("instance")._renderItem = function (ul, item) {
-                return $("<li><div><img src='" + item.img + "'><span>" + item.value + "</span></div></li>").appendTo(ul);
-            };
+                        @await RenderSectionAsync("Scripts", required: false)
 
+                    </body>
 
-        })</script>
-
-    @await RenderSectionAsync("Scripts", required: false)
-
-</body>
-</html>
+                </html>
 

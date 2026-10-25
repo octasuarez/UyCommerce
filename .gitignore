@@ -489,3 +489,4 @@ DS_Store
 #appsettings
 appsettings.json
 appsettings.Development.json
+.vscode/launch.json

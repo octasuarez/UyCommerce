@@ -11,11 +11,12 @@
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#reviews"
-                        type="button" role="tab" aria-controls="reviews" aria-selected="true">@Localizer["Finished"]</button>
+                        type="button" role="tab" aria-controls="reviews"
+                        aria-selected="true">@Localizer["Finished"]</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#productos"
-                        type="button" role="tab" aria-controls="productos" aria-selected="false">@Localizer["Pending"]</button>
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#productos" type="button"
+                        role="tab" aria-controls="productos" aria-selected="false">@Localizer["Pending"]</button>
             </li>
 
         </ul>
@@ -51,198 +52,205 @@
 
                                 <div class="ms-auto me-5">
                                     <a class="btn btn-light" href="#" data-bs-toggle="modal" data-bs-target="#modal@(r.Id)">
-                                    <i class="bi bi-pencil"></i>@Localizer["Edit"]</a>
-                                    <!--Modal-->
-                                    <div class="modal fade" id="modal@(r.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">@r.Producto?.Nombre</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
+                                        <i class="bi bi-pencil"></i>@Localizer["Edit"]</a>
+                                        <!--Modal-->
+                                        <div class="modal fade" id="modal@(r.Id)" tabindex="-1"
+                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">@r.Producto?.Nombre
+                                                        </h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
 
-                                                    <form id="form@(r.Id)">
+                                                        <form id="form@(r.Id)">
 
-                                                        <input type="number" name="ReviewId" value="@r.Id" hidden />
+                                                            <input type="number" name="ReviewId" value="@r.Id" hidden />
 
-                                                        <div class="mb-3">
-                                                            <h6 class="text-center">@Localizer["Comment:"]</h6>
-                                                            <textarea name="Comentario" class="form-control"></textarea>
-                                                        </div>
-
-                                                        <div class="d-flex flex-column">
-                                                            <h6 class="text-center">@Localizer["Rating:"]:</h6>
-                                                            <div class="rating mx-auto">
-                                                                <label>
-                                                                    <input type="radio" name="Valoracion" value="1" />
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="Valoracion" value="2" />
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="Valoracion" value="3" />
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="Valoracion" value="4" />
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="Valoracion" value="5" />
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                    <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                                </label>
+                                                            <div class="mb-3">
+                                                                <h6 class="text-center">@Localizer["Comment:"]</h6>
+                                                                <textarea name="Comentario" class="form-control"></textarea>
                                                             </div>
-                                                        </div>
 
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button data-form-id="form@(r.Id)" onclick="UpdateReview(this)" type="button"
-                                                            class="btn btn-primary" data-bs-dismiss="modal">@Localizer["Submit"]</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </div>
-            <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                                            <div class="d-flex flex-column">
+                                                                <h6 class="text-center">@Localizer["Rating:"]:</h6>
+                                                                <div class="rating mx-auto">
+                                                                    <label>
+                                                                        <input type="radio" name="Valoracion" value="1" />
+                                                                        <span class="icon"><i
+                                                                            class="bi bi-star-fill"></i></span>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="Valoracion" value="2" />
+                                                                            <span class="icon"><i
+                                                                                class="bi bi-star-fill"></i></span>
+                                                                                <span class="icon"><i
+                                                                                    class="bi bi-star-fill"></i></span>
+                                                                                </label>
+                                                                                <label>
+                                                                                    <input type="radio" name="Valoracion" value="3" />
+                                                                                    <span class="icon"><i
+                                                                                        class="bi bi-star-fill"></i></span>
+                                                                                        <span class="icon"><i
+                                                                                            class="bi bi-star-fill"></i></span>
+                                                                                            <span class="icon"><i
+                                                                                                class="bi bi-star-fill"></i></span>
+                                                                                            </label>
+                                                                                            <label>
+                                                                                                <input type="radio" name="Valoracion" value="4" />
+                                                                                                <span class="icon"><i
+                                                                                                    class="bi bi-star-fill"></i></span>
+                                                                                                    <span class="icon"><i
+                                                                                                        class="bi bi-star-fill"></i></span>
+                                                                                                        <span class="icon"><i
+                                                                                                            class="bi bi-star-fill"></i></span>
+                                                                                                            <span class="icon"><i
+                                                                                                                class="bi bi-star-fill"></i></span>
+                                                                                                            </label>
+                                                                                                            <label>
+                                                                                                                <input type="radio" name="Valoracion" value="5" />
+                                                                                                                <span class="icon"><i
+                                                                                                                    class="bi bi-star-fill"></i></span>
+                                                                                                                    <span class="icon"><i
+                                                                                                                        class="bi bi-star-fill"></i></span>
+                                                                                                                        <span class="icon"><i
+                                                                                                                            class="bi bi-star-fill"></i></span>
+                                                                                                                            <span class="icon"><i
+                                                                                                                                class="bi bi-star-fill"></i></span>
+                                                                                                                                <span class="icon"><i
+                                                                                                                                    class="bi bi-star-fill"></i></span>
+                                                                                                                                </label>
+                                                                                                                            </div>
+                                                                                                                        </div>
 
-                <ul class="list-unstyled my-5">
-                    @foreach (var p in Model.Productos!)
-                    {
+                                                                                                                    </form>
+                                                                                                                </div>
+                                                                                                                <div class="modal-footer">
+                                                                                                                    <button data-form-id="form@(r.Id)" onclick="UpdateReview(this)"
+                                                                                                                            type="button" class="btn btn-primary"
+                                                                                                                            data-bs-dismiss="modal">@Localizer["Submit"]</button>
+                                                                                                                    <button type="button" class="btn btn-secondary"
+                                                                                                                            data-bs-dismiss="modal">@Localizer["Close"]</button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    }
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
 
-                        <li class="card my-2 p-2">
-                            <div class="d-flex align-items-center">
-                                <div class="me-4">
+                                                                                <ul class="list-unstyled my-5">
+                                                                                    @foreach (var p in Model.Productos!)
+                                                                                    {
 
-                                    <img src="~/Imagenes/Productos/@p.Imagenes?.First().ImagenNombre" style="height:60px;width:60px;object-fit:contain" />
-                                </div>
+                                                                                        <li class="card my-2 p-2">
+                                                                                            <div class="d-flex align-items-center">
+                                                                                                <div class="me-4">
 
-                                <div class="me-4 col-auto">
-                                    <h5>@p.Nombre</h5>
-                                </div>
+                                                                                                    <img src="~/Imagenes/Productos/@p.Imagenes?.First().ImagenNombre"
+                                                                                                         style="height:60px;width:60px;object-fit:contain" />
+                                                                                                </div>
 
-                                <form id="review@(p.Id)" class="d-flex  align-items-center w-100">
+                                                                                                <div class="me-4 col-auto">
+                                                                                                    <h5>@p.Nombre</h5>
+                                                                                                </div>
 
-                                    <input type="number" value="@p.Id" name="ProductoId" hidden />
-                                    <div class="me-4 d-flex flex-column">
-                                        <h6 for="Comentario">@Localizer["Write your opinion:"]</h6>
-                                        <textarea class="form-control" name="Comentario"></textarea>
-                                    </div>
+                                                                                                <form id="review@(p.Id)" class="d-flex  align-items-center w-100">
 
-                                    <div>
-                                        <h6 class="text-center">@Localizer["Rating:"]</h6>
-                                        <div class="rating mx-auto">
-                                            <label>
-                                                <input type="radio" name="Valoracion" value="1" />
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="Valoracion" value="2" />
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="Valoracion" value="3" />
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="Valoracion" value="4" />
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="Valoracion" value="5" />
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
-                                            </label>
-                                        </div>
-                                    </div>
+                                                                                                    <input type="number" value="@p.Id" name="ProductoId" hidden />
+                                                                                                    <div class="me-4 d-flex flex-column">
+                                                                                                        <h6 for="Comentario">@Localizer["Write your opinion:"]</h6>
+                                                                                                        <textarea class="form-control" name="Comentario"></textarea>
+                                                                                                    </div>
 
-                                    <div class="ms-auto me-5">
-                                        <button data-form-id="review@(p.Id)" type="button" onclick="CrearReview(this)" class="btn btn-primary">@Localizer["Submit"]</button>
-                                    </div>
-                                </form>
+                                                                                                    <div>
+                                                                                                        <h6 class="text-center">@Localizer["Rating:"]</h6>
+                                                                                                        <div class="rating mx-auto">
+                                                                                                            <label>
+                                                                                                                <input type="radio" name="Valoracion" value="1" />
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                            </label>
+                                                                                                            <label>
+                                                                                                                <input type="radio" name="Valoracion" value="2" />
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                            </label>
+                                                                                                            <label>
+                                                                                                                <input type="radio" name="Valoracion" value="3" />
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                            </label>
+                                                                                                            <label>
+                                                                                                                <input type="radio" name="Valoracion" value="4" />
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                            </label>
+                                                                                                            <label>
+                                                                                                                <input type="radio" name="Valoracion" value="5" />
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                                <span class="icon"><i class="bi bi-star-fill"></i></span>
+                                                                                                            </label>
+                                                                                                        </div>
+                                                                                                    </div>
 
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+                                                                                                    <div class="ms-auto me-5">
+                                                                                                        <button data-form-id="review@(p.Id)" type="button" onclick="CrearReview(this)"
+                                                                                                                class="btn btn-primary">@Localizer["Submit"]</button>
+                                                                                                    </div>
+                                                                                                </form>
 
-    </div>
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    }
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
 
-    <script>async function CrearReview(e) {
+                                                                    </div>
 
-            let form = new FormData(document.getElementById(e.dataset.formId));
+                                                                    <script>async function CrearReview(e) {
+                                                                                let form = new FormData(document.getElementById(e.dataset.formId));
+                                                                                let body = Object.fromEntries(form);
+                                                                                const response = await fetch("/Usuario/AgregarReview", {
 
-            let body = Object.fromEntries(form);
+                                                                                    headers: { "Content-Type": "application/json" },
+                                                                                    method: "POST",
+                                                                                    credentials: "include",
+                                                                                    body: JSON.stringify(body)
+                                                                                }).then((response) => {
+                                                                                    if (response.ok) {
+                                                                                        location.reload();
+                                                                                    }
+                                                                                }).catch((error) => {
+                                                                                })
+                                                                        }</script>
 
-            console.log(body);
-
-            const response = await fetch("/Usuario/AgregarReview", {
-
-                headers: { "Content-Type": "application/json" },
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(body)
-            }).then((response) => {
-                if (response.ok) {
-                    location.reload();
-                }
-
-            }).catch((error) => {
-                console.log(error);
-            })
-        }</script>
-
-    <script>async function UpdateReview(e) {
-
-            let form = new FormData(document.getElementById(e.dataset.formId));
-
-            let body = Object.fromEntries(form);
-
-            console.log(body);
-
-            const response = await fetch("/Usuario/UpdateReview", {
-
-                headers: { "Content-Type": "application/json" },
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(body)
-            }).then((response) => {
-                if (response.ok) {
-                    location.reload();
-                }
-
-            }).catch((error) => {
-                console.log(error);
-            })
-        }</script>
-</body>
+                                                                        <script>async function UpdateReview(e) {
+                                                                                    let form = new FormData(document.getElementById(e.dataset.formId));
+                                                                                    let body = Object.fromEntries(form);
+                                                                                    const response = await fetch("/Usuario/UpdateReview", {
+                                                                                        headers: { "Content-Type": "application/json" },
+                                                                                        method: "POST",
+                                                                                        credentials: "include",
+                                                                                        body: JSON.stringify(body)
+                                                                                    }).then((response) => {
+                                                                                        if (response.ok) {
+                                                                                            location.reload();
+                                                                                        }
+                                                                                    }).catch((error) => {
+                                                                                    })
+                                                                            }</script>
+                                                                        </body>

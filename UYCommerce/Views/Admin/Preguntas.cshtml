@@ -43,7 +43,8 @@
 
                                 @if (p.Respuesta is not null)
                                 {
-                                    <p class="me-2">@p.Respuesta.Contenido</p><p class="text-secondary">@p.Respuesta.Fecha</p>
+                                    <p class="me-2">@p.Respuesta.Contenido</p>
+                                    <p class="text-secondary">@p.Respuesta.Fecha</p>
                                 }
                                 else
                                 {
@@ -54,7 +55,7 @@
                                         <button data-reply-id="respuesta@(p.Id)" data-form-id="@p.Id" type="button"
                                                 class="btn btn-primary" onclick="AgregarRespuesta(this)">
                                             @Localizer["Reply"]
-                                            </button>
+                                        </button>
                                     </form>
                                 }
                             </div>
@@ -72,31 +73,26 @@
 
     <script>async function AgregarRespuesta(e) {
 
-            let formData = new FormData(document.getElementById(e.dataset.formId))
-            let form = Object.fromEntries(formData);
+                let formData = new FormData(document.getElementById(e.dataset.formId))
+                let form = Object.fromEntries(formData);
+                const response = await fetch("/Admin/AgregarRespuesta", {
+                    headers: { "Content-Type": "application/json" },
+                    method: "POST",
+                    credentials: "include",
+                    body: JSON.stringify(form)
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                }).then((responseJson) => {
 
-            console.log(form)
+                    let respuesta = document.getElementById(e.dataset.replyId);
+                    respuesta.innerHTML = `<p class="me-2">${responseJson.contenido}</p>
+                    <p class="text-secondary">${Date.parse(responseJson.fecha)}</p>
+                    `;
 
-            const response = await fetch("/Admin/AgregarRespuesta", {
-                headers: { "Content-Type": "application/json" },
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(form)
-            }).then((response) => {
-                if (response.ok) {
-                    console.log(response)
-                    return response.json();
-                }
-            }).then((responseJson) => {
-
-               let respuesta = document.getElementById(e.dataset.replyId);
-                respuesta.innerHTML = `<p class="me-2">${responseJson.contenido}</p>
-                <p class="text-secondary">${Date.parse(responseJson.fecha)}</p>
-                `;
-
-            }).catch((error) => {
-                console.log(error)
-            })
+                }).catch((error) => {
+                })
 
         }</script>
-</body>
+    </body>

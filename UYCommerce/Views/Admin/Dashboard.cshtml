@@ -18,8 +18,8 @@
                            value="@Model.FechaDesde.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
 
                     <h6 class="mb-0 me-1">@Localizer["To:"]</h6>
-                    <input class="card p-2" type="date" name="fchHasta"
-                           value="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <input class="card p-2" type="date" name="fchHasta" value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           max="@DateTime.Today.ToString("yyyy-MM-dd")" />
 
                 </form>
 
@@ -54,115 +54,116 @@
                     <div class="card col-6 m-2">
                         <div class="card-body text-center">
                             <p>@Localizer["Orders pending shipping:"]</p>
-                            <p class="text-center m-0 fw-bold fs-5">@Model.Ordenes.Where(o => o.Estado != "Entregado").Count()</p>
+                            <p class="text-center m-0 fw-bold fs-5">@Model.Ordenes.Where(o => o.Estado !=
+                                                              "Entregado").Count()</p>
+                            </div>
                         </div>
-                    </div>
 
 
-                    <div class="card col-12 m-2">
-                        <div class="card-body">
-                            <canvas class="m-3" id="myChart2"></canvas>
+                        <div class="card col-12 m-2">
+                            <div class="card-body">
+                                <canvas class="m-3" id="myChart2"></canvas>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-12 mx-auto card">
+            <div class="col-12 mx-auto card">
 
-            <h5 class="text-center my-4">@Localizer["Products Sold"]</h5>
+                <h5 class="text-center my-4">@Localizer["Products Sold"]</h5>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>@Localizer["Name"]</th>
-                        <th>Sku</th>
-                        <th>@Localizer["Price"]</th>
-                        <th>@Localizer["Quantity"]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var p in Model.Productos) {
-                    <tr>
-                        <td><img src="~/Imagenes/Productos/@p.Sku.Imagenes.First().ImagenNombre" style="height:50px;" /></td>
-                        <td><a class="link-dark" target="_blank" href="/@p.SkuId">@p.Nombre</a></td>
-                        <td>@p.Sku.Key</td>
-                        <td>$@p.Precio</td>
-                        <td>@p.Cantidad</td>
-                    </tr>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>@Localizer["Name"]</th>
+                            <th>Sku</th>
+                            <th>@Localizer["Price"]</th>
+                            <th>@Localizer["Quantity"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Productos)
+                        {
+                            <tr>
+                                <td><img src="~/Imagenes/Productos/@p.Sku.Imagenes.First().ImagenNombre" style="height:50px;" />
+                                </td>
+                                <td><a class="link-dark" target="_blank" href="/@p.SkuId">@p.Nombre</a></td>
+                                <td>@p.Sku.Key</td>
+                                <td>$@p.Precio</td>
+                                <td>@p.Cantidad</td>
+                            </tr>
                         }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+
+            </div>
 
         </div>
 
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+                $(document).ready(function () {
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    $(document).ready(function () {
+                    var list = '@Html.Raw(Json.Serialize(Model.PuntosVentas))'
+                })
+        </script>
 
-        var list = '@Html.Raw(Json.Serialize(Model.PuntosVentas))'
-    console.log(list)
-
-    })
-    </script>
-
-    <script>const ctx = document.getElementById('myChart');
+        <script>const ctx = document.getElementById('myChart');
 
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: `@Localizer["Total sales"]`,
-                //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
-                data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosVentas))')
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    max: 10,
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: `@Localizer["Total sales"]`,
+                            //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
+                            data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosVentas))')
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                max: 10,
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
                     }
-                }
-            }
-        }
-    });</script>
+            });</script>
 
-    <script>const ctx2 = document.getElementById('myChart2');
+            <script>const ctx2 = document.getElementById('myChart2');
 
 
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            datasets: [{
-                label: `@Localizer["Profit"]`,
-                //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
-                data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosGanacias))'),
-                backgroundColor: 'lightgreen'
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    //max: ,
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });</script>
+                    new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            datasets: [{
+                                label: `@Localizer["Profit"]`,
+                                //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
+                                data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosGanacias))'),
+                                backgroundColor: 'lightgreen'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    //max: ,
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                });</script>
 
-    <script>$('form input').change(function () {
-            $(this).closest('form').submit();
-        });</script>
+                <script>$('form input').change(function () {
+                            $(this).closest('form').submit();
+                    });</script>
 
-</body>
+                </body>
