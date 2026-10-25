@@ -54,21 +54,7 @@
         </ul>
     </div>
 
-
-    <script>async function EliminarReview(e) {
-
-                let reviewId = e.dataset.reviewId;
-                const response = await fetch("/Admin/EliminarReview", {
-
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    method: "POST",
-                    body: JSON.stringify(reviewId),
-                }).then((response) => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                    }
-                })
-        }</script>
-    </body>
+    @section Scripts {
+        <script src="~/js/pages/admin/get-reviews.js"></script>
+    }
+</body>

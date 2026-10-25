@@ -55,7 +55,7 @@
                         <div class="card-body text-center">
                             <p>@Localizer["Orders pending shipping:"]</p>
                             <p class="text-center m-0 fw-bold fs-5">@Model.Ordenes.Where(o => o.Estado !=
-                                                              "Entregado").Count()</p>
+                                                                                                                                                                                                                                                                                                                              "Entregado").Count()</p>
                             </div>
                         </div>
 
@@ -102,68 +102,16 @@
             </div>
 
         </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-                $(document).ready(function () {
-
-                    var list = '@Html.Raw(Json.Serialize(Model.PuntosVentas))'
-                })
-        </script>
-
-        <script>const ctx = document.getElementById('myChart');
-
-
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        datasets: [{
-                            label: `@Localizer["Total sales"]`,
-                            //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
-                            data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosVentas))')
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                max: 10,
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0
-                                }
-                            }
-                        }
-                    }
-            });</script>
-
-            <script>const ctx2 = document.getElementById('myChart2');
-
-
-                    new Chart(ctx2, {
-                        type: 'bar',
-                        data: {
-                            datasets: [{
-                                label: `@Localizer["Profit"]`,
-                                //data: [{ x: 'March', y: 20 }, { x: 'April', y: 10 }, { x: 'May', y: 5 },]
-                                data: JSON.parse('@Html.Raw(Json.Serialize(Model.PuntosGanacias))'),
-                                backgroundColor: 'lightgreen'
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    //max: ,
-                                    beginAtZero: true,
-                                    ticks: {
-                                        precision: 0
-                                    }
-                                }
-                            }
-                        }
-                });</script>
-
-                <script>$('form input').change(function () {
-                            $(this).closest('form').submit();
-                    });</script>
-
-                </body>
+        @section Scripts {
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                    $(document).ready(function () {
+                        const puntosVentas = @Html.Raw(Json.Serialize(Model.PuntosVentas));
+                        const puntosGanancias = @Html.Raw(Json.Serialize(Model.PuntosGanacias));
+                        const lblVentas = '@Localizer["Total sales"]';
+                        const lblGanancias = '@Localizer["Profit"]';
+                    })
+            </script>
+            <script src="~/js/pages/admin/dashboard.js"></script>
+        }
+    </body>

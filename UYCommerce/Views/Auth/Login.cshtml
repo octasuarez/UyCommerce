@@ -15,34 +15,38 @@
 
                     <form method="post" asp-controller="Auth" asp-action="Login" autocomplete="on">
                         <div class="form-floating mb-3">
-                            <input asp-for="Email" type="email" name="Email"
-                                   class="form-control" id="email"  placeholder="" style="box-shadow:none;"
-                                   autocomplete="on">
+                            <input asp-for="Email" type="email" name="Email" class="form-control" id="email"
+                                   placeholder="" style="box-shadow:none;" autocomplete="on">
                             <label for="email">Email</label>
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                         <div class="form-floating mb-3 d-flex">
-                            <input asp-for="Password" type="password" class="form-control" id="password" name="Password" placeholder="" style="border-radius:5px 0px 0px 5px;box-shadow:none;">
+                            <input asp-for="Password" type="password" class="form-control" id="password" name="Password"
+                                   placeholder="" style="border-radius:5px 0px 0px 5px;box-shadow:none;">
                             <label for="password">@Localizer["Password"]</label>
                             <div class="input-group-append">
-                                <span class="input-group-text h-100" id="basic-addon2" style="border-radius:0px 5px 5px 0px;">
-                                    <i onclick="ViewPassword(this)" class="bi bi-eye-slash my-auto input-group-append" style="cursor:pointer;"></i>
+                                <span class="input-group-text h-100" id="basic-addon2"
+                                      style="border-radius:0px 5px 5px 0px;">
+                                    <i onclick="ViewPassword(this)" class="bi bi-eye-slash my-auto input-group-append"
+                                       style="cursor:pointer;"></i>
                                 </span>
                             </div>
                         </div>
-                                <span asp-validation-for="Password" class="text-danger d-block"></span>
+                        <span asp-validation-for="Password" class="text-danger d-block"></span>
                         <div class="my-3 d-flex">
                             <span class="text-danger mx-auto">@ViewBag.msjLogin</span>
                         </div>
                         <div class="d-flex mb-3">
                             <div class="form-check">
-                                <input id="check" asp-for="RememberMe" class="form-check-input" type="checkbox" name="RememberMe" />
+                                <input id="check" asp-for="RememberMe" class="form-check-input" type="checkbox"
+                                       name="RememberMe" />
                                 <label class="form-check-label" for="check">@Localizer["Stay logged in"]</label>
                             </div>
                             <a href="/RecuperarPwd" class="ms-auto">@Localizer["Remember Password"]</a>
                         </div>
 
-                        <button type="submit" class="btn btn-primary d-flex mx-auto w-100 justify-content-center">@Localizer["Sign in"]</button>
+                        <button type="submit"
+                                class="btn btn-primary d-flex mx-auto w-100 justify-content-center">@Localizer["Sign in"]</button>
                     </form>
                 </div>
 
@@ -53,20 +57,7 @@
         </div>
     </div>
 
-    <script>function ViewPassword(e) {
-
-            var input = document.getElementById("password");
-            if (input.getAttribute("type") === "password") {
-                input.setAttribute("type", "text");
-                e.classList.remove("bi-eye-slash")
-                e.classList.add("bi-eye");
-            } else {
-                input.setAttribute("type", "password");
-                e.classList.remove("bi-eye");
-                e.classList.add("bi-eye-slash");
-            }
-
-
-        }</script>
-
+    @section Scripts {
+        <script src="~/js/login.js"></script>
+    }
 </body>

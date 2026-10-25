@@ -14,7 +14,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["New Brand"]</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="@Localizer["Close"]"></button>
                     </div>
                     <div class="modal-body">
                         <form id="form-marca">
@@ -28,8 +29,10 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button onclick="CreateMarca()" type="button" class="btn btn-primary me-2">@Localizer["Save"]</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                        <button onclick="CreateMarca()" type="button"
+                                class="btn btn-primary me-2">@Localizer["Save"]</button>
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">@Localizer["Close"]</button>
                     </div>
                 </div>
             </div>
@@ -53,7 +56,8 @@
                     <td>@m.Nombre</td>
                     <td>@m.Productos?.Count()</td>
                     <td class="d-flex">
-                        <button data-marca-id="@m.Id" class="btn btn-danger ms-auto me-5" type="button" onclick="DeleteMarca(this)">
+                        <button data-marca-id="@m.Id" class="btn btn-danger ms-auto me-5" type="button"
+                                onclick="DeleteMarca(this)">
                             <i class="bi bi-trash3"></i>
                             @Localizer["Delete"]
                         </button>
@@ -63,42 +67,6 @@
         </tbody>
     </table>
 </div>
-
-<script>function CreateMarca() {
-
-        let form = new FormData(document.getElementById('form-marca'));
-        let nombre = Object.fromEntries(form).nombre;
-
-        $.ajax({
-            url: '/Marca/CreateMarca',
-            method: 'post',
-            data: { nombre: nombre },
-            dataType: 'json',
-            statusCode: {
-                200: () => { location.href = "/admin/marcas" },
-                400: (data) => {
-                    let error = data.responseJSON.error;
-                    document.getElementById("error").innerText = error;
-                }
-            }
-        })
-    }</script>
-
-<script>
-
-    function DeleteMarca(e) {
-
-        $.ajax({
-
-            url: '/Marca/DeleteMarca',
-            method: 'post',
-            data: { marcaId: e.dataset.marcaId },
-            success: () => {
-                location.reload();
-                ShowToast("Success", "Marca eliminada");
-            },
-            error: () => { ShowToast("", "error"); }
-        })
-
-    }
-</script>
+@section Scripts {
+    <script src="~/js/pages/admin/marcas.js"></script>
+}

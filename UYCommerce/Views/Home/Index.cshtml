@@ -2,12 +2,14 @@
 
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home Page</title>
 
 </head>
+
 <body class="">
     @*Carousel*@
     <div id="carouselExampleAutoplaying" class="carousel slide mx-auto col-12" data-bs-ride="carousel">
@@ -18,8 +20,9 @@
                 {
                     var img = Model.Carousel.ElementAt(i);
 
-                    <div class="carousel-item @(i == 0? "active" : "")" style="max-height:500px">
-                        <img src="~/Imagenes/Carousel/@img.Name" class="d-block object-fit-contain mx-auto col-12 col-lg-auto" style="" alt="...">
+                    <div class="carousel-item @(i == 0 ? "active" : "")" style="max-height:500px">
+                        <img src="~/Imagenes/Carousel/@img.Name" class="d-block object-fit-contain mx-auto col-12 col-lg-auto"
+                             style="" alt="...">
                         <div class="carousel-caption text-dark" style="position:absolute;transform:translate(-450px, -70px)">
                         </div>
                     </div>
@@ -27,11 +30,13 @@
 
             }
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+                data-bs-slide="prev">
             <span class="carousel-control-prev-icon" style="filter:invert()" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+                data-bs-slide="next">
             <span class="carousel-control-next-icon" style="filter:invert()" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
@@ -67,17 +72,19 @@
             <h1 class="text-center">@Localizer["Featured"]</h1>
             <div class="d-lg-flex">
                 <div class="cover container">
-                    <button class="left" >
+                    <button class="left">
                         <i class="bi bi-chevron-left"></i>
                     </button>
                     <div class="scroll-images">
                         @foreach (var s in Model.Skus!)
                         {
-                            <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child" style="height:600px;min-width: 380px;">
+                            <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child"
+                                 style="height:600px;min-width: 380px;">
                                 <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
                                     @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
                                     {
-                                        <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
+                                        <i
+                                        class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                     }
                                     else
                                     {
@@ -85,7 +92,8 @@
                                     }
                                 </a>
                                 <a href="/@s.Key" class="text-decoration-none text-reset">
-                                    <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;" src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                    <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;"
+                                         src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
                                 </a>
                                 <div class="card-body">
                                     <ul class="text-center p-0">
@@ -105,7 +113,8 @@
                                     <a href="/@s.Key" class="text-decoration-none text-reset">
                                         <h4 class="card-title text-center">@s.Nombre</h4>
                                         <p class="card-text text-center">
-                                            <strike class="card-text">$@(s.Precio + 100)</strike><b class="card-text text-center"> $@s.Precio</b>
+                                            <strike class="card-text">$@(s.Precio + 100)</strike><b
+                                            class="card-text text-center"> $@s.Precio</b>
                                         </p>
                                     </a>
                                 </div>
@@ -120,51 +129,10 @@
             </div>
         </div>
     </div>
-
-    <script src="~/js/site.js"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const scrollImages = document.querySelector(".scroll-images");
-            const scrollLength = scrollImages.scrollWidth - scrollImages.clientWidth;
-            const leftButton = document.querySelector(".left");
-            const rightButton = document.querySelector(".right");
-
-            function checkScroll() {
-                const currentScroll = scrollImages.scrollLeft;
-                if (currentScroll === 0) {
-                    leftButton.setAttribute("disabled", "true");
-                    rightButton.removeAttribute("disabled");
-                } else if (currentScroll === scrollLength) {
-                    rightButton.setAttribute("disabled", "true");
-                    leftButton.removeAttribute("disabled");
-                } else {
-                    leftButton.removeAttribute("disabled");
-                    rightButton.removeAttribute("disabled");
-                }
-            }
-
-            scrollImages.addEventListener("scroll", checkScroll);
-            window.addEventListener("resize", checkScroll);
-            checkScroll();
-
-            function leftScroll() {
-                scrollImages.scrollBy({
-                    left: -400,
-                    behavior: "smooth"
-                });
-            }
-
-            function rightScroll() {
-                scrollImages.scrollBy({
-                    left: 400,
-                    behavior: "smooth"
-                });
-            }
-
-            leftButton.addEventListener("click", leftScroll);
-            rightButton.addEventListener("click", rightScroll);
-        });
-    </script>
+    @section Scripts {
+        <script src="~/js/site.js"></script>
+        <script src="~/js/pages/home/index.js"></script>
+    }
 </body>
+
 </html>
