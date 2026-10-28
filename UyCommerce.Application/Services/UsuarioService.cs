@@ -32,5 +32,10 @@ namespace UyCommerce.Application.Services
 
             return usuario;
         }
+
+        public async Task<Usuario?> GetUsuarioByEmail(string email)
+        {
+            return await _usuarioRepository.GetUsuarioByEmailAsync(email);
+        }
     }
 }

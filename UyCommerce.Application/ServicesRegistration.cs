@@ -22,6 +22,7 @@ namespace UyCommerce.Application
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<ICarritoService, CarritoService>();
             services.AddScoped<IMarcaService, MarcaService>();
+            services.AddScoped<IAuthService, AuthService>();
             return services;
         }
     }

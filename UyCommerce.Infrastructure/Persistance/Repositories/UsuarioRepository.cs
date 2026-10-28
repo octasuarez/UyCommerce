@@ -21,6 +21,15 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<Usuario?> GetUsuarioByEmailAsync(string email)
+        {
+            return await _context.Usuarios
+                .AsNoTracking()
+                .Include(u => u.Rol)
+                .Include(u => u.Carrito).ThenInclude(c => c.Productos)
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == email);
+        }
+
         public async Task<List<Usuario>> GetUsuariosClientesAsync()
         {
             return await _context.Usuarios

@@ -7,17 +7,26 @@ using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UYCommerce.ViewModels;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Domain.Exceptions;
 
 namespace UYCommerce.Controllers
 {
     public class AuthController : Controller
     {
         private readonly IEmailService _emailService;
+        private readonly IUsuarioService _usuarioService;
+        private readonly IAuthService _authService;
         private readonly ShopContext _context;
 
-        public AuthController(ShopContext context, IEmailService emailService)
+        public AuthController(ShopContext context
+            , IEmailService emailService
+            , IUsuarioService usuarioService
+            , IAuthService authService)
         {
             _emailService = emailService;
+            this._usuarioService = usuarioService;
+            this._authService = authService;
             _context = context;
         }
 
@@ -32,82 +41,42 @@ namespace UYCommerce.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
-
             if (ModelState.IsValid)
             {
-
-                var usuario = await _context.Usuarios
-                    .Include(u => u.Rol)
-                    .Include(u => u.Carrito).ThenInclude(c => c.Productos)
-                    .FirstOrDefaultAsync(u => u.Email!.ToLower() == loginModel.Email!.ToLower());
-
-
-                if (usuario is null)
+                try
                 {
-                    ViewBag.msjLogin = "No existe ese usuario";
-                    return View("Login", loginModel);
-                }
-                if (usuario.Password != loginModel.Password)
-                {
-                    ViewBag.msjLogin = "Contraseña incorrecta";
-                    return View("Login", loginModel);
-                }
-                if (usuario.Activo == false)
-                {
-                    ViewBag.msjLogin = "Usuario inactivo";
-                    return View("Login", loginModel);
-                }
-
-
-                var claims = new List<Claim>
+                    var usuario = await _authService.AuthenticateUsuario(loginModel.Email.ToLower(), loginModel.Password);
+                    if (usuario is not null)
                     {
-                    new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                    new Claim(ClaimTypes.Name, usuario.Email!),
-                    new Claim("FullName", usuario.Nombre!),
-                    new Claim(ClaimTypes.Role, usuario.Rol!.Nombre!),
-                    new Claim("CarritoId", usuario.Carrito.Id.ToString()),
-                    };
-
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-
-                var authProperties = new AuthenticationProperties
+                        var claims = new List<Claim>{
+                            new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                            new(ClaimTypes.Name, usuario.Email!),
+                            new("FullName", usuario.Nombre!),
+                            new(ClaimTypes.Role, usuario.Rol!.Nombre!),
+                            new("CarritoId", usuario.Carrito.Id.ToString()),
+                        };
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var authProperties = new AuthenticationProperties
+                        {
+                            AllowRefresh = true,
+                            IsPersistent = loginModel.RememberMe,
+                        };
+                        await HttpContext.SignInAsync(
+                            CookieAuthenticationDefaults.AuthenticationScheme,
+                            new ClaimsPrincipal(claimsIdentity),
+                            authProperties);
+                        HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos.Count.ToString());
+                        return (usuario.Rol.Nombre == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("Index", "Home");
+                    }
+                }
+                catch (NotFoundException)
                 {
-                    AllowRefresh = true,
-                    // Refreshing the authentication session should be allowed.
-
-                    //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-                    // The time at which the authentication ticket expires. A 
-                    // value set here overrides the ExpireTimeSpan option of 
-                    // CookieAuthenticationOptions set with AddCookie.
-
-                    IsPersistent = loginModel.RememberMe,
-                    // Whether the authentication session is persisted across 
-                    // multiple requests. When used with cookies, controls
-                    // whether the cookie's lifetime is absolute (matching the
-                    // lifetime of the authentication ticket) or session-based.
-
-                    //IssuedUtc = <DateTimeOffset>,
-                    // The time at which the authentication ticket was issued.
-
-                    //RedirectUri = <string>
-                    // The full path or absolute URI to be used as an http 
-                    // redirect response value.
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-                HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos!.Count.ToString());
-
-                if (usuario.Rol!.Nombre! == "Admin") return RedirectToAction("Dashboard", "Admin");
-
-                return RedirectToAction("Index", "Home");
+                }
+                catch (Exception)
+                {
+                }
             }
-
+            ViewBag.msjLogin = "Usuario o contraseña incorrectos.";
             return View("Login", loginModel);
         }
 

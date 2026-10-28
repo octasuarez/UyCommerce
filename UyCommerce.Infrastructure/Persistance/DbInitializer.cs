@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using UyCommerce.Application.Services;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Infrastructure.Persistance
@@ -594,7 +595,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         Nombre = "Juan",
                         Email = "juan@gmail.com",
                         Rol = roles[0],
-                        Password = "123",
+                        Password = await AuthService.HashPassword("123"),
                         Favoritos = new Sku[]
                         {
                             productos[0].Skus!.ElementAt(1),
@@ -607,7 +608,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         Nombre = "Maria",
                         Email = "maria@gmail.com",
                         Rol = roles[0],
-                        Password = "123",
+                        Password = await AuthService.HashPassword("123"),
                         Favoritos = new Sku[]
                         {
                             productos[1].Skus!.ElementAt(1),
@@ -620,7 +621,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         Nombre = "Admin",
                         Email = "admin@gmail.com",
                         Rol = roles[1],
-                        Password = "123"
+                        Password = await AuthService.HashPassword("123"),
                     },
                 };
 

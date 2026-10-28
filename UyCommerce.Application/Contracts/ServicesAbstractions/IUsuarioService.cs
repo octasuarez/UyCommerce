@@ -7,6 +7,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IUsuarioService
     {
+        Task<Usuario?> GetUsuarioByEmail(string email);
         Task<Usuario> GetUsuarioFavoritosByIdAsync(int id);
         Task<List<Usuario>> GetUsuariosClientesAsync();
     }
