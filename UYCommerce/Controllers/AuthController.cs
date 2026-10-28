@@ -32,7 +32,7 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("Login")]
-        public IActionResult Login(string? returnUrl)
+        public IActionResult Login()
         {
             return View();
         }
@@ -45,7 +45,7 @@ namespace UYCommerce.Controllers
             {
                 try
                 {
-                    var usuario = await _authService.AuthenticateUsuario(loginModel.Email.ToLower(), loginModel.Password);
+                    var usuario = await _authService.AuthenticateUsuarioAsync(loginModel.Email.ToLower(), loginModel.Password);
                     if (usuario is not null)
                     {
                         var claims = new List<Claim>{
@@ -84,52 +84,32 @@ namespace UYCommerce.Controllers
         [Route("Register")]
         public IActionResult AgregarUsuario()
         {
-
             return View("Register");
         }
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> AgregarUsuario(RegisterModel registerModel)
+        public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && registerModel.Password == registerModel.ConfirmPassword)
             {
-                var usuarioExiste = _context.Usuarios.FirstOrDefault(u => u.Email == registerModel.Email);
-                if (usuarioExiste is not null)
-                    return View("Register");
-
-                var rol = await _context.Roles.FirstOrDefaultAsync(r => r.Nombre == "User");
-
-                Usuario usuario = new()
+                try
                 {
-                    Nombre = registerModel.Nombre,
-                    Email = registerModel.Email.ToLower(),
-                    Password = registerModel.Password,
-                    Rol = rol
-                };
-
-                await _context.Usuarios.AddAsync(usuario);
-                await _context.SaveChangesAsync();
-
-                LoginModel loginModel = new() { Email = registerModel.Email, Password = registerModel.Password };
-                return await Login(loginModel);
-
-                //return RedirectToAction("Index", "Home");
+                    var success = await _authService.RegisterUsuarioAsync(registerModel.Nombre, registerModel.Email, registerModel.Password);
+                    if (success) return Login();
+                }
+                catch (Exception)
+                {
+                }
             }
-
-            return View("Register");
+            return View("Register", registerModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-
-            await HttpContext.SignOutAsync(
-       CookieAuthenticationDefaults.AuthenticationScheme);
-
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.SetString("cartItems", "");
-
             return RedirectToAction("Login", "Auth");
         }
 
@@ -137,7 +117,6 @@ namespace UYCommerce.Controllers
         [Route("RecuperarPwd")]
         public IActionResult RecuperarPassword()
         {
-
             return View("RecuperarPwd");
         }
 
@@ -145,51 +124,21 @@ namespace UYCommerce.Controllers
         [Route("RecuperarPassword")]
         public async Task<IActionResult> RecuperarPassword(string email)
         {
-
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (usuario != null)
+            try
             {
-                var codigoExiste = await _context.Codigos.FirstOrDefaultAsync(c => c.UsuarioId == usuario.Id);
-                if (usuario.Activo == true)
-                {
-                    usuario.Activo = false;
-                    _context.Usuarios.Update(usuario);
-                }
-
-                Codigo? codigo = new();
-
-                if (codigoExiste is not null)
-                {
-                    if (codigoExiste.FechaExpiracion > DateTime.Now)
-                    {
-                        codigo = codigoExiste;
-                    }
-                    else
-                    {
-                        codigoExiste = new Codigo(Guid.NewGuid().ToString()[..5], usuario.Id);
-                        _context.Codigos.Update(codigoExiste);
-                    }
-                }
-                else
-                {
-                    codigo = new Codigo(Guid.NewGuid().ToString()[..6], usuario.Id);
-                    await _context.Codigos.AddAsync(codigo);
-                }
-
-                var content = "Tu codigo es: " + codigo.CodigoRecuperacion;
-                _emailService.SendEmail(email, "UyCommerce Recuperacion Contraseña", content);
-                await _context.SaveChangesAsync();
-                return View("CodigoRecuperacion", usuario.Id);
+                await _authService.SendRecuperacionPasswordEmail(email);
+                var usuario = await _usuarioService.GetUsuarioByEmail(email);
+                return View("CodigoRecuperacion", usuario?.Id);
             }
-
+            catch (Exception)
+            {
+            }
             return View("RecuperarPwd");
         }
 
         [HttpPost]
         public async Task<IActionResult> VerificarCodigoRecuperacion(string codigo, int usrId)
         {
-
             var codigoDB = await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == codigo);
 
             if (codigoDB is null || codigoDB.UsuarioId != usrId)

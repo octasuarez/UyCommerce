@@ -40,5 +40,32 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Where(u => u.Rol!.Nombre == "User")
                 .ToListAsync();
         }
+
+        public async Task<List<Rol>> GetRolesUsuarios()
+        {
+            return await _context.Roles.ToListAsync();
+        }
+
+        public async Task<Rol?> GetRolByNombre(string nombre)
+        {
+            return await _context.Roles.FirstOrDefaultAsync(r => r.Nombre == nombre);
+        }
+
+        public async Task<Codigo?> GetCodigoRecuperacionUsuarioAsync(int id)
+        {
+            return await _context.Codigos.FirstOrDefaultAsync(c => c.UsuarioId == id);
+        }
+
+        public async Task<int> CreateCodigoRecuperacion(Codigo codigo)
+        {
+            await _context.Codigos.AddAsync(codigo);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> UpdateCodigoRecuperacion(Codigo codigo)
+        {
+            _context.Codigos.Update(codigo);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

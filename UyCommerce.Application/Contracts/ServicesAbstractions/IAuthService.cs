@@ -7,6 +7,8 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IAuthService
     {
-        Task<Usuario?> AuthenticateUsuario(string email, string password);
+        Task<Usuario?> AuthenticateUsuarioAsync(string email, string password);
+        Task<bool> RegisterUsuarioAsync(string name, string email, string password);
+        Task SendRecuperacionPasswordEmail(string email);
     }
 }

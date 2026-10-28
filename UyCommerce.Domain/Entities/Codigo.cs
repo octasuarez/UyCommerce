@@ -10,11 +10,11 @@ namespace UyCommerce.Domain.Entities
 		public int UsuarioId { get; set; }
 		public DateTime FechaExpiracion { get; set; }
 
-		public Codigo(string codigo, int usuarioId)
+		public Codigo(string codigo, int usuarioId, DateTime fechaExpiracion)
 		{
 			CodigoRecuperacion = codigo;
 			UsuarioId = usuarioId;
-			FechaExpiracion = DateTime.Now.AddDays(2);
+			FechaExpiracion = fechaExpiracion;
 		}
 
 		public Codigo() { }
