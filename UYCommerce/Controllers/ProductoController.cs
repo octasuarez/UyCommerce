@@ -160,7 +160,7 @@ namespace UYCommerce.Controllers
                 try
                 {
                     var userId = GetUserId();
-                    result = await _productoService.GetProductosByQueryAsync(query, (ProductsOrderBy)orden, pag - 1, qty, userId);
+                    result = await _productoService.GetProductosByQueryAsync(query, (ProductsOrderBy)orden, pag, qty, userId);
                     return View("BusquedaProductos", result);
                 }
                 catch (Exception)

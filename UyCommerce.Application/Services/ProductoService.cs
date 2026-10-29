@@ -110,9 +110,10 @@ namespace UyCommerce.Application.Services
 
         public async Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId)
         {
-            var result = await _productoRepository.GetProductosByQueryAsync(query, orderBy, pag, qty);
+            var result = await _productoRepository.GetProductosByQueryAsync(query, orderBy, pag-1, qty);
             result.Categorias = await _categoriaRepository.GetCategoriasPadreAsync();
             result.NumberOfPages = (result.TotalItems + qty - 1) / qty;
+            result.Page = pag;
             if (userId != null)
             {
                 var user = await _usuarioRepository.GetUsuarioAndFavoritos((int)userId);

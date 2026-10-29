@@ -196,17 +196,21 @@ button.accept-policy {
     border-radius: 10px;
 }
 
-    .categoria img {
-        height: 80%;
-        width: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease 0s, opacity 0.5s;
-        border-radius: 10px 10px 0px 0px;
-    }
+.categoria img {
+    height: 80%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease 0s, opacity 0.5s;
+    border-radius: 10px 10px 0px 0px;
+}
 
-        .categoria img:hover {
-            opacity: 60%;
-        }
+.categoria-text{
+    padding: 10px 0 10px 0;
+}
+
+.categoria img:hover {
+    opacity: 60%;
+}
 
 /* Tooltip text */
 .tooltiptext {

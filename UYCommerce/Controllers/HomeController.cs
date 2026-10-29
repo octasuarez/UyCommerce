@@ -74,24 +74,6 @@ public class HomeController : Controller
         return View(homeVM);
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-
-
-    [Route("NotFound")]
-    public IActionResult NotFoundPage()
-    {
-        return View("NotFound");
-    }
-
     [HttpGet]
     [Route("/Contacto")]
     public IActionResult Contacto()
@@ -120,20 +102,6 @@ public class HomeController : Controller
         return Ok("Se envió correctamente");
     }
 
-    [HttpGet]
-    [Route("About")]
-    public IActionResult About()
-    {
-        return View();
-    }
-
-    [HttpGet]
-    [Route("Faq")]
-    public IActionResult Faq()
-    {
-        return View();
-    }
-
     [HttpPost]
     public IActionResult SetLanguage(string culture, string returnUrl)
     {
@@ -144,6 +112,12 @@ public class HomeController : Controller
         );
 
         return LocalRedirect(returnUrl);
+    }
+
+    [Route("NotFound")]
+    public IActionResult NotFoundPage()
+    {
+        return View("NotFound");
     }
 
 }

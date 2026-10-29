@@ -7,13 +7,15 @@
 
     <div class="container d-flex flex-column" style="height:70vh;">
 
-        <div class="row mt-5">
-            <div class="card col-12 col-sm-7 col-md-6 mx-auto mt-2 pt-3 pb-3 border-0 shadow">
+        <div class="row my-auto">
+            <div class="card col-6 col-sm-5 col-md-4 mx-auto mt-2 pt-3 pb-3 border-0 shadow-lg">
                 <i class="bi bi-person-circle mx-auto" style="font-size:50px"></i>
                 <h1 class="mx-auto fw-semibold">@Localizer["Sign in"]</h1>
-                <div class="card-body">
-
+                <div class="card-body pt-0">
                     <form method="post" asp-controller="Auth" asp-action="Login" autocomplete="on">
+                        <div class="my-3 d-flex">
+                            <span class="text-danger mx-auto">@ViewBag.msjLogin</span>
+                        </div>
                         <div class="form-floating mb-3">
                             <input asp-for="Email" type="email" name="Email" class="form-control" id="email"
                                    placeholder="" style="box-shadow:none;" autocomplete="on">
@@ -33,10 +35,7 @@
                             </div>
                         </div>
                         <span asp-validation-for="Password" class="text-danger d-block"></span>
-                        <div class="my-3 d-flex">
-                            <span class="text-danger mx-auto">@ViewBag.msjLogin</span>
-                        </div>
-                        <div class="d-flex mb-3">
+                        <div class="d-flex">
                             <div class="form-check">
                                 <input id="check" asp-for="RememberMe" class="form-check-input" type="checkbox"
                                        name="RememberMe" />
@@ -44,14 +43,13 @@
                             </div>
                             <a href="/RecuperarPwd" class="ms-auto">@Localizer["Remember Password"]</a>
                         </div>
-
                         <button type="submit"
-                                class="btn btn-primary d-flex mx-auto w-100 justify-content-center">@Localizer["Sign in"]</button>
+                                class="btn btn-primary d-flex mx-auto w-100 justify-content-center my-3">@Localizer["Sign in"]
+                        </button>
                     </form>
                 </div>
-
                 <div class="d-flex">
-                    <a href="/register" class="d-flex mx-auto mt-5">@Localizer["Create a new Account"]</a>
+                    <a href="/register" class="d-flex mx-auto">@Localizer["Create a new Account"]</a>
                 </div>
             </div>
         </div>

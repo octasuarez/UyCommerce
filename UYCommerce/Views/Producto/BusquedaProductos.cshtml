@@ -20,8 +20,7 @@
                         <a class="link-body-emphasis" href="/">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                  class="bi bi-house-door-fill" viewBox="0 0 16 16">
-                                <path
-                                d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
                             </svg>
                             <span class="visually-hidden">Home</span>
                         </a>
@@ -175,8 +174,7 @@
                                             @for (int i = 0; i < 5; i++)
                                             {
                                                 <li class="d-inline text-warning p-0 me-1">
-                                                    <i
-                                                    class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star" )"></i>
+                                                    <i class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star")"></i>
                                                 </li>
                                             }
                                         </ul>
@@ -199,31 +197,33 @@
                                     {
                                         if (Model.Page > 1)
                                         {
-                                            <li class="page-item"><a data-pag="@(Model.Page -1)" class="page-link">Previous</a> </li>
+                                            <li class="page-item"><a data-pag="@(Model.Page - 1)" class="page-link">Previous</a> </li>
                                         }
                                         for (int i = 0; i < Model.NumberOfPages; i++)
                                         {
                                             var p = i + 1;
-                                            <li class="page-item @(Model.Page == p ? "active" : "")"><a data-pag="@p"
-                                                                                                            class="page-link">@p</a> </li>
-                                            }
-                                            if (Model.NumberOfPages > Model.Page)
-                                            {
-                                                <li class="page-item"><a data-pag="@(Model.Page + 1)" class="page-link">Next</a> </li>
-                                            }
+                                            <li class="page-item @(Model.Page == p ? "active" : "")">
+                                                <a data-pag="@p"
+                                                   class="page-link">@p</a>
+                                            </li>
                                         }
-                                    </ul>
-                                </nav>
-                            </div>
-                        }
-                    </div>
+                                        if (Model.NumberOfPages > Model.Page)
+                                        {
+                                            <li class="page-item"><a data-pag="@(Model.Page + 1)" class="page-link">Next</a> </li>
+                                        }
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    }
                 </div>
+            </div>
 
-            }
-
-        </div>
-
-        @section Scripts {
-            <script src="~/js/pages/producto/busqueda-producto.js"></script>
         }
-    </body>
+
+    </div>
+
+    @section Scripts {
+        <script src="~/js/pages/producto/busqueda-producto.js"></script>
+    }
+</body>
