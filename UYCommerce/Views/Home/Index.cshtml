@@ -81,7 +81,7 @@
                             <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child"
                                  style="height:600px;min-width: 380px;">
                                 <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                    @if (Model.Favoritos != null && Model.Favoritos.Contains(s))
+                                    @if (Model.Favoritos != null && Model.Favoritos.FirstOrDefault(f => f.Id == s.Id) != null)
                                     {
                                         <i
                                         class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -225,17 +217,13 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> AgregarAFavoritos(string skuId)
         {
-
             var sku = await _context.Skus.FirstOrDefaultAsync(s => s.Id.ToString() == skuId);
-
             if (sku is null)
             {
                 return new BadRequestObjectResult("El producto no fue encontrado");
             }
-
             var usuario = await _context.Usuarios.Include(u => u.Favoritos)
                 .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-
             string msj = "";
             if (usuario is null)
             {

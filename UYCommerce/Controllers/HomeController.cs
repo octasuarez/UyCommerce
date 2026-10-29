@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using System.Security.Claims;
 using UyCommerce.Application.Contracts.Persistance.Services;
@@ -18,8 +19,11 @@ public class HomeController : Controller
     private readonly IUsuarioService _usuarioService;
     private readonly ICategoriaService _categoriaService;
     private readonly IImagesService _imagesService;
+    private readonly IMemoryCache _cache;
 
-    public HomeController(ILogger<HomeController> logger,
+    public HomeController(
+        IMemoryCache cache,
+        ILogger<HomeController> logger,
         IProductoService productoService,
         IUsuarioService usuarioService,
         ICategoriaService categoriaService,
@@ -32,6 +36,7 @@ public class HomeController : Controller
         _usuarioService = usuarioService;
         _categoriaService = categoriaService;
         _imagesService = imagesService;
+        _cache = cache;
     }
 
     public async Task<IActionResult> Index()
@@ -39,21 +44,27 @@ public class HomeController : Controller
         HomeVM homeVM = new HomeVM();
         try
         {
-            var productos = await _productoService.GetFeaturedProductsAsync();
-
-            var skus = productos
-                .OrderByDescending(p => p.GetPuntuacionPromedio())
-                .Select(p => p.Skus!.First()).ToList();
-
-            homeVM.Skus = skus;
-            homeVM.Categorias = await _categoriaService.GetCategoriasInicioAsync();
-            homeVM.Carousel = await _imagesService.GetCarouselImagesAsync();
+            if (_cache.TryGetValue<HomeVM>("homeVM", out var homeCache) && homeCache.Skus.Any())
+            {
+                homeVM = homeCache;
+            }
+            else
+            {
+                var productos = await _productoService.GetFeaturedProductsAsync();
+                var skus = productos
+                    .OrderByDescending(p => p.GetPuntuacionPromedio())
+                    .Select(p => p.Skus!.First()).ToList();
+                homeVM.Skus = skus;
+                homeVM.Categorias = await _categoriaService.GetCategoriasInicioAsync();
+                homeVM.Carousel = await _imagesService.GetCarouselImagesAsync();
+                _cache.Set("homeVM", homeVM, TimeSpan.FromHours(1));
+            }
 
             if (User.Identity is not null && User.Identity.IsAuthenticated
                 && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
             {
                 var usuario = await _usuarioService.GetUsuarioFavoritosByIdAsync(userId);
-                homeVM.Favoritos = usuario?.Favoritos;
+                homeVM.Favoritos = usuario.Favoritos;
             }
         }
         catch (Exception)

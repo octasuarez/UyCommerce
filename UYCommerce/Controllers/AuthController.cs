@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UyCommerce.Infrastructure.Persistance;
-using UyCommerce.Domain.Entities;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UYCommerce.ViewModels;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
