@@ -2,31 +2,16 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Exceptions;
-using UyCommerce.Infrastructure.Persistance;
 using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly IEmailService _emailService;
-        private readonly IUsuarioService _usuarioService;
         private readonly IAuthService _authService;
-        private readonly ShopContext _context;
-
-        public AuthController(ShopContext context
-            , IEmailService emailService
-            , IUsuarioService usuarioService
-            , IAuthService authService)
-        {
-            _emailService = emailService;
-            this._usuarioService = usuarioService;
-            this._authService = authService;
-            _context = context;
-        }
+        public AuthController(IAuthService authService) => this._authService = authService;
 
         [HttpGet]
         [Route("Login")]
