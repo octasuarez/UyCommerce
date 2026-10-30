@@ -1,25 +1,19 @@
 ﻿
 @{
-
     Layout = "EmptyLayout";
 }
 
-
 <body>
-
     <div class="container" style="min-height:1000px;">
-
-
         <div class="card col-5 mx-auto p-5" style="margin-top:150px;">
             <h5 class="text-center">@Localizer["Remember Password"]</h5>
             <form method="post"  asp-action="RecuperarPassword">
                 <div class="mx-auto text-center justify-content-center d-flex flex-column ">
                     <p>@Localizer["We will send you a code to your email to change your password"]</p>
-                    <input class="form-control mb-3" type="text" placeholder="@Localizer["Type your email address here"]" name="email" value="juan@gmail.com"/>
+                    <input class="form-control mb-3" type="text" placeholder="@Localizer["Type your email address here"]" name="email"/>
                     <button type="submit" class="btn btn-primary">@Localizer["Send"]</button>
                 </div>
             </form>
         </div>
-
     </div>
 </body>

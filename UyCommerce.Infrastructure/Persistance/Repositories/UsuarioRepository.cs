@@ -24,7 +24,6 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         public async Task<Usuario?> GetUsuarioByEmailAsync(string email)
         {
             return await _context.Usuarios
-                .AsNoTracking()
                 .Include(u => u.Rol)
                 .Include(u => u.Carrito).ThenInclude(c => c.Productos)
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == email);
@@ -66,6 +65,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
             _context.Codigos.Update(codigo);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<Codigo?> GetCodigoRecuperacionByCodigoAsync(string codigo)
+        {
+            return await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == codigo);
         }
     }
 }

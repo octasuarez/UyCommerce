@@ -1,34 +1,34 @@
 ﻿using Konscious.Security.Cryptography;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
+using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
-using UyCommerce.Application.Common.Enums;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
+
 namespace UyCommerce.Application.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
         public IUsuarioRepository _usuarioRepository { get; }
-        public AuthService(IUsuarioRepository usuarioRepository, IEmailService emailService)
+        public AuthService(IUsuarioRepository usuarioRepository, IEmailService emailService, IConfiguration configuration)
         {
             _usuarioRepository = usuarioRepository;
             _emailService = emailService;
+            this._configuration = configuration;
         }
 
         public async Task<Usuario?> AuthenticateUsuarioAsync(string email, string password)
         {
             var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email)
-                ?? throw new NotFoundException(nameof(Usuario),email);
-            if(!usuario.Activo) throw new Exception("Usuario inhabilitado");
+                ?? throw new NotFoundException(nameof(Usuario), email);
+            if (!usuario.Activo) throw new Exception("Usuario inhabilitado");
             return await VerifyPassword(password, usuario.Password) == true ? usuario : null;
         }
 
@@ -41,7 +41,7 @@ namespace UyCommerce.Application.Services
             byte[] salt = Convert.FromBase64String(PadBase64String(phcParts[3]));
             byte[] expectedHash = Convert.FromBase64String(PadBase64String(phcParts[4]));
             int m = 0, t = 0, p = 0;
-            foreach(var param in _params)
+            foreach (var param in _params)
             {
                 var paramValue = param.Split('=');
                 m = paramValue[0] == "m" ? int.Parse(paramValue[1]) : m;
@@ -83,7 +83,7 @@ namespace UyCommerce.Application.Services
             var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email);
             if (usuario is not null) throw new Exception("Correo electronico ya registrado");
             var rolUsuario = await _usuarioRepository.GetRolByNombre("User")
-                ?? throw new NotFoundException(nameof(Rol),"User");
+                ?? throw new NotFoundException(nameof(Rol), "User");
             Usuario newUsuario = new()
             {
                 Nombre = name,
@@ -95,23 +95,75 @@ namespace UyCommerce.Application.Services
             return await _usuarioRepository.CreateAsync(newUsuario) > 0;
         }
 
-        public async Task SendRecuperacionPasswordEmail(string email)
+        public async Task CreateRecuperacionPassword(string email, string url)
         {
             var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email)
                 ?? throw new NotFoundException(nameof(Usuario), email);
             usuario.Activo = false;
             var codigoDb = await _usuarioRepository.GetCodigoRecuperacionUsuarioAsync(usuario.Id);
-            if(codigoDb is not null)
+            if (codigoDb is not null)
             {
                 codigoDb.FechaExpiracion = DateTime.Now.AddDays(-1);
                 await _usuarioRepository.UpdateCodigoRecuperacion(codigoDb);
             }
-            Codigo codigo = new(Guid.NewGuid().ToString()[..6], usuario.Id, DateTime.Now.AddMinutes(2));
+            var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+            var codigoRecuperacion = HashSHA256(token);
+            Codigo codigo = new(codigoRecuperacion, usuario.Id, DateTime.UtcNow.AddMinutes(5));
             await _usuarioRepository.CreateCodigoRecuperacion(codigo);
             await _usuarioRepository.UpdateAsync(usuario);
-            string mailAsunto = "UyCommerce Recuperacion Contraseña";
-            string mailBody = "Tu codigo es: " + codigo.CodigoRecuperacion;
-            await _emailService.SendEmail(email, mailAsunto, mailBody);
+            await SendRecuperacionPasswordEmail(email, url, token);
+        }
+
+        private async Task SendRecuperacionPasswordEmail(string email, string url, string token)
+        {
+            string mailSubject = _configuration["RecuperacionPasswordAsunto"]
+                ?? throw new Exception("Asunto de correo de recuperacion sin definir.");
+            string mailBody = _configuration["RecuperacionPasswordBody"]
+                ?? throw new Exception("Body de correo de recuperacion sin definir.");
+            mailBody = mailBody.Replace("#URL#", url).Replace("#TOKEN#", token);
+            await _emailService.SendEmail(email, mailSubject, mailBody);
+        }
+
+        private static string HashSHA256(string data)
+        {
+            var bytes = Encoding.UTF8.GetBytes(data);
+            var hash = SHA256.HashData(bytes);
+            return Convert.ToHexString(hash).ToLower();
+        }
+
+        public async Task<bool> VerifyCodigoRecuperacion(string codigo)
+        {
+            var codigoHash = HashSHA256(codigo);
+            var codigoDb = await _usuarioRepository.GetCodigoRecuperacionByCodigoAsync(codigoHash)
+                ?? throw new NotFoundException(nameof(Codigo), codigo);
+            return codigoDb.FechaExpiracion >= DateTime.UtcNow;
+        }
+
+        public async Task ChangePasswordUsuario(string codigo, string email, string password)
+        {
+            var isCodigoValid = await VerifyCodigoRecuperacion(codigo);
+            if (!isCodigoValid) throw new Exception("Codigo recuperacion invalido.");
+            var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email)
+                ?? throw new NotFoundException(nameof(Usuario), email);
+            var codigoDb = await _usuarioRepository.GetCodigoRecuperacionUsuarioAsync(usuario.Id)
+                ?? throw new NotFoundException(nameof(Codigo), codigo);
+            var codigosMatch = FixedTimeEquals(HashSHA256(codigo), codigoDb.CodigoRecuperacion);
+            if (codigosMatch)
+            {
+                usuario.Activo = true;
+                usuario.Password = await HashPassword(password);
+                codigoDb.FechaExpiracion = DateTime.UtcNow.AddDays(-1);
+                await _usuarioRepository.UpdateAsync(usuario);
+                await _usuarioRepository.UpdateCodigoRecuperacion(codigoDb);
+                await _emailService.SendEmail(email, _configuration["CambioPasswordAsunto"]!, _configuration["CambioPasswordBody"]!);
+            }
+        }
+
+        private static bool FixedTimeEquals(string data, string expected)
+        {
+            var codigoBytes = Encoding.UTF8.GetBytes(data);
+            var matchBytes = Encoding.UTF8.GetBytes(expected);
+            return CryptographicOperations.FixedTimeEquals(codigoBytes, matchBytes);
         }
     }
 }

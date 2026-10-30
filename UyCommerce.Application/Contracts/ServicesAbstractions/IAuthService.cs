@@ -9,6 +9,8 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
     {
         Task<Usuario?> AuthenticateUsuarioAsync(string email, string password);
         Task<bool> RegisterUsuarioAsync(string name, string email, string password);
-        Task SendRecuperacionPasswordEmail(string email);
+        Task CreateRecuperacionPassword(string email, string url);
+        Task<bool> VerifyCodigoRecuperacion(string codigo);
+        Task ChangePasswordUsuario(string codigo, string email, string password);
     }
 }

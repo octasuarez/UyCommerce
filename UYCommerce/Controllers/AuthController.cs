@@ -1,13 +1,12 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UyCommerce.Infrastructure.Persistance;
+using System.Security.Claims;
 using UyCommerce.Application.Contracts.Persistance.Services;
-using UYCommerce.ViewModels;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Exceptions;
+using UyCommerce.Infrastructure.Persistance;
+using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers
 {
@@ -95,7 +94,7 @@ namespace UYCommerce.Controllers
                 try
                 {
                     var success = await _authService.RegisterUsuarioAsync(registerModel.Nombre, registerModel.Email, registerModel.Password);
-                    if (success) return Login();
+                    if (success) return await Login(new LoginModel { Email = registerModel.Email, Password = registerModel.Password});
                 }
                 catch (Exception)
                 {
@@ -125,9 +124,9 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _authService.SendRecuperacionPasswordEmail(email);
-                var usuario = await _usuarioService.GetUsuarioByEmail(email);
-                return View("CodigoRecuperacion", usuario?.Id);
+                var request = HttpContext.Request;
+                var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}/VerificarCodigoRecuperacion";
+                await _authService.CreateRecuperacionPassword(email, baseUrl);
             }
             catch (Exception)
             {
@@ -135,15 +134,17 @@ namespace UYCommerce.Controllers
             return View("RecuperarPwd");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> VerificarCodigoRecuperacion(string codigo, int usrId)
+        [HttpGet]
+        [Route("/VerificarCodigoRecuperacion/{codigo}")]
+        public async Task<IActionResult> VerificarCodigoRecuperacion(string codigo)
         {
-            var codigoDB = await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == codigo);
-
-            if (codigoDB is null || codigoDB.UsuarioId != usrId)
-                return View("NotFound");
-
-            return View("CambiarPwd", new PasswordRecuperacionModel { Codigo = codigoDB.CodigoRecuperacion });
+            try
+            {
+                var codigoIsValid = await _authService.VerifyCodigoRecuperacion(codigo);
+                if(codigoIsValid) return View("CambiarPwd", new PasswordRecuperacionModel { Codigo = codigo });
+            }
+            catch (Exception){}
+            return View("NotFound");
         }
 
         [HttpPost]
@@ -151,26 +152,15 @@ namespace UYCommerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                var codigoDB = await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == request.Codigo);
-
-                if (codigoDB is null)
+                try
                 {
-                    ViewBag.msg = "No existe ese codigo";
-                    return View("CambiarPwd");
-                }
-
-                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == codigoDB.UsuarioId);
-
-                if (usuario is not null)
-                {
-                    usuario.Password = request.Password;
-                    usuario.Activo = true;
-                    _context.Update(usuario);
-                    _context.Remove(codigoDB);
-                    await _context.SaveChangesAsync();
+                    await _authService.ChangePasswordUsuario(request.Codigo, request.Email, request.Password);
                     return Redirect("/Login");
                 }
-                return View("NotFound");
+                catch (Exception)
+                {
+                    return View("NotFound");
+                }
             }
             return View("CambiarPwd", request);
         }
