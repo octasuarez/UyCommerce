@@ -1,54 +1,168 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Domain.Entities;
+using UyCommerce.Domain.Exceptions;
 using UyCommerce.Infrastructure.Persistance;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+using UyCommerce.Infrastructure.Services.Paypal;
 
 namespace UYCommerce.Controllers
 {
+    [Authorize(Policy = "User")]
     public class PagosController : Controller
     {
         private readonly ShopContext _context;
-
-        public PagosController(ShopContext context)
+        private readonly PaypalAPI _paypalAPI;
+        private readonly ICarritoService _carritoService;
+        public PagosController(ShopContext context, PaypalAPI PaypalAPI, ICarritoService carritoService)
         {
-
-            _context = context;
+            this._paypalAPI = PaypalAPI;
+            this._context = context;
+            this._carritoService = carritoService;
         }
 
-        // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Success()
         {
             return View();
         }
 
         [HttpGet]
-        [Authorize(Policy = "User")]
         [Route("Checkout")]
-        public IActionResult Checkout()
+        public async Task<IActionResult> Checkout()
         {
-            var usuarioID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var carrito = _context.Carritos
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto).ThenInclude(pr => pr!.Marca)
-                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .FirstOrDefault(c => c.UsuarioId.ToString() == usuarioID);
-
-
-            return View(carrito);
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var carrito = await _carritoService.GetCarritoCompleteByUserIdAsync(userId);
+                return View(carrito);
+            }
+            catch (NotFoundException) { }
+            catch (Exception) { }
+            return RedirectToAction("/");
         }
 
+        #region paypal
 
-        public IActionResult Success()
+        [HttpPost]
+        [Route("/create-paypal-order")]
+        public async Task<IActionResult> CreateOrder()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var carrito = await _carritoService.GetCarritoByUserIdAsync(userId);
+                var total = carrito.GetTotal().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                var response = await _paypalAPI.CreateOrder(carrito.Productos, total);
+
+                return Ok(response);
+            }
+            catch (NotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpPost]
+        [Route("/orders/{orderID}/capture")]
+        public async Task<IActionResult> CaptureOrder(string? orderID)
+        {
+            try
+            {
+                var response = await _paypalAPI.CaptureOrder(orderID);
+
+                if (response is not null && User.Identity!.IsAuthenticated)
+                {
+                    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                    var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == userId)
+                        ?? throw new Exception("The user was not found");
+
+                    Orden orden = CreateOrder(response, usuario);
+                    await UpdateStock(orden.Productos!);
+                    await DeleteCartProducts();
+                    await _context.AddAsync(orden);
+                    await _context.SaveChangesAsync();
+
+                }
+
+                return Ok(response);
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error.Message);
+            }
+        }
+
+        private async Task UpdateStock(ICollection<ProductoOrden> products)
         {
 
-            return View();
+            var skusIds = products.Select(p => p.SkuId);
+
+            var skus = await _context.Skus.Include(s => s.Producto)
+                .Where(s => skusIds.Any(skuId => skuId == s.Id)).ToListAsync();
+
+            foreach (var s in skus)
+            {
+                s.Stock -= products.First(p => p.SkuId == s.Id).Cantidad;
+                s.Producto!.VecesComprado += 1;
+            }
+
+            _context.UpdateRange(skus);
         }
+
+        private static Orden CreateOrder(CaptureOrderResponse response, Usuario usuario)
+        {
+
+            Orden orden = new()
+            {
+                Id = response.id!,
+                Usuario = usuario,
+                FechaDeCompra = DateTime.Now,
+                Estado = "en camino",
+                NombreComprador = usuario?.Nombre,
+                MetodoDePago = response.payment_source!.card != null ? "Tarjeta" : "Paypal",
+                Total = double.Parse(response.purchase_units![0].amount!.value!),
+                Direccion = JsonSerializer.Deserialize<OrdenDireccion>(JsonSerializer.Serialize(response.purchase_units[0].shipping?.address)),
+                Productos = new List<ProductoOrden>()
+            };
+
+            foreach (var item in response.purchase_units![0].items!)
+            {
+                orden.Productos?.Add(new ProductoOrden
+                {
+                    SkuId = int.Parse(item.sku!),
+                    OrdenId = orden.Id,
+                    Cantidad = int.Parse(item.quantity!),
+                    Precio = double.Parse(item.unit_amount!.value!),
+                    Nombre = item.name,
+                });
+            }
+
+            return orden;
+        }
+
+        private async Task DeleteCartProducts()
+        {
+
+            var cartId = int.Parse(User.FindFirstValue("CarritoId")!);
+            await _context.ProductosCarritos.Where(p => p.CarritoId == cartId).ExecuteDeleteAsync();
+            HttpContext.Session.SetString("cartItems", "0");
+
+        }
+
+        #endregion paypal
     }
 }
 

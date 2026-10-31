@@ -23,8 +23,7 @@ function initPayPalCheckout() {
                         throw new Error(errorMessage);
                     }
                 } catch (error) {
-                    console.error(error);
-                    resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+                    resultMessage(`Lo sentimos, no se pudo iniciar su orden...<br><br>${error}`);
                 }
             },
             async onApprove(data, actions) {
@@ -42,21 +41,18 @@ function initPayPalCheckout() {
                     if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
                         return actions.restart();
                     } else if (errorDetail) {
-                        resultMessage("No se pudo completar la transaccion" + errorDetail);
+                        throw new Error(errorDetail);
                     } else if (!orderData.purchase_units) {
                         throw new Error(JSON.stringify(orderData));
-                    } else {
-                        // (3) Successful transaction
-                        window.location.href = `/Compras/${orderData.id}`;
-                    }
+                    } 
+                    window.location.href = `/Compras/${orderData.id}`;
                 } catch (error) {
-                    console.error(error);
-                    resultMessage(
-                        `Sorry, your transaction could not be processed...<br><br>${error}`,
-                    );
+                    resultMessage(`Lo sentimos, su compra no pudo ser concretada...<br><br>${error}`);
                 }
             },
-            onError(err) { },
+            onError(err) {
+                resultMessage(`Lo sentimos, su compra no pudo ser concretada...<br><br>${err}`);
+            },
         })
         .render("#paypal-button-container")
 }

@@ -79,6 +79,12 @@ namespace UyCommerce.Application.Services
             return carrito;
         }
 
+        public async Task<Carrito> GetCarritoCompleteByUserIdAsync(int userId)
+        {
+            var carrito = await _carritoRepository.GetCarritoCompleteByUserIdAsync(userId)
+                ?? throw new NotFoundException(nameof(Carrito), userId);
+        }
+
         public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)
         {
             return await _carritoRepository.GetProductosCarritoByProductoIdAsync(productoId);

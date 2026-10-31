@@ -26,6 +26,16 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                         .FirstOrDefaultAsync(c => c.UsuarioId == userId);
         }
 
+        public async Task<Carrito?> GetCarritoCompleteByUserIdAsync(int userId)
+        {
+            return await _context.Carritos
+                .AsNoTracking()
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto).ThenInclude(pr => pr!.Marca)
+                .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.AtributosValores)!.ThenInclude(a => a.Atributo)
+                .FirstOrDefault(c => c.UsuarioId.ToString() == userId);
+        }
+
         public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)
         {
             return await _context.ProductosCarritos
