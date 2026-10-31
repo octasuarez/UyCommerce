@@ -39,7 +39,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Include(s => s.Producto).ThenInclude(p => p!.Marca)
                 .Include(s => s.Producto).ThenInclude(p => p!.Categoria).ThenInclude(c => c!.CategoriaPadre)
                 .Include(s => s.Imagenes)
-                .FirstOrDefaultAsync(s => s.Key.ToLower().Contains(key.ToLower()));
+                .FirstOrDefaultAsync(s => s.Key.ToLower() == key.ToLower());
 
         }
 

@@ -1,11 +1,10 @@
-﻿@model DashboardVM
-@{
+﻿@{
     Layout = "AdminLayout";
 }
-
+@model DashboardVM
 
 <body>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div class="container-fluid" style="padding-right:10%;">
         <h5 class="my-5 text-center">Dashboard</h5>
 
@@ -103,15 +102,15 @@
 
         </div>
         @section Scripts {
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
+            <script type="text/javascript" src="~/js/pages/admin/dashboard.js"></script>
+            <script type="text/javascript">
                     $(document).ready(function () {
                         const puntosVentas = @Html.Raw(Json.Serialize(Model.PuntosVentas));
                         const puntosGanancias = @Html.Raw(Json.Serialize(Model.PuntosGanacias));
-                        const lblVentas = '@Localizer["Total sales"]';
-                        const lblGanancias = '@Localizer["Profit"]';
+                        const lblVentas = '@Localizer["Total sales"].Value';
+                        const lblGanancias = '@Localizer["Profit"].Value';
+                        LoadDashBoard(puntosVentas, puntosGanancias, lblVentas, lblGanancias)
                     })
             </script>
-            <script src="~/js/pages/admin/dashboard.js"></script>
         }
     </body>

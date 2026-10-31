@@ -9,9 +9,9 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 {
     public class PreguntaRepository : GenericRepository<Pregunta>, IPreguntaRepository
     {
-        public PreguntaRepository(ShopContext context):base(context)
+        public PreguntaRepository(ShopContext context) : base(context)
         {
-            
+
         }
 
         public async Task<Pregunta?> GetPreguntaByRespuestaId(int respuestaId)
@@ -21,15 +21,19 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Pregunta>> GetPreguntas(bool answered)
+        public async Task<List<Pregunta>> GetPreguntas(bool? answered)
         {
-            return await _context.Preguntas
+            var preguntas = _context.Preguntas
                 .AsNoTracking()
                 .Include(p => p.Usuario)
                 .Include(p => p.Producto).ThenInclude(pr => pr.Imagenes)
                 .Include(p => p.Respuesta)
-                .Where(p => answered == true ? p.Respuesta != null : p.Respuesta == null)
-                .ToListAsync();
+                .AsQueryable();
+            if (answered is not null)
+            {
+                preguntas = preguntas.Where(p => answered == true ? p.Respuesta != null : p.Respuesta == null);
+            }
+            return await preguntas.ToListAsync();
         }
     }
 }

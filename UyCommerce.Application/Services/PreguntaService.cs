@@ -30,7 +30,7 @@ namespace UyCommerce.Application.Services
                 ?? throw new NotFoundException(nameof(Pregunta),respuestaId);
         }
 
-        public async Task<List<Pregunta>> GetPreguntas(bool answered)
+        public async Task<List<Pregunta>> GetPreguntas(bool? answered)
         {
             return await _preguntaRepository.GetPreguntas(answered);
         }

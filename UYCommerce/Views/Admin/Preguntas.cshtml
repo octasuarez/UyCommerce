@@ -10,10 +10,10 @@
         <h5 class="my-5">@Localizer["Questions"]</h5>
 
 
-        <select class="form-select mb-4" onchange="window.location= this.value">
-            <option>@Localizer["All questions"]</option>
-            <option value="/admin/preguntas/sin responder">@Localizer["Pending reply"]</option>
-            <option value="/admin/preguntas/respondidas">@Localizer["Replied"]</option>
+        <select class="form-select mb-4" onchange="window.location=this.value">
+            <option selected="@(ViewBag.selected == "")" value="/admin/preguntas/">@Localizer["All questions"]</option>
+            <option selected="@(ViewBag.selected == "sin responder")" value="/admin/preguntas/sin responder">@Localizer["Pending reply"]</option>
+            <option selected="@(ViewBag.selected == "respondidas")" value="/admin/preguntas/respondidas">@Localizer["Replied"]</option>
         </select>
 
         @if (Model != null && Model.Any())

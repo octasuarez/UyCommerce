@@ -36,7 +36,8 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
             return await _context.Categorias
                 .AsNoTracking()
-                .Where(c => c.MostrarEnInicio == true).ToListAsync();
+                .Where(c => c.MostrarEnInicio == true)
+                .ToListAsync();
         }
 
         public async Task<List<Categoria>> GetCategoriasPadreAsync()

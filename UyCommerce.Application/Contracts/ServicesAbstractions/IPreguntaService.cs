@@ -8,7 +8,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IPreguntaService
     {
-        Task<List<Pregunta>> GetPreguntas(bool answered);
+        Task<List<Pregunta>> GetPreguntas(bool? answered);
         Task<Pregunta> GetPreguntaByIdAsync(int id);
         Task<Pregunta> GetPreguntaByRespuestaIdAsync(int respuestaId);
         Task UpdatePreguntaRespuestaAsync(RespuestaDTO respuesta);

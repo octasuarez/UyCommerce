@@ -16,12 +16,6 @@ namespace UYCommerce.Controllers
         }
 
         [HttpGet]
-        public IActionResult CrearAtributo()
-        {
-            return View();
-        }
-
-        [HttpGet]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetAtributosJson()
         {

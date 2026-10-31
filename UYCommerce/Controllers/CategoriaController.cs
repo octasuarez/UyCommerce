@@ -112,13 +112,13 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                var categoria = _categoriaService.FeatureCategoria(categoriaId, featured);
+                await _categoriaService.FeatureCategoria(categoriaId, featured);
+                return Ok("Categoria actualizada correctamente.");
             }
             catch (NotFoundException e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok("Categoria actualizada correctamente.");
+            {}
+            catch (Exception e) { }
+            return BadRequest("No se pudo actualizar la categoria.");
         }
     }
 }

@@ -98,12 +98,12 @@ namespace UYCommerce.Controllers
             return View(result);
         }
 
-        [HttpGet("admin/preguntas/{orden?}")]
-        public async Task<IActionResult> GetPreguntas(string? orden)
+        [HttpGet("admin/preguntas/{option?}")]
+        public async Task<IActionResult> GetPreguntas(string? option)
         {
-            var filter = orden.Equals("sin responder") ? false : true;
-            var preguntas = await _preguntaService.GetPreguntas(filter);
-            ViewBag.selected = orden;
+            var answered = option?.Equals("respondidas");
+            var preguntas = await _preguntaService.GetPreguntas(answered);
+            ViewBag.selected = option;
 
             return View("Preguntas", preguntas);
         }
@@ -139,7 +139,7 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> GetOrdenes()
         {
             var ordenes = await _ordenService.GetOrdenesUsuariosAsync();
-            List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario }).ToList();
+            List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario  }).ToList();
             return View(result);
         }
 
