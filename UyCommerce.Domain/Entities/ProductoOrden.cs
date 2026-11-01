@@ -7,7 +7,7 @@ namespace UyCommerce.Domain.Entities
     [PrimaryKey(nameof(OrdenId), nameof(SkuId))]
     public class ProductoOrden
 	{
-		public required string OrdenId { get; set; }
+		public required int OrdenId { get; set; }
 		[ForeignKey("SkuId")]
 		public int SkuId { get; set; }
 		public Sku? Sku { get; set; }

@@ -83,6 +83,7 @@ namespace UyCommerce.Application.Services
         {
             var carrito = await _carritoRepository.GetCarritoCompleteByUserIdAsync(userId)
                 ?? throw new NotFoundException(nameof(Carrito), userId);
+            return carrito;
         }
 
         public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)

@@ -11,5 +11,6 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<Carrito?> GetCarritoCompleteByUserIdAsync(int userId);
         Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId);
         Task DeleteProductosCarritoAsync(List<ProductoCarrito> productosCarrito);
+        Task DeleteProductosCarritoByCarritoIdAsync(int userId);
     }
 }

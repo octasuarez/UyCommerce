@@ -86,6 +86,20 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
+        public async Task UpdateStock(List<ProductoOrden> productos)
+        {
+            var skusIds = productos.Select(p => p.SkuId);
+            var skus = await _context.Skus.Include(s => s.Producto)
+                .Where(s => skusIds.Any(skuId => skuId == s.Id)).ToListAsync();
+
+            foreach (var s in skus)
+            {
+                s.Stock -= productos.First(p => p.SkuId == s.Id).Cantidad;
+                s.Producto!.VecesComprado += 1;
+            }
+            _context.UpdateRange(skus);
+        }
+
         private IQueryable<Producto> GetQueryProductosComplete()
         {
             return _context.Productos

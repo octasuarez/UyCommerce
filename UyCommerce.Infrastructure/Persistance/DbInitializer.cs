@@ -20,13 +20,15 @@ namespace UyCommerce.Infrastructure.Persistance
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
-
+                #region carouselImages 
                 CarouselImage[] carouselImages = new CarouselImage[]{
 
                     new CarouselImage{Name= "carousel_1.png"},
                     new CarouselImage{Name= "carousel_2.png"},
                 };
+                #endregion carouselImages 
 
+                #region atributos
                 Atributo[] atributos = new Atributo[] {
 
                         new Atributo{Nombre = "Color"},
@@ -35,7 +37,9 @@ namespace UyCommerce.Infrastructure.Persistance
                         new Atributo{Nombre = "Rodado"},
                         new Atributo{Nombre = "Memoria RAM"},
                     };
+                #endregion atributos
 
+                #region categorias
                 Categoria[] categorias = new Categoria[] {
 
                         new Categoria
@@ -63,7 +67,6 @@ namespace UyCommerce.Infrastructure.Persistance
                         },
 
                     };
-
                 //subcategorias
                 Categoria[] subCategorias = new Categoria[] {
 
@@ -90,9 +93,9 @@ namespace UyCommerce.Infrastructure.Persistance
 
                     };
 
+                #endregion categorias
 
-
-
+                #region atributosValores
                 AtributoValor[] atributoValores = new AtributoValor[] {
 
                         new AtributoValor{Valor = "Blanco", Atributo = atributos.FirstOrDefault(a=>a.Nombre == "Color")},
@@ -118,7 +121,9 @@ namespace UyCommerce.Infrastructure.Persistance
                         new AtributoValor{Valor = "8gb", Atributo = atributos.FirstOrDefault(a=>a.Nombre == "Memoria RAM")},
                         new AtributoValor{Valor = "16gb", Atributo = atributos.FirstOrDefault(a=>a.Nombre == "Memoria RAM")},
                     };
+                #endregion atributosValores
 
+                #region marcas
                 Marca[] marcas = new Marca[] {
 
                         new Marca{Nombre = "Nike"},
@@ -133,9 +138,9 @@ namespace UyCommerce.Infrastructure.Persistance
 
                      };
 
+                #endregion marcas
 
-
-
+                #region productos
                 Producto[] productos = new Producto[] {
                         //Iphone 11
                         new Producto
@@ -577,16 +582,17 @@ namespace UyCommerce.Infrastructure.Persistance
                         },
 
                     };
+                #endregion productos
 
-
-                //ROLES
+                #region roles
                 Rol[] roles = new Rol[] {
 
                     new Rol{Nombre = "User" },
                     new Rol{Nombre = "Admin" }
                 };
+                #endregion roles
 
-                //USUARIOS
+                #region usuarios
                 Usuario[] usuarios = new Usuario[] {
 
                     new Usuario
@@ -625,15 +631,24 @@ namespace UyCommerce.Infrastructure.Persistance
                     },
                 };
 
-                //ORDENES
-                Orden[] ordenes = new Orden[] {
+                #endregion usuarios
 
+                #region ordenes
+                OrdenEstado[] ordenEstados =
+                [
+                    new(){Descripcion = "Entregado"},
+                    new(){Descripcion = "En espera"},
+                    new(){Descripcion = "Cancelado"},
+                    new(){Descripcion = "Fallido"}
+                ];
+
+                Orden[] ordenes = [
                     new Orden
                     {
-                        Id = "1",
+                        Id = 1,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "Entregado",
+                        Estado = ordenEstados[0],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -648,7 +663,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "1",
+                                OrdenId = 1,
                                 SkuId = 2,
                                 Sku = productos[0].Skus!.ElementAt(1),
                                 Nombre = "Iphone 11 Azul 64gb",
@@ -662,10 +677,10 @@ namespace UyCommerce.Infrastructure.Persistance
                     },
                     new Orden
                     {
-                        Id = "2",
+                        Id = 2,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "En camino",
+                        Estado = ordenEstados[1],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -679,7 +694,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "2",
+                                OrdenId = 2,
                                 SkuId = 6,
                                 Sku = productos[1].Skus!.ElementAt(3),
                                 Nombre = "Remera Vlone Rojo",
@@ -688,7 +703,7 @@ namespace UyCommerce.Infrastructure.Persistance
                             },
                             new ProductoOrden
                             {
-                                OrdenId = "2",
+                                OrdenId = 2,
                                 SkuId = 8,
                                 Sku = productos[2].Skus!.ElementAt(1),
                                 Nombre = "Macbook m2 8gb",
@@ -702,10 +717,10 @@ namespace UyCommerce.Infrastructure.Persistance
                     },
                     new Orden
                     {
-                        Id = "3",
+                        Id = 3,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "En camino",
+                        Estado = ordenEstados[1],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -719,7 +734,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "3",
+                                OrdenId = 3,
                                 SkuId = 6,
                                 Sku = productos[1].Skus!.ElementAt(3),
                                 Nombre = "Remera Vlone Rojo",
@@ -732,10 +747,10 @@ namespace UyCommerce.Infrastructure.Persistance
                     },
                     new Orden
                     {
-                        Id = "4",
+                        Id = 4,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "En camino",
+                        Estado = ordenEstados[1],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -749,7 +764,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "4",
+                                OrdenId = 4,
                                 SkuId = 6,
                                 Sku = productos[1].Skus!.ElementAt(3),
                                 Nombre = "Remera Vlone Rojo",
@@ -763,10 +778,10 @@ namespace UyCommerce.Infrastructure.Persistance
                     ,
                     new Orden
                     {
-                        Id = "5",
+                        Id = 5,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "En camino",
+                        Estado = ordenEstados[1],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -780,7 +795,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "5",
+                                OrdenId = 5,
                                 SkuId = 6,
                                 Sku = productos[1].Skus!.ElementAt(3),
                                 Nombre = "Remera Vlone Rojo",
@@ -793,10 +808,10 @@ namespace UyCommerce.Infrastructure.Persistance
                     },
                     new Orden
                     {
-                        Id = "6",
+                        Id = 6,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "Entregado",
+                        Estado = ordenEstados[0],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -811,7 +826,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "6",
+                                OrdenId = 6,
                                 SkuId = productos[5].Skus!.ElementAt(1).Id,
                                 Sku = productos[5].Skus!.ElementAt(1),
                                 Nombre = productos[5].Skus!.ElementAt(1).Nombre,
@@ -824,10 +839,10 @@ namespace UyCommerce.Infrastructure.Persistance
                     },
                     new Orden
                     {
-                        Id = "7",
+                        Id = 7,
                         NombreComprador = "Juan",
                         Usuario = usuarios[0],
-                        Estado = "Entregado",
+                        Estado = ordenEstados[0],
                         Direccion = new OrdenDireccion{
                             address_line_1 = "Calle 1",
                             address_line_2 = "apt 23",
@@ -842,7 +857,7 @@ namespace UyCommerce.Infrastructure.Persistance
                         {
                             new ProductoOrden
                             {
-                                OrdenId = "7",
+                                OrdenId = 7,
                                 SkuId = productos[4].Skus!.ElementAt(0).Id,
                                 Sku = productos[4].Skus!.ElementAt(0),
                                 Nombre = productos[4].Skus!.ElementAt(0).Nombre,
@@ -853,10 +868,10 @@ namespace UyCommerce.Infrastructure.Persistance
                         Total = productos[4].Skus!.ElementAt(0).Precio,
                         MetodoDePago = "Paypal"
                     },
-                };
+                ];
+                #endregion ordenes
 
-                //Reviews
-
+                #region reviews
                 Review[] reviews = new Review[] {
 
                     new Review {
@@ -896,8 +911,9 @@ namespace UyCommerce.Infrastructure.Persistance
                         Usuario = usuarios[0]
                     },
                 };
+                #endregion reviews
 
-
+                #region productosCarrito
                 ProductoCarrito[] productosCarrito = new ProductoCarrito[]
                 {
                     new ProductoCarrito{
@@ -920,11 +936,14 @@ namespace UyCommerce.Infrastructure.Persistance
                     }
                 };
 
+                #endregion productosCarrito
 
+                #region preguntas
                 Pregunta[] preguntas = new Pregunta[]
                 {
                     new Pregunta{ Contenido= "Tienen stock?", Fecha = DateTime.Now, Usuario = usuarios[0], Producto = productos[0]}
                 };
+                #endregion preguntas
 
 
                 await context.AddRangeAsync(categorias);
@@ -935,6 +954,7 @@ namespace UyCommerce.Infrastructure.Persistance
                 await context.AddRangeAsync(productos);
                 await context.AddRangeAsync(roles);
                 await context.AddRangeAsync(usuarios);
+                await context.AddRangeAsync(ordenEstados);
                 await context.AddRangeAsync(ordenes);
                 await context.AddRangeAsync(reviews);
                 await context.AddRangeAsync(productosCarrito);

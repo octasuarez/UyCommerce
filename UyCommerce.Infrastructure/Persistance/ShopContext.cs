@@ -27,6 +27,7 @@ namespace UyCommerce.Infrastructure.Persistance
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Codigo> Codigos { get; set; }
         public DbSet<CarouselImage> CarouselImages { get; set; }
+        public DbSet<OrdenEstado> OrdenEstados { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

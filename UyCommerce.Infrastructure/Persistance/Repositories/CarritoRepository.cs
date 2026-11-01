@@ -18,6 +18,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteProductosCarritoByCarritoIdAsync(int carritoId)
+        {
+            await _context.ProductosCarritos.Where(p => p.CarritoId == carritoId).ExecuteDeleteAsync();
+        }
+
         public async Task<Carrito?> GetCarritoByUserIdAsync(int userId)
         {
             return await _context.Carritos
@@ -33,7 +38,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
                 .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto).ThenInclude(pr => pr!.Marca)
                 .Include(c => c.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .FirstOrDefault(c => c.UsuarioId.ToString() == userId);
+                .FirstOrDefaultAsync(c => c.UsuarioId == userId);
         }
 
         public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)

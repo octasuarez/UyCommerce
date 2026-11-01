@@ -52,7 +52,7 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Route("Compras/{compraId}")]
-        public async Task<IActionResult> BuscarCompraPorId(string compraId)
+        public async Task<IActionResult> BuscarCompraPorId(int compraId)
         {
             var compra = await _context.Ordenes
                 .Include(o => o.Direccion)

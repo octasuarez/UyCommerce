@@ -21,6 +21,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         public async Task<List<Orden>> GetOrdenesByDateAsync(DateTime startDate, DateTime endDate)
         {
             return await GetOrdenesQuery()
+                .Include(o => o.Estado)
                 .Where(o => o.FechaDeCompra > startDate && o.FechaDeCompra < endDate)
                 .ToListAsync();
         }
@@ -37,6 +38,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
             return await _context.Ordenes
                 .AsNoTracking()
+                .Include(o => o.Estado)
                 .Include(o => o.Usuario)
                 .Include(o => o.Productos).ThenInclude(p => p.Sku)
                 .ToListAsync();
@@ -46,6 +48,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
             return  _context.Ordenes
                 .AsNoTracking()
+                .Include(o => o.Estado)
                 .Include(o => o.Direccion)
                 .Include(o => o.Productos)!
                 .ThenInclude(p => p.Sku)

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UyCommerce.Application.DTOs.ExternalServices.Paypal;
 
 namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
-    internal interface IPagosService
+    public interface IPagosService
     {
-        Task<CreateOrderResponse> CreateOrder(int userId);
+        Task<CreateOrderResponse> CreateOrderPaypal(int userId);
+        Task<CaptureOrderResponse> CaptureOrderPaypal(string ordenId, int userId);
     }
 }

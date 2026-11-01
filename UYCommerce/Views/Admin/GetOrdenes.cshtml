@@ -31,7 +31,7 @@
                             <td>@o.Orden.FechaDeEntrega</td>
                             <td>@o.Orden.Productos?.Count</td>
                             <td>$@o.Orden.Total</td>
-                            <td>@o.Orden.Estado</td>
+                            <td>@o.Orden.Estado.Descripcion</td>
                             <td class="text-center">
                                 <a href="#" class="btn btn-primary" data-bs-toggle="modal"
                                    data-bs-target="#modalOrden@(o.Orden.Id)">@Localizer["Order details"]</a>

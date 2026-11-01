@@ -13,5 +13,6 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<Producto?> GetProductoByNombreAsync(string nombre);
         Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty);
         Task<List<Producto>> GetProductosByQueryNameAsync(string query);
+        Task UpdateStock(List<ProductoOrden> productos);
     }
 }
