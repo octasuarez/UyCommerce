@@ -16,12 +16,14 @@ namespace UYCommerce.Controllers
     {
         private readonly ShopContext _context;
         private readonly IEmailService _emailService;
+        private readonly IPreguntaService _preguntaService;
         private readonly IUsuarioService _usuarioService;
 
-        public UsuarioController(ShopContext context, IEmailService emailService, IUsuarioService usuarioService)
+        public UsuarioController(ShopContext context, IEmailService emailService, IPreguntaService preguntaService, IUsuarioService usuarioService)
         {
             _context = context;
             _emailService = emailService;
+            this._preguntaService = preguntaService;
             this._usuarioService = usuarioService;
         }
 
@@ -76,7 +78,7 @@ namespace UYCommerce.Controllers
             {
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
                 pregunta.Fecha = DateTime.Now;
-                await _usuarioService.CreatePregunta(pregunta, userId);
+                await _preguntaService.CreatePregunta(pregunta, userId);
                 var nombreUsuario = User.FindFirstValue("FullName") ?? "";
                 return Ok(new PreguntaDto { Contenido = pregunta.Contenido, Fecha = pregunta.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), NombreUsuario = nombreUsuario});
             }

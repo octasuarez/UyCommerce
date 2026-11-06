@@ -12,5 +12,6 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<Pregunta> GetPreguntaByIdAsync(int id);
         Task<Pregunta> GetPreguntaByRespuestaIdAsync(int respuestaId);
         Task UpdatePreguntaRespuestaAsync(RespuestaDTO respuesta);
+        Task CreatePregunta(CreatePreguntaDTO preguntaDto, int userId);
     }
 }

@@ -66,20 +66,6 @@ namespace UyCommerce.Application.Services
             return favoritos;
         }
 
-        public async Task CreatePregunta(CreatePreguntaDTO preguntaDto, int userId)
-        {
-            var usuario = await _usuarioRepository.GetByIdAsync(userId)
-                ?? throw new NotFoundException(nameof(Usuario), userId);
-            var producto = await _productoRepository.GetByIdAsync(preguntaDto.ProductoId)
-                ?? throw new NotFoundException(nameof(Producto), preguntaDto.ProductoId);
-            Pregunta pregunta = new()
-            {
-                Contenido = preguntaDto.Contenido,
-                Usuario = usuario,
-                Producto = producto,
-                Fecha = preguntaDto.Fecha,
-            };
-            await _usuarioRepository.CreatePregunta(pregunta);
-        }
+        
     }
 }

@@ -12,10 +12,16 @@ namespace UyCommerce.Application.Services
     public class PreguntaService : IPreguntaService
     {
         private readonly IPreguntaRepository _preguntaRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IProductoRepository _productoRepository;
 
-        public PreguntaService(IPreguntaRepository preguntaRepository)
+        public PreguntaService(IPreguntaRepository preguntaRepository
+            , IUsuarioRepository usuarioRepository
+            , IProductoRepository productoRepository)
         {
             _preguntaRepository = preguntaRepository;
+            this._usuarioRepository = usuarioRepository;
+            this._productoRepository = productoRepository;
         }
 
         public async Task<Pregunta> GetPreguntaByIdAsync(int id)
@@ -49,6 +55,21 @@ namespace UyCommerce.Application.Services
                 PreguntaId = pregunta.Id
             };
             await _preguntaRepository.UpdateAsync(pregunta);
+        }
+        public async Task CreatePregunta(CreatePreguntaDTO preguntaDto, int userId)
+        {
+            var usuario = await _usuarioRepository.GetByIdAsync(userId)
+                ?? throw new NotFoundException(nameof(Usuario), userId);
+            var producto = await _productoRepository.GetByIdAsync(preguntaDto.ProductoId)
+                ?? throw new NotFoundException(nameof(Producto), preguntaDto.ProductoId);
+            Pregunta pregunta = new()
+            {
+                Contenido = preguntaDto.Contenido,
+                Usuario = usuario,
+                Producto = producto,
+                Fecha = preguntaDto.Fecha,
+            };
+            await _preguntaRepository.CreateAsync(pregunta);
         }
     }
 }

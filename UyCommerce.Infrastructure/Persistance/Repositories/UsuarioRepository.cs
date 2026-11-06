@@ -85,9 +85,5 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task CreatePregunta(Pregunta pregunta)
-        {
-            await _context.Preguntas.AddAsync(pregunta);
-        }
     }
 }
