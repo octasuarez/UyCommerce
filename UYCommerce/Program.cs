@@ -35,7 +35,7 @@ var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<UyC
 builder.Services.AddSingleton(emailConfig!);
 builder.Services.AddSingleton<IEmailService, UyCommerce.Infrastructure.Services.Email.EmailService>();
 //paypal settings
-builder.Services.AddSingleton(x =>
+builder.Services.AddSingleton<IPaypalService,PaypalAPI>(x =>
 new PaypalAPI(
     builder.Configuration.GetSection("paypal:settings")["clientId"],
     builder.Configuration.GetSection("paypal:settings")["secretKey"],

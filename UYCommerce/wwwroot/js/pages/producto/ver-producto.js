@@ -82,26 +82,28 @@ function AgregarPregunta() {
         url: '/Usuario/AgregarPregunta',
         data: formData,
         success: function (response) {
-            ShowPregunta(response.pregunta, response.count)
+            ShowPregunta(response)
         },
         error: function (response) {
         }
     })
   }
 
-function ShowPregunta(pregunta,count){
+function ShowPregunta(pregunta){
 
-    preguntas = document.getElementById('Preguntas');
-    var preg_existentes = count > 1 ? preguntas.innerHTML : "";
+    var preguntas = document.getElementById('Preguntas');
+    var pCount = document.getElementById('pcount').innerText;
+    var cantPreguntas = pCount !== null ? parseInt(pCount) : 0;
+    var preg_existentes = preguntas.innerHTML;
     preguntas.innerHTML =
         `<h5>${pregunta.nombreUsuario}</h5>
         <p>${pregunta.contenido}</p>
-        <p class="fs-6 fw-lighter"> Publicado el ${pregunta.fecha}</p>
+        <p class="fs-6 fw-lighter"> ${pregunta.fecha}</p>
         ${preg_existentes}
         `;
 
     document.getElementById('txtPregunta').value = "";
-    document.getElementById('pcount').innerHTML = `${count} preguntas`;
+    pCount.innerHTML = `${cantPreguntas + 1} preguntas`;
 }
 
 function cambiarImagen(e) {

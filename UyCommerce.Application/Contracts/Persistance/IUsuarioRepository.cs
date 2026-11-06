@@ -13,5 +13,7 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<int> CreateCodigoRecuperacion(Codigo codigo);
         Task<bool> UpdateCodigoRecuperacion(Codigo codigo);
         Task<Codigo?> GetCodigoRecuperacionByCodigoAsync(string codigo);
+        Task<Usuario?> GetUsuarioByIdNoTracking(int id);
+        Task CreatePregunta(Pregunta pregunta);
     }
 }

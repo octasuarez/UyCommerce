@@ -7,6 +7,7 @@ using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 using UYCommerce.ViewModels;
 using UyCommerce.Application.Contracts.Persistance.Services;
+using UyCommerce.Application.Contracts.ServicesAbstractions;
 
 namespace UYCommerce.Controllers
 {
@@ -15,25 +16,13 @@ namespace UYCommerce.Controllers
     {
         private readonly ShopContext _context;
         private readonly IEmailService _emailService;
+        private readonly IUsuarioService _usuarioService;
 
-        public UsuarioController(ShopContext context, IEmailService emailService)
+        public UsuarioController(ShopContext context, IEmailService emailService, IUsuarioService usuarioService)
         {
             _context = context;
             _emailService = emailService;
-        }
-
-        private async Task<Usuario?> GetUserById(int id)
-        {
-
-            var user = await _context.Usuarios
-                .Include(u => u.Carrito).ThenInclude(c => c.Productos)
-                .Include(u => u.Favoritos)!.ThenInclude(f => f.Imagenes)
-                .Include(u => u.Ordenes)
-                .Include(u => u.Preguntas)
-                .Include(u => u.Reviews)
-                .FirstOrDefaultAsync(u => u.Id == id);
-
-            return user;
+            this._usuarioService = usuarioService;
         }
 
         [HttpGet]
@@ -69,62 +58,32 @@ namespace UYCommerce.Controllers
         [Route("Favoritos")]
         public async Task<IActionResult> GetFavoritos()
         {
-
-            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var user = await GetUserById(userId);
-
-            if (user is null || user.Favoritos is null)
-                return BadRequest();
-
-            List<SkuWishlistVM> wishlist = new();
-
-            wishlist = user.Favoritos.Select(f => new SkuWishlistVM
+            try
             {
-                Id = f.Id,
-                Key = f.Key,
-                Imagenes = f.Imagenes,
-                Nombre = f.Nombre,
-                Precio = f.Precio,
-                PrecioAnterior = f.PrecioAnterior,
-                Stock = f.Stock,
-                AtributosValores = f.AtributosValores,
-                IsInCart = user.Carrito.Productos!.FirstOrDefault(p => p.SkuId == f.Id) is not null
-            }).ToList();
-
-            return View("Favoritos", wishlist);
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                return View("Favoritos", await _usuarioService.GetFavoritosByUsuarioId(userId));
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
-        public async Task<JsonResult> AgregarPregunta(PreguntaDTO pregunta)
+        public async Task<IActionResult> AgregarPregunta(CreatePreguntaDTO pregunta)
         {
-
-            var producto = await _context.Productos.Include(p => p.Preguntas).FirstOrDefaultAsync(p => p.Id == pregunta.ProductoId);
-
-            if (producto is null || string.IsNullOrEmpty(pregunta.Contenido) || !User.Identity!.IsAuthenticated)
+            try
             {
-
-                return new JsonResult("No se pudo agregar la pregunta");
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                pregunta.Fecha = DateTime.Now;
+                await _usuarioService.CreatePregunta(pregunta, userId);
+                var nombreUsuario = User.FindFirstValue("FullName") ?? "";
+                return Ok(new PreguntaDto { Contenido = pregunta.Contenido, Fecha = pregunta.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), NombreUsuario = nombreUsuario});
             }
-
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            Pregunta preguntaNueva = new()
+            catch (Exception)
             {
-                Contenido = pregunta.Contenido,
-                Fecha = DateTime.Now,
-                Usuario = usuario!
-            };
-
-            producto.Preguntas!.Add(preguntaNueva);
-
-            _context.Update(producto);
-            _context.SaveChanges();
-
-            pregunta.NombreUsuario = usuario!.Nombre;
-            pregunta.Fecha = DateTime.Now.ToString();
-
-            return new JsonResult(new { pregunta, count = producto.Preguntas.Count });
+                return BadRequest("No se pudo agregar la pregunta");
+            }
         }
 
 

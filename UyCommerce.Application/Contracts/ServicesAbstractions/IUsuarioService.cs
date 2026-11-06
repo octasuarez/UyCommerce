@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Contracts.ServicesAbstractions
@@ -10,5 +11,8 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<Usuario?> GetUsuarioByEmail(string email);
         Task<Usuario> GetUsuarioFavoritosByIdAsync(int id);
         Task<List<Usuario>> GetUsuariosClientesAsync();
+        Task<Usuario> GetUsuarioById(int id);
+        Task<List<FavoritosDto>> GetFavoritosByUsuarioId(int id);
+        Task CreatePregunta(CreatePreguntaDTO pregunta, int userId);
     }
 }

@@ -1,12 +1,13 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace UyCommerce.Application.DTOs
 {
-	public class PreguntaDTO
-	{
-        public int ProductoId { get; set; }
-        public required string Contenido { get; set; }
-        public string? NombreUsuario { get; set; }
-        public string? Fecha { get; set; }
+    public class PreguntaDto
+    {
+        public string Contenido { get; set; } = string.Empty;
+        public string NombreUsuario { get; set; } = string.Empty;
+        public string Fecha { get; set; } = string.Empty;
     }
 }
-

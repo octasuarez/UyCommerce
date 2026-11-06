@@ -71,5 +71,23 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
             return await _context.Codigos.FirstOrDefaultAsync(c => c.CodigoRecuperacion == codigo);
         }
+
+        public async Task<Usuario?> GetUsuarioByIdNoTracking(int id)
+        {
+            return await _context.Usuarios
+                .AsNoTracking()
+                .Include(u => u.Carrito).ThenInclude(c => c.Productos)
+                .Include(u => u.Favoritos)!.ThenInclude(f => f.Imagenes)
+                .Include(u => u.Favoritos)!.ThenInclude(f => f.AtributosValores)
+                .Include(u => u.Ordenes)
+                .Include(u => u.Preguntas)
+                .Include(u => u.Reviews)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task CreatePregunta(Pregunta pregunta)
+        {
+            await _context.Preguntas.AddAsync(pregunta);
+        }
     }
 }
