@@ -176,41 +176,17 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AgregarAFavoritos(string skuId)
+        public async Task<IActionResult> AgregarAFavoritos(int skuId)
         {
-            var sku = await _context.Skus.FirstOrDefaultAsync(s => s.Id.ToString() == skuId);
-            if (sku is null)
+            try
             {
-                return new BadRequestObjectResult("El producto no fue encontrado");
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Ok(await _usuarioService.AddToFavoritos(skuId, userId));
             }
-            var usuario = await _context.Usuarios.Include(u => u.Favoritos)
-                .FirstOrDefaultAsync(u => u.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-            string msj = "";
-            if (usuario is null)
+            catch (Exception)
             {
-                return new BadRequestObjectResult("El producto no fue encontrado");
+                return BadRequest();
             }
-            else
-            {
-                if (usuario.Favoritos!.Contains(sku))
-                {
-                    usuario.Favoritos.Remove(sku);
-                    msj = "eliminado";
-                }
-                else
-                {
-                    usuario.Favoritos.Add(sku);
-                    msj = "agregado";
-
-                }
-
-            }
-
-            _context.Update(usuario);
-            await _context.SaveChangesAsync();
-
-            return Json(new { msj });
-
         }
     }
 }

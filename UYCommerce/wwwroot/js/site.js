@@ -4,16 +4,18 @@
   $.ajax({
     type: "POST",
     url: "/Usuario/AgregarAFavoritos",
-    dataType: "json",
+    dataType: "text",
     data: { skuId: skuId },
     success: function (response) {
-      if (response.msj === "agregado") {
-        element.replace("bi-heart", "bi-heart-fill");
-        element.add("text-secondary", "text-danger");
-      } else {
+      if (element.contains("bi-heart-fill")) {
         element.replace("bi-heart-fill", "bi-heart");
         element.replace("text-danger", "text-secondary");
       }
+      else {
+        element.replace("bi-heart", "bi-heart-fill");
+        element.add("text-secondary", "text-danger");
+        }
+        ShowToast("", response);
     },
     error: function () {
       window.location.href = "/Login";

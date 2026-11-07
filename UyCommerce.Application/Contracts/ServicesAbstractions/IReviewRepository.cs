@@ -6,5 +6,6 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
     public interface IReviewRepository : IGenericRepository<Review>
     {
         Task<List<Review>> GetReviewsAsync();
+        Task<List<Review>> GetReviewsByUsuarioId(int id);
     }
 }

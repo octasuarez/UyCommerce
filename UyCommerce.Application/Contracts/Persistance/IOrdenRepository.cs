@@ -8,5 +8,6 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<List<Orden>> GetOrdenesAsync();
         Task<List<Orden>> GetOrdenesUsuariosAsync();
         Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId);
+        Task<List<Orden>> GetOrdenesByUsuarioId(int id);
     }
 }

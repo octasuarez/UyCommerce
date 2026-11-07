@@ -34,6 +34,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
+        public Task<List<Orden>> GetOrdenesByUsuarioId(int id)
+        {
+            return GetOrdenesQuery().Where(o => o.Usuario.Id == id).ToListAsync();
+        }
+
         public async Task<List<Orden>> GetOrdenesUsuariosAsync()
         {
             return await _context.Ordenes
@@ -50,8 +55,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .AsNoTracking()
                 .Include(o => o.Estado)
                 .Include(o => o.Direccion)
-                .Include(o => o.Productos)!
-                .ThenInclude(p => p.Sku)
+                .Include(o => o.Productos)!.ThenInclude(p => p.Sku)
                 .ThenInclude(s => s.Imagenes)
                 .AsQueryable();
         }
