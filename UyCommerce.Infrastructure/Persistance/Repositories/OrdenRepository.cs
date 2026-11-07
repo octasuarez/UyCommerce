@@ -49,6 +49,17 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Producto>> GetProductosFromOrdenesByUsuarioId(int id)
+        {
+            return await _context.Ordenes
+                .Include(o => o.Productos).ThenInclude(po => po.Sku).ThenInclude(s => s.Producto).ThenInclude(p => p.Imagenes)
+                .Where(o => o.Usuario.Id == id)
+                .SelectMany(o => o.Productos)
+                .Select(po => po.Sku)
+                .Select(s => s.Producto).Distinct()
+                .ToListAsync();
+        }
+
         private IQueryable<Orden> GetOrdenesQuery()
         {
             return  _context.Ordenes

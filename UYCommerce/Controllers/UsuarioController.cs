@@ -80,7 +80,7 @@ namespace UYCommerce.Controllers
                 pregunta.Fecha = DateTime.Now;
                 await _preguntaService.CreatePregunta(pregunta, userId);
                 var nombreUsuario = User.FindFirstValue("FullName") ?? "";
-                return Ok(new PreguntaDto { Contenido = pregunta.Contenido, Fecha = pregunta.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), NombreUsuario = nombreUsuario});
+                return Ok(new PreguntaDto { Contenido = pregunta.Contenido, Fecha = pregunta.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), NombreUsuario = nombreUsuario });
             }
             catch (Exception)
             {
@@ -93,27 +93,16 @@ namespace UYCommerce.Controllers
         [Route("/reviews")]
         public async Task<IActionResult> GetReviews()
         {
-
-            ReviewsVM result = new();
-
-            var usuario = await _context.Usuarios
-                .Include(u => u.Reviews)!.ThenInclude(r => r.Producto)!.ThenInclude(p => p!.Imagenes)
-                .Include(u => u.Ordenes)!.ThenInclude(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Producto).ThenInclude(p => p!.Imagenes)
-                .FirstOrDefaultAsync(u => u.Id == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
-
-            if (usuario is null) return Redirect("/Compras");
-
-            result.Reviews = usuario?.Reviews?.ToList();
-
-            var productosReviews = result.Reviews?.Select(r => r.Producto).ToList();
-
-            var productosOrdenes = usuario!.Ordenes!.SelectMany(o => o.Productos!).Select(p => p.Sku).Select(s => s!.Producto).Distinct();
-
-            var productosPendientesReview = productosOrdenes.Where(p => !productosReviews!.Any(pr => pr!.Id == p!.Id)).ToList();
-
-            result.Productos = productosPendientesReview!;
-
-            return View("Reviews", result);
+            try
+            {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var result = await _usuarioService.GetReviewsAndProductos(userId);
+                return View("Reviews", result);
+            }
+            catch (Exception e)
+            {
+            }
+            return Redirect("/Compras");
         }
 
         [HttpPost]

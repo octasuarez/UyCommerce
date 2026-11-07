@@ -87,20 +87,22 @@ namespace UyCommerce.Application.Services
             return (usuario.Favoritos.Contains(sku) ? "Se agrego a favoritos" : "Se elimino de favoritos");
         }
 
-        public async Task<GetReviewsDto> GetReviewsProductos(int id)
+        public async Task<GetReviewsDto> GetReviewsAndProductos(int id)
         {
-            GetReviewsDto result = new();
-
-            var reviews = await _reviewRepository.GetReviewsByUsuarioId(id);
-            var ordenes = await _ordenRepository.GetOrdenesByUsuarioId(id);
-            var reviewsSkus = reviews.SelectMany(r => r.Producto.Skus).Select(s => s.Id).ToList();
-            List<Orden> ordenesSinReview = [];
-            foreach(var orden in ordenes)
+            GetReviewsDto result = new()
             {
-                //if(reviewsSkus.Contains(orden.Productos))
+                Reviews = await _reviewRepository.GetReviewsByUsuarioId(id)
+            };
+
+            var productosReviews = result.Reviews.Count > 0 ? result.Reviews.Select(r => r.Producto).ToList() : [];
+            var productosOrdenes = await _ordenRepository.GetProductosFromOrdenesByUsuarioId(id);
+            foreach(var producto in productosOrdenes)
+            {
+                if (!productosReviews.Exists(pr => pr.Id == producto.Id))
+                    result.Productos.Add(producto);
             }
 
-            throw new NotImplementedException();
+            return result;
         }
     }
 }
