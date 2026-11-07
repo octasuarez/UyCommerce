@@ -4,6 +4,7 @@ using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Entities;
+using UyCommerce.Domain.Exceptions;
 
 namespace UyCommerce.Application.Services
 {
@@ -42,6 +43,18 @@ namespace UyCommerce.Application.Services
         public async Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId)
         {
             return await _ordenRepository.GetOrdenesByProductoIdAsync(productoId);
+        }
+
+        public async Task<List<Orden>> GetOrdenesByUsuarioId(int userId)
+        {
+            return await _ordenRepository.GetOrdenesByUsuarioId(userId);
+        }
+
+        public async Task<Orden> GetOrdenById(int id)
+        {
+            var orden = await _ordenRepository.GetOrdenCompleteById(id)
+                ?? throw new NotFoundException(nameof(Orden), id);
+            return orden;
         }
     }
 }

@@ -13,6 +13,11 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
         }
 
+        public Task<Orden?> GetOrdenCompleteById(int id)
+        {
+            return GetOrdenesQuery().FirstOrDefaultAsync(o => o.Id == id);
+        }
+
         public async Task<List<Orden>> GetOrdenesAsync()
         {
             return await GetOrdenesQuery().ToListAsync();
@@ -36,7 +41,9 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
 
         public Task<List<Orden>> GetOrdenesByUsuarioId(int id)
         {
-            return GetOrdenesQuery().Where(o => o.Usuario.Id == id).ToListAsync();
+            return GetOrdenesQuery()
+                .Where(o => o.Usuario.Id == id)
+                .ToListAsync();
         }
 
         public async Task<List<Orden>> GetOrdenesUsuariosAsync()

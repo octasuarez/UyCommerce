@@ -1,60 +1,72 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UyCommerce.Infrastructure.Persistance;
 using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Entities;
-using UYCommerce.ViewModels;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Domain.Exceptions;
 
 namespace UYCommerce.Controllers
 {
     [Authorize(Policy = "User")]
     public class UsuarioController : Controller
     {
-        private readonly ShopContext _context;
         private readonly IEmailService _emailService;
         private readonly IPreguntaService _preguntaService;
         private readonly IUsuarioService _usuarioService;
+        private readonly IOrdenService _ordenService;
 
-        public UsuarioController(ShopContext context, IEmailService emailService, IPreguntaService preguntaService, IUsuarioService usuarioService)
+        public UsuarioController(IEmailService emailService
+            , IPreguntaService preguntaService
+            , IUsuarioService usuarioService
+            , IOrdenService ordenService)
         {
-            _context = context;
-            _emailService = emailService;
+            this._emailService = emailService;
             this._preguntaService = preguntaService;
             this._usuarioService = usuarioService;
+            this._ordenService = ordenService;
         }
+
+        #region ordenes
 
         [HttpGet]
         [Route("Compras")]
         public async Task<IActionResult> GetCompras()
         {
-            List<Orden>? compras = null;
-
-            var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            compras = await _context.Ordenes.Where(o => o.Usuario.Id == usuarioId)
-                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
-                .ToListAsync();
-
-            return View("Compras", compras);
+            List<Orden> ordenes = [];
+            try
+            {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                ordenes = await _ordenService.GetOrdenesByUsuarioId(userId);
+            }
+            catch (Exception e)
+            {
+            }
+            return View("Compras", ordenes);
         }
 
         [HttpGet]
         [Route("Compras/{compraId}")]
         public async Task<IActionResult> BuscarCompraPorId(int compraId)
         {
-            var compra = await _context.Ordenes
-                .Include(o => o.Direccion)
-                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.Imagenes)
-                .Include(o => o.Productos)!.ThenInclude(p => p.Sku).ThenInclude(s => s!.AtributosValores)!.ThenInclude(a => a.Atributo)
-                .FirstOrDefaultAsync(o => o.Id == compraId);
-
-            if (compra is not null) { return View("VerCompra", compra); }
-
+            try
+            {
+                return View("VerCompra", await _ordenService.GetOrdenById(compraId));
+            }
+            catch (NotFoundException e)
+            {
+                Response.StatusCode = 404;
+            }
+            catch (Exception e)
+            {
+            }
             return View("NotFound");
         }
+
+        #endregion ordenes
+
+        #region favoritos
 
         [HttpGet]
         [Route("Favoritos")]
@@ -70,24 +82,23 @@ namespace UYCommerce.Controllers
                 return BadRequest();
             }
         }
-
         [HttpPost]
-        public async Task<IActionResult> AgregarPregunta(CreatePreguntaDTO pregunta)
+        public async Task<IActionResult> AgregarAFavoritos(int skuId)
         {
             try
             {
-                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                pregunta.Fecha = DateTime.Now;
-                await _preguntaService.CreatePregunta(pregunta, userId);
-                var nombreUsuario = User.FindFirstValue("FullName") ?? "";
-                return Ok(new PreguntaDto { Contenido = pregunta.Contenido, Fecha = pregunta.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), NombreUsuario = nombreUsuario });
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Ok(await _usuarioService.AddToFavoritos(skuId, userId));
             }
             catch (Exception)
             {
-                return BadRequest("No se pudo agregar la pregunta");
+                return BadRequest();
             }
         }
 
+        #endregion favoritos
+
+        #region reviews
 
         [HttpGet]
         [Route("/reviews")]
@@ -108,75 +119,67 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> AgregarReview([FromBody] ReviewDTO reviewDTO)
         {
-
             if (ModelState.IsValid)
             {
-
-                var producto = await _context.Productos.Include(p => p.Reviews)!.ThenInclude(r => r.Usuario).FirstOrDefaultAsync(p => p.Id == reviewDTO.ProductoId);
-
-                var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-                if (producto is null || producto.Reviews!.Any(r => r.UsuarioId == usuarioId))
+                try
                 {
-
-                    return BadRequest("error");
+                    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    await _usuarioService.CreateReview(reviewDTO, userId);
+                    return Ok("Se agrego la review");
                 }
-
-                Review review = new()
+                catch (NotFoundException)
                 {
-                    ProductoId = reviewDTO.ProductoId,
-                    Texto = reviewDTO.Comentario,
-                    Puntuacion = reviewDTO.Valoracion,
-                    UsuarioId = usuarioId
-                };
-
-                producto.Reviews?.Add(review);
-
-                _context.Productos.Update(producto);
-                await _context.SaveChangesAsync();
-
-                return Ok("Se agrego la review");
+                    return BadRequest();
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(500);
+                }
             }
-
             return BadRequest("Campos invalidos");
+
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateReview([FromBody] UpdateReviewDTO reviewDTO)
         {
-
             if (ModelState.IsValid)
             {
-
-                var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewDTO.ReviewId);
-
-                if (review is null) return BadRequest();
-
-                review.Texto = reviewDTO.Comentario;
-                review.Puntuacion = reviewDTO.Valoracion;
-
-                _context.Update(review);
-                await _context.SaveChangesAsync();
-
-                return Ok("Se actualizo la review correctamente");
+                try
+                {
+                    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    await _usuarioService.UpdateReview(reviewDTO, userId);
+                    return Ok("Se actualizo la review correctamente");
+                }
+                catch (Exception e)
+                {
+                }
             }
-
-            return BadRequest("error");
+            return BadRequest();
         }
 
+        #endregion reviews
+
+        #region preguntas
+
         [HttpPost]
-        public async Task<IActionResult> AgregarAFavoritos(int skuId)
+        public async Task<IActionResult> AgregarPregunta(CreatePreguntaDTO pregunta)
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                return Ok(await _usuarioService.AddToFavoritos(skuId, userId));
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                pregunta.Fecha = DateTime.Now;
+                await _preguntaService.CreatePregunta(pregunta, userId);
+                var nombreUsuario = User.FindFirstValue("FullName") ?? "";
+                return Ok(new PreguntaDto { Contenido = pregunta.Contenido, Fecha = pregunta.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), NombreUsuario = nombreUsuario });
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("No se pudo agregar la pregunta");
             }
         }
+
+        #endregion preguntas
     }
 }
 

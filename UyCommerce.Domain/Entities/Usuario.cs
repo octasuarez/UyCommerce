@@ -13,7 +13,7 @@
         public virtual ICollection<Orden>? Ordenes { get; set; }
         public virtual ICollection<Sku> Favoritos { get; set; } = [];
         public virtual ICollection<Pregunta>? Preguntas { get; set; }
-        public virtual ICollection<Review>? Reviews { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; } = [];
 
     }
 }

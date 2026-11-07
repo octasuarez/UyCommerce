@@ -15,5 +15,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<List<FavoritosDto>> GetFavoritosByUsuarioId(int id);
         Task<string> AddToFavoritos(int skuId, int userId);
         Task<GetReviewsDto> GetReviewsAndProductos(int id);
+        Task CreateReview(ReviewDTO reviewDto, int userId);
+        Task UpdateReview(UpdateReviewDTO updatedReview, int userId);
     }
 }

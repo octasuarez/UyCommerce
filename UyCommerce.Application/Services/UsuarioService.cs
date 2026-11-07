@@ -82,7 +82,7 @@ namespace UyCommerce.Application.Services
                 ?? throw new NotFoundException(nameof(Usuario), userId);
             var sku = await _skuRepository.GetByIdAsync(skuId)
                 ?? throw new NotFoundException(nameof(Sku), skuId);
-            if (!usuario.Favoritos.Remove(sku)){ usuario.Favoritos.Add(sku); }
+            if (!usuario.Favoritos.Remove(sku)) { usuario.Favoritos.Add(sku); }
             await _usuarioRepository.UpdateAsync(usuario);
             return (usuario.Favoritos.Contains(sku) ? "Se agrego a favoritos" : "Se elimino de favoritos");
         }
@@ -96,13 +96,45 @@ namespace UyCommerce.Application.Services
 
             var productosReviews = result.Reviews.Count > 0 ? result.Reviews.Select(r => r.Producto).ToList() : [];
             var productosOrdenes = await _ordenRepository.GetProductosFromOrdenesByUsuarioId(id);
-            foreach(var producto in productosOrdenes)
+            foreach (var producto in productosOrdenes)
             {
                 if (!productosReviews.Exists(pr => pr.Id == producto.Id))
                     result.Productos.Add(producto);
             }
 
             return result;
+        }
+
+        public async Task CreateReview(ReviewDTO reviewDto, int userId)
+        {
+            var usuario = await _usuarioRepository.GetByIdAsync(userId)
+                ?? throw new NotFoundException(nameof(Usuario), userId);
+            var producto = await _productoRepository.GetByIdAsync(reviewDto.ProductoId)
+                ?? throw new NotFoundException(nameof(Producto), reviewDto.ProductoId);
+            Review review = new()
+            {
+                Puntuacion = reviewDto.Valoracion,
+                Texto = reviewDto.Comentario,
+                Producto = producto,
+                ProductoId = reviewDto.ProductoId,
+                Usuario = usuario,
+                UsuarioId = usuario.Id,
+            };
+
+            usuario.Reviews.Add(review);
+            await _usuarioRepository.UpdateAsync(usuario);
+        }
+
+        public async Task UpdateReview(UpdateReviewDTO updatedReview, int userId)
+        {
+            var reviewToUpdate = await _reviewRepository.GetByIdAsync(updatedReview.ReviewId)
+                ?? throw new NotFoundException(nameof(Review), updatedReview.ReviewId);
+            if (reviewToUpdate.UsuarioId != userId)
+                throw new Exception($"Review no le pertence a usuario {userId}");
+
+            reviewToUpdate.Texto = updatedReview.Comentario;
+            reviewToUpdate.Puntuacion = updatedReview.Valoracion;
+            await _reviewRepository.UpdateAsync(reviewToUpdate);
         }
     }
 }
