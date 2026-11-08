@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
 using System.Security.Claims;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
-using UyCommerce.Domain.Entities;
 using UYCommerce.ViewModels;
 
 namespace UYCommerce.Controllers;
