@@ -1,7 +1,6 @@
-﻿using UyCommerce.Application.Contracts.Persistance;
-using UyCommerce.Domain.Entities;
+﻿using UyCommerce.Domain.Entities;
 
-namespace UyCommerce.Application.Contracts.ServicesAbstractions
+namespace UyCommerce.Application.Contracts.Persistance
 {
     public interface IReviewRepository : IGenericRepository<Review>
     {
