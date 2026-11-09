@@ -55,7 +55,7 @@ namespace UYCommerce.Controllers
             List<PuntoGrafica> puntos = [];
             List<PuntoGrafica> puntosGanacias = [];
             List<ProductoOrden> productos = [];
-            var ordenes = await _ordenService.GetOrdenesByDateAsync(fchDesde, fchHasta);
+            var ordenes = await _ordenService.GetOrdenesByDate(fchDesde, fchHasta);
 
             if (ordenes != null && ordenes.Count > 0)
             {
@@ -112,7 +112,7 @@ namespace UYCommerce.Controllers
         [Route("admin/clientes")]
         public async Task<IActionResult> GetClientes()
         {
-            var clientes = await _usuarioService.GetUsuariosClientesAsync();
+            var clientes = await _usuarioService.GetUsuariosClientes();
             return View(clientes);
         }
 
@@ -121,7 +121,7 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> GetProductos()
         {
 
-            var productos = await _productoService.GetProductosCompleteAsync();
+            var productos = await _productoService.GetProductosComplete();
             return View(productos);
         }
 
@@ -129,7 +129,7 @@ namespace UYCommerce.Controllers
         [Route("admin/atributos")]
         public async Task<IActionResult> GetAtributos()
         {
-            var atributos = await _atributoService.GetAtributosAsync();
+            var atributos = await _atributoService.GetAtributos();
             return View(atributos);
         }
 
@@ -138,7 +138,7 @@ namespace UYCommerce.Controllers
         [Route("admin/ordenes")]
         public async Task<IActionResult> GetOrdenes()
         {
-            var ordenes = await _ordenService.GetOrdenesUsuariosAsync();
+            var ordenes = await _ordenService.GetOrdenesUsuarios();
             List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario  }).ToList();
             return View(result);
         }
@@ -147,7 +147,7 @@ namespace UYCommerce.Controllers
         [Route("admin/reviews")]
         public async Task<IActionResult> GetReviews()
         {
-            var reviews = await _reviewService.GetReviewAsync();
+            var reviews = await _reviewService.GetReview();
             return View(reviews);
         }
 
@@ -155,7 +155,7 @@ namespace UYCommerce.Controllers
         [Route("admin/carousel")]
         public async Task<IActionResult> Carousel()
         {
-            var carouselImages = await _imagesService.GetCarouselImagesAsync();
+            var carouselImages = await _imagesService.GetCarouselImages();
             return View(carouselImages);
         }
         #endregion [HttpGet]
@@ -186,7 +186,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _reviewService.DeleteReviewAsync(reviewId);
+                await _reviewService.DeleteReview(reviewId);
             }
             catch (NotFoundException e)
             {
@@ -200,7 +200,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _preguntaService.UpdatePreguntaRespuestaAsync(respuesta);
+                await _preguntaService.UpdatePreguntaRespuesta(respuesta);
             }
             catch (NotFoundException e)
             {
@@ -221,7 +221,7 @@ namespace UYCommerce.Controllers
             try
             {
                 using var fileStream = file.OpenReadStream();
-                await _imagesService.AddCarouselImageAsync(file.Name, fileStream);
+                await _imagesService.AddCarouselImage(file.Name, fileStream);
             }
             catch (Exception e)
             {
@@ -237,7 +237,7 @@ namespace UYCommerce.Controllers
             try
             {
                 var stream = file.OpenReadStream();
-                await _imagesService.UpdateCarouselImageAsync(imageId, file.Name, stream);
+                await _imagesService.UpdateCarouselImage(imageId, file.Name, stream);
             }
             catch (NotFoundException e)
             {

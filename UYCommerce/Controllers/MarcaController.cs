@@ -24,14 +24,14 @@ namespace UYCommerce.Controllers
         [Route("admin/marcas")]
         public async Task<IActionResult> GetMarcas()
         {
-            var marcas = await _marcaService.GetMarcasWithProductosAsync();
+            var marcas = await _marcaService.GetMarcasWithProductos();
             return View("../Admin/GetMarcas", marcas);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetMarcasApi()
         {
-            var marcas = _marcaService.GetMarcasAsync();
+            var marcas = _marcaService.GetMarcas();
             return Ok(marcas);
         }
 
@@ -47,7 +47,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _marcaService.AddMarcaAsync(nombre);
+                await _marcaService.AddMarca(nombre);
             }
             catch (Exception e)
             {
@@ -62,7 +62,7 @@ namespace UYCommerce.Controllers
 
             try
             {
-                await _marcaService.DeleteMarcaAsync(marcaId);
+                await _marcaService.DeleteMarca(marcaId);
             }
             catch (NotFoundException e)
             {
@@ -74,7 +74,7 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public async Task<Marca?> GetMarcaById(int id) {
 
-            var marca = await _marcaService.GetMarcaAndProductosByIdAsync(id);
+            var marca = await _marcaService.GetMarcaAndProductosById(id);
             return marca;
         }
     }

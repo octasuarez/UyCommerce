@@ -24,7 +24,7 @@ namespace UyCommerce.Application.Services
             this._configuration = configuration;
         }
 
-        public async Task<Usuario?> AuthenticateUsuarioAsync(string email, string password)
+        public async Task<Usuario> AuthenticateUsuario(string email, string password)
         {
             var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email)
                 ?? throw new NotFoundException(nameof(Usuario), email);
@@ -78,7 +78,7 @@ namespace UyCommerce.Application.Services
             return b64.PadRight(b64.Length + (4 - b64.Length % 4) % 4, '=');
         }
 
-        public async Task<bool> RegisterUsuarioAsync(string name, string email, string password)
+        public async Task<bool> RegisterUsuario(string name, string email, string password)
         {
             var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email);
             if (usuario is not null) throw new Exception("Correo electronico ya registrado");

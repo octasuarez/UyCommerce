@@ -48,20 +48,20 @@ public class HomeController : Controller
             }
             else
             {
-                var productos = await _productoService.GetFeaturedProductsAsync();
+                var productos = await _productoService.GetFeaturedProducts();
                 var skus = productos
                     .OrderByDescending(p => p.GetPuntuacionPromedio())
                     .Select(p => p.Skus!.First()).ToList();
                 homeVM.Skus = skus;
-                homeVM.Categorias = await _categoriaService.GetCategoriasInicioAsync();
-                homeVM.Carousel = await _imagesService.GetCarouselImagesAsync();
+                homeVM.Categorias = await _categoriaService.GetCategoriasInicio();
+                homeVM.Carousel = await _imagesService.GetCarouselImages();
                 _cache.Set("homeVM", homeVM, TimeSpan.FromHours(1));
             }
 
             if (User.Identity is not null && User.Identity.IsAuthenticated
                 && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
             {
-                var usuario = await _usuarioService.GetUsuarioFavoritosByIdAsync(userId);
+                var usuario = await _usuarioService.GetUsuarioFavoritosById(userId);
                 homeVM.Favoritos = usuario.Favoritos;
             }
         }

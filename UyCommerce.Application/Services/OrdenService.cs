@@ -16,7 +16,7 @@ namespace UyCommerce.Application.Services
         {
             _ordenRepository = ordenRepository;
         }
-        public async Task<List<Orden>> GetOrdenesByDateAsync(DateTime? startDate, DateTime? endDate)
+        public async Task<List<Orden>> GetOrdenesByDate(DateTime? startDate, DateTime? endDate)
         {
 
             startDate = startDate ?? DateTime.Now.AddMonths(-4).Date;
@@ -25,22 +25,22 @@ namespace UyCommerce.Application.Services
             return await _ordenRepository.GetOrdenesByDateAsync((DateTime)startDate, (DateTime)endDate);
         }
 
-        public async Task<List<Orden>> GetOrdenesAsync()
+        public async Task<List<Orden>> GetOrdenes()
         {
             return await _ordenRepository.GetOrdenesAsync();
         }
 
-        public Task DeleteOrdenAsync()
+        public Task DeleteOrden()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<Orden>> GetOrdenesUsuariosAsync()
+        public async Task<List<Orden>> GetOrdenesUsuarios()
         {
             return await _ordenRepository.GetOrdenesUsuariosAsync();
         }
 
-        public async Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId)
+        public async Task<List<Orden>> GetOrdenesByProductoId(int productoId)
         {
             return await _ordenRepository.GetOrdenesByProductoIdAsync(productoId);
         }

@@ -36,7 +36,7 @@ namespace UYCommerce.Controllers
                 try
                 {
                     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                    var qty = await _carritoService.AddProductoAlCarritoAsync(userId, skuId, quantity);
+                    var qty = await _carritoService.AddProductoAlCarrito(userId, skuId, quantity);
                     HttpContext.Session.SetString("cartItems", qty.ToString());
                     return new JsonResult(new { qty });
                 }
@@ -67,7 +67,7 @@ namespace UYCommerce.Controllers
                 if (!int.TryParse(skuId, out int sku))
                     Response.StatusCode = StatusCodes.Status400BadRequest;
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                await _carritoService.DeleteProductoCarritoAsync(userId, sku);
+                await _carritoService.DeleteProductoCarrito(userId, sku);
                 var carritoItemsCount = HttpContext.Session.GetInt32("cartItems") - 1 ?? 0;
                 HttpContext.Session.SetString("cartItems", carritoItemsCount.ToString());
             }

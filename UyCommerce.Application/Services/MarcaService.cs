@@ -17,7 +17,7 @@ namespace UyCommerce.Application.Services
             _marcaRepository = marcaRepository;
         }
 
-        public async Task AddMarcaAsync(string nombre)
+        public async Task AddMarca(string nombre)
         {
             var marcaDb = await _marcaRepository.GetMarcaByNombre(nombre);
             if (marcaDb is not null)
@@ -27,30 +27,30 @@ namespace UyCommerce.Application.Services
             await _marcaRepository.CreateAsync(newMarca);
         }
 
-        public async Task DeleteMarcaAsync(int id)
+        public async Task DeleteMarca(int id)
         {
             var marca = await _marcaRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(Marca), id);
             await _marcaRepository.DeleteAsync(marca);
         }
 
-        public async Task<Marca> GetMarcaAndProductosByIdAsync(int id)
+        public async Task<Marca> GetMarcaAndProductosById(int id)
         {
             return await _marcaRepository.GetMarcaAndProductosAsync(id);
         }
 
-        public async Task<Marca> GetMarcaByIdAsync(int id)
+        public async Task<Marca> GetMarcaById(int id)
         {
             return await _marcaRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(Marca), id);
         }
 
-        public async Task<List<Marca>> GetMarcasAsync()
+        public async Task<List<Marca>> GetMarcas()
         {
             return await _marcaRepository.GetAllAsync();
         }
 
-        public async Task<List<Marca>> GetMarcasWithProductosAsync()
+        public async Task<List<Marca>> GetMarcasWithProductos()
         {
             return await _marcaRepository.GetMarcasWithProductosAsync();
         }

@@ -19,7 +19,7 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetAtributosJson()
         {
-            return Ok(await _atributoService.GetAtributosAsync());
+            return Ok(await _atributoService.GetAtributos());
         }
 
         [HttpPost]
@@ -30,7 +30,7 @@ namespace UYCommerce.Controllers
                 return BadRequest("Atributo invalido.");
             try
             {
-                await _atributoService.AddAtributoAsync(nombre);
+                await _atributoService.AddAtributo(nombre);
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -51,7 +51,7 @@ namespace UYCommerce.Controllers
                 return BadRequest("escriba un valor");
             try
             {
-                await _atributoService.AddAtributoValorAsync(atributoValor);
+                await _atributoService.AddAtributoValor(atributoValor);
             }
             catch (NotFoundException e)
             {

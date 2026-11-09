@@ -24,7 +24,7 @@ namespace UyCommerce.Application.Services
         }
 
         #region carouselImages
-        public async Task AddCarouselImageAsync(string name, Stream stream)
+        public async Task AddCarouselImage(string name, Stream stream)
         {
             if (string.IsNullOrEmpty(name) || stream.Length <= 0)
             {
@@ -42,20 +42,20 @@ namespace UyCommerce.Application.Services
             _fileService.DeleteFile([carImage.Name], this._carouselImagePath);
         }
 
-        public async Task<CarouselImage> GetCarouselImageByIdAsync(int id)
+        public async Task<CarouselImage> GetCarouselImageById(int id)
         {
             return await _carouselImageRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(CarouselImage), id);
         }
 
-        public async Task<List<CarouselImage>> GetCarouselImagesAsync()
+        public async Task<List<CarouselImage>> GetCarouselImages()
         {
             return await _carouselImageRepository.GetAllAsync();
         }
 
-        public async Task UpdateCarouselImageAsync(int id, string imgName, Stream stream)
+        public async Task UpdateCarouselImage(int id, string imgName, Stream stream)
         {
-            var imageDb = await GetCarouselImageByIdAsync(id);
+            var imageDb = await GetCarouselImageById(id);
             string imageToDelete = imageDb.Name.ToString();
             if (stream.Length <= 0) throw new Exception($"Imagen {imgName} invalida.");
             await this.SaveImageFile(imgName, stream, this._carouselImagePath);

@@ -23,7 +23,7 @@ namespace UyCommerce.Application.Services
         private readonly IFileService _fileService;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ISkuRepository _skuRepository;
-        private readonly IOrdenService _ordenService;
+        private readonly IOrdenRepository _ordenRepository;
         private readonly ICarritoService _carritoService;
 
         public ProductoService(IProductoRepository productoRepository
@@ -33,7 +33,7 @@ namespace UyCommerce.Application.Services
             , IFileService fileService
             , IUsuarioRepository usuarioRepository
             , ISkuRepository skuRepository
-            , IOrdenService ordenService
+            , IOrdenRepository ordenRepository
             , ICarritoService carritoService)
         {
             _productoRepository = productoRepository;
@@ -43,7 +43,7 @@ namespace UyCommerce.Application.Services
             this._fileService = fileService;
             this._usuarioRepository = usuarioRepository;
             this._skuRepository = skuRepository;
-            this._ordenService = ordenService;
+            this._ordenRepository = ordenRepository;
             this._carritoService = carritoService;
             this._imgFilesPath = "Imagenes/Productos";
         }
@@ -90,7 +90,7 @@ namespace UyCommerce.Application.Services
             await _productoRepository.CreateAsync(newProducto);
         }
 
-        public async Task FeatureProductAsync(int id, bool feature)
+        public async Task FeatureProduct(int id, bool feature)
         {
             var producto = await _productoRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(Producto), id);
@@ -98,17 +98,17 @@ namespace UyCommerce.Application.Services
             await _productoRepository.UpdateAsync(producto);
         }
 
-        public async Task<List<Producto>> GetFeaturedProductsAsync()
+        public async Task<List<Producto>> GetFeaturedProducts()
         {
             return await _productoRepository.GetFeaturedProductsAsync();
         }
 
-        public async Task<Producto?> GetProductoCompleteByIdNoTrackingAsync(int id)
+        public async Task<Producto?> GetProductoCompleteByIdNoTracking(int id)
         {
             return await _productoRepository.GetProductoCompleteByIdNoTrackingAsync(id);
         }
 
-        public async Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId)
+        public async Task<GetProductosDto> GetProductosByQuery(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId)
         {
             var result = await _productoRepository.GetProductosByQueryAsync(query, orderBy, pag-1, qty);
             result.Categorias = await _categoriaRepository.GetCategoriasPadreAsync();
@@ -122,7 +122,7 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task<List<GetProductosByQueryNameDto>> GetProductosByQueryNameAsync(string query)
+        public async Task<List<GetProductosByQueryNameDto>> GetProductosByQueryName(string query)
         {
             var productos = await _productoRepository.GetProductosByQueryNameAsync(query);
             var result = productos.Select(p => new GetProductosByQueryNameDto
@@ -136,27 +136,27 @@ namespace UyCommerce.Application.Services
             return result ??= [];
         }
 
-        public async Task<List<Producto>> GetProductosCompleteAsync()
+        public async Task<List<Producto>> GetProductosComplete()
         {
             return await _productoRepository.GetProductosCompleteAsync();
         }
 
-        public async Task DeleteProductoAsync(int id)
+        public async Task DeleteProducto(int id)
         {
             var producto = await _productoRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(Producto), id);
 
-            var ordenesWithProducto = await _ordenService.GetOrdenesByProductoIdAsync(id);
+            var ordenesWithProducto = await _ordenRepository.GetOrdenesByProductoIdAsync(id);
             if (ordenesWithProducto.Count > 0) 
                 throw new ArgumentOutOfRangeException("No se puede eliminar el producto porque existen ordenes con el");
 
-            var productosCarrito = await _carritoService.GetProductosCarritoByProductoIdAsync(id);
-            if (productosCarrito.Count > 0) await _carritoService.DeleteProductosCarritoAsync(productosCarrito);
+            var productosCarrito = await _carritoService.GetProductosCarritoByProductoId(id);
+            if (productosCarrito.Count > 0) await _carritoService.DeleteProductosCarrito(productosCarrito);
 
             await _productoRepository.DeleteAsync(producto);
         }
 
-        public async Task<GetProductosDto> GetProductosByCategoriaAsync(string categoria, string[]? filtros, int? usuarioId, int orden, int pag, int qty)
+        public async Task<GetProductosDto> GetProductosByCategoria(string categoria, string[]? filtros, int? usuarioId, int orden, int pag, int qty)
         {
             GetProductosDto result = new();
             var categoriaDb = await _categoriaRepository.GetCategoriaByNameAsync(categoria)
@@ -237,7 +237,7 @@ namespace UyCommerce.Application.Services
 
         #region Skus
 
-        public async Task<GetSkuByKeyDto> GetSkuByKeyAsync(string key, int? usuarioId)
+        public async Task<GetSkuByKeyDto> GetSkuByKey(string key, int? usuarioId)
         {
             GetSkuByKeyDto result = new();
             var sku = await _skuRepository.GetSkuByKeyAsync(key)
@@ -315,7 +315,7 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task AddSkuAProductoAsync(AddSkuAProductoDto addSkuAProductoDto)
+        public async Task AddSkuAProducto(AddSkuAProductoDto addSkuAProductoDto)
         {
             var producto = await _productoRepository.GetProductoCompleteByIdAsync(addSkuAProductoDto.ProductoId)
                 ?? throw new NotFoundException(nameof(Producto), addSkuAProductoDto.ProductoId);
@@ -380,14 +380,14 @@ namespace UyCommerce.Application.Services
             await _productoRepository.UpdateAsync(producto);
         }
 
-        public async Task DeleteSkuAsync(int skuId)
+        public async Task DeleteSku(int skuId)
         {
             var sku = await _skuRepository.GetByIdAsync(skuId)
                 ?? throw new NotFoundException(nameof(Sku), skuId);
             await _skuRepository.DeleteAsync(sku);
         }
 
-        public async Task<string> FindSkuKeyMatchAsync(string key)
+        public async Task<string> FindSkuKeyMatch(string key)
         {
             var result = await _skuRepository.FindSkuKeyByKey(key);
             if (result is null)
@@ -399,8 +399,6 @@ namespace UyCommerce.Application.Services
             }
             return result;
         }
-
-        
 
         #endregion Skus
 

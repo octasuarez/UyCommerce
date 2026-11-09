@@ -8,11 +8,11 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface ICarritoService
     {
-        Task<Carrito> GetCarritoByUserIdAsync(int userId);
-        Task<Carrito> GetCarritoCompleteByUserIdAsync(int userId);
-        Task<int> AddProductoAlCarritoAsync(int userId, int skuId, int quantity);
-        Task DeleteProductoCarritoAsync(int userId, int skuId);
-        Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId);
-        Task DeleteProductosCarritoAsync(List<ProductoCarrito> productosCarrito);
+        Task<Carrito> GetCarritoByUserId(int userId);
+        Task<Carrito> GetCarritoCompleteByUserId(int userId);
+        Task<int> AddProductoAlCarrito(int userId, int skuId, int quantity);
+        Task DeleteProductoCarrito(int userId, int skuId);
+        Task<List<ProductoCarrito>> GetProductosCarritoByProductoId(int productoId);
+        Task DeleteProductosCarrito(List<ProductoCarrito> productosCarrito);
     }
 }

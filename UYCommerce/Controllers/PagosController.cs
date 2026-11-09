@@ -30,7 +30,7 @@ namespace UYCommerce.Controllers
             try
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var carrito = await _carritoService.GetCarritoCompleteByUserIdAsync(userId);
+                var carrito = await _carritoService.GetCarritoCompleteByUserId(userId);
                 return View(carrito);
             }
             catch (NotFoundException) { }

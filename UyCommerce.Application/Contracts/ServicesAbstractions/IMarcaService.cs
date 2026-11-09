@@ -7,11 +7,11 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IMarcaService
     {
-        Task<List<Marca>> GetMarcasAsync();
-        Task<List<Marca>> GetMarcasWithProductosAsync();
-        Task<Marca> GetMarcaByIdAsync(int id);
-        Task<Marca> GetMarcaAndProductosByIdAsync(int id);
-        Task DeleteMarcaAsync(int id);
-        Task AddMarcaAsync(string nombre);
+        Task<List<Marca>> GetMarcas();
+        Task<List<Marca>> GetMarcasWithProductos();
+        Task<Marca> GetMarcaById(int id);
+        Task<Marca> GetMarcaAndProductosById(int id);
+        Task DeleteMarca(int id);
+        Task AddMarca(string nombre);
     }
 }

@@ -8,8 +8,8 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IAtributoService
     {
-        Task<List<Atributo>> GetAtributosAsync();
-        Task AddAtributoValorAsync(AgregarValorDTO atributoDto);
-        Task AddAtributoAsync(string nombre);
+        Task<List<Atributo>> GetAtributos();
+        Task AddAtributoValor(AgregarValorDTO atributoDto);
+        Task AddAtributo(string nombre);
     }
 }

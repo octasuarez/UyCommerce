@@ -7,11 +7,11 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IOrdenService
     {
-        Task<List<Orden>> GetOrdenesByDateAsync(DateTime? startDate, DateTime? endDate);
-        Task<List<Orden>> GetOrdenesAsync();
-        Task DeleteOrdenAsync();
-        Task<List<Orden>> GetOrdenesUsuariosAsync();
-        Task<List<Orden>> GetOrdenesByProductoIdAsync(int productoId);
+        Task<List<Orden>> GetOrdenesByDate(DateTime? startDate, DateTime? endDate);
+        Task<List<Orden>> GetOrdenes();
+        Task DeleteOrden();
+        Task<List<Orden>> GetOrdenesUsuarios();
+        Task<List<Orden>> GetOrdenesByProductoId(int productoId);
         Task<List<Orden>> GetOrdenesByUsuarioId(int userId);
         Task<Orden> GetOrdenById(int id);
     }

@@ -6,18 +6,18 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IProductoService
     {
-        Task<List<Producto>> GetFeaturedProductsAsync();
-        Task<List<Producto>> GetProductosCompleteAsync();
+        Task<List<Producto>> GetFeaturedProducts();
+        Task<List<Producto>> GetProductosComplete();
         Task AddProductoAsync(AddProductoDto addProductoDto);
-        Task<Producto?> GetProductoCompleteByIdNoTrackingAsync(int id);
-        Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId);
-        Task<List<GetProductosByQueryNameDto>> GetProductosByQueryNameAsync(string query);
-        Task AddSkuAProductoAsync(AddSkuAProductoDto addSkuAProductoDto);
-        Task DeleteSkuAsync(int skuId);
-        Task FeatureProductAsync(int id, bool feature);
-        Task<GetSkuByKeyDto> GetSkuByKeyAsync(string key, int? userId);
-        Task<string> FindSkuKeyMatchAsync(string key);
-        Task DeleteProductoAsync(int id);
-        Task<GetProductosDto> GetProductosByCategoriaAsync(string categoria, string[]? filtros, int? usuarioId, int orden, int pag, int qty);
+        Task<Producto?> GetProductoCompleteByIdNoTracking(int id);
+        Task<GetProductosDto> GetProductosByQuery(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId);
+        Task<List<GetProductosByQueryNameDto>> GetProductosByQueryName(string query);
+        Task AddSkuAProducto(AddSkuAProductoDto addSkuAProductoDto);
+        Task DeleteSku(int skuId);
+        Task FeatureProduct(int id, bool feature);
+        Task<GetSkuByKeyDto> GetSkuByKey(string key, int? userId);
+        Task<string> FindSkuKeyMatch(string key);
+        Task DeleteProducto(int id);
+        Task<GetProductosDto> GetProductosByCategoria(string categoria, string[]? filtros, int? usuarioId, int orden, int pag, int qty);
     }
 }

@@ -15,7 +15,7 @@ namespace UyCommerce.Application.Services
         private readonly IAtributoRepository _atributoRepository;
         public AtributoService(IAtributoRepository atributoRepository) => _atributoRepository = atributoRepository;
 
-        public async Task AddAtributoAsync(string nombre)
+        public async Task AddAtributo(string nombre)
         {
             var atributoDb = await _atributoRepository.GetAtributoByNameAsync(nombre);
             if (atributoDb is not null) throw new ArgumentOutOfRangeException($"{nameof(Atributo)} con nombre {nombre} ya existe.");
@@ -23,7 +23,7 @@ namespace UyCommerce.Application.Services
             await _atributoRepository.CreateAsync(newAtributo);
         }
 
-        public async Task AddAtributoValorAsync(AgregarValorDTO atributoDto)
+        public async Task AddAtributoValor(AgregarValorDTO atributoDto)
         {
             var atributoDb = await _atributoRepository.GetAtributoConValoresByIdAsync(atributoDto.atributoId)
                 ?? throw new NotFoundException(nameof(Atributo),atributoDto.atributoId);
@@ -38,7 +38,7 @@ namespace UyCommerce.Application.Services
             await _atributoRepository.UpdateAsync(atributoDb);
         }
 
-        public async Task<List<Atributo>> GetAtributosAsync()
+        public async Task<List<Atributo>> GetAtributos()
         {
             return await _atributoRepository.GetAtributosAsync();
         }

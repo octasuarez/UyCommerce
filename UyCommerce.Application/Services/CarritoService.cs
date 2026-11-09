@@ -21,7 +21,7 @@ namespace UyCommerce.Application.Services
             this._usuarioRepository = usuarioRepository;
         }
 
-        public async Task<int> AddProductoAlCarritoAsync(int userId, int skuId, int quantity)
+        public async Task<int> AddProductoAlCarrito(int userId, int skuId, int quantity)
         {
             ProductoCarrito newProductoCarrito = new();
             int qty = quantity;
@@ -55,7 +55,7 @@ namespace UyCommerce.Application.Services
             return qty;
         }
 
-        public async Task DeleteProductoCarritoAsync(int userId, int skuId)
+        public async Task DeleteProductoCarrito(int userId, int skuId)
         {
             var carrito = await _carritoRepository.GetCarritoByUserIdAsync(userId)
                 ?? throw new NotFoundException(nameof(Carrito), userId);
@@ -67,26 +67,26 @@ namespace UyCommerce.Application.Services
             await _carritoRepository.UpdateAsync(carrito);
         }
 
-        public async Task DeleteProductosCarritoAsync(List<ProductoCarrito> productosCarrito)
+        public async Task DeleteProductosCarrito(List<ProductoCarrito> productosCarrito)
         {
             await _carritoRepository.DeleteProductosCarritoAsync(productosCarrito);
         }
 
-        public async Task<Carrito> GetCarritoByUserIdAsync(int userId)
+        public async Task<Carrito> GetCarritoByUserId(int userId)
         {
             var carrito = await _carritoRepository.GetCarritoByUserIdAsync(userId) 
                 ?? throw new NotFoundException(nameof(Carrito), userId);
             return carrito;
         }
 
-        public async Task<Carrito> GetCarritoCompleteByUserIdAsync(int userId)
+        public async Task<Carrito> GetCarritoCompleteByUserId(int userId)
         {
             var carrito = await _carritoRepository.GetCarritoCompleteByUserIdAsync(userId)
                 ?? throw new NotFoundException(nameof(Carrito), userId);
             return carrito;
         }
 
-        public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoIdAsync(int productoId)
+        public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoId(int productoId)
         {
             return await _carritoRepository.GetProductosCarritoByProductoIdAsync(productoId);
         }

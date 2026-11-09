@@ -87,7 +87,7 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> AgregarSku(int productoId)
         {
 
-            var producto = await _productoService.GetProductoCompleteByIdNoTrackingAsync(productoId);
+            var producto = await _productoService.GetProductoCompleteByIdNoTracking(productoId);
 
             if (producto is null || producto.Atributos!.Count == 0 && producto.Skus!.Count != 0)
             {
@@ -130,8 +130,8 @@ namespace UYCommerce.Controllers
                         Stock = skuModel.Stock
                     };
 
-                    await _productoService.AddSkuAProductoAsync(skuDto);
-                    var producto = await _productoService.GetProductoCompleteByIdNoTrackingAsync(skuModel.ProductoId);
+                    await _productoService.AddSkuAProducto(skuDto);
+                    var producto = await _productoService.GetProductoCompleteByIdNoTracking(skuModel.ProductoId);
                     skuModel.Atributos = producto?.Atributos;
                 }
                 catch (Exception e)
@@ -160,7 +160,7 @@ namespace UYCommerce.Controllers
                 try
                 {
                     var userId = GetUserId();
-                    result = await _productoService.GetProductosByQueryAsync(query, (ProductsOrderBy)orden, pag, qty, userId);
+                    result = await _productoService.GetProductosByQuery(query, (ProductsOrderBy)orden, pag, qty, userId);
                     return View("BusquedaProductos", result);
                 }
                 catch (Exception)
@@ -178,7 +178,7 @@ namespace UYCommerce.Controllers
             try
             {
                 var userId = GetUserId();
-                var result = await _productoService.GetProductosByCategoriaAsync(categoria, filtros, userId, orden, pag, qty);
+                var result = await _productoService.GetProductosByCategoria(categoria, filtros, userId, orden, pag, qty);
                 return View("BusquedaProductos", result);
             }
             catch (NotFoundException)
@@ -205,13 +205,13 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                var correctSkuKey = await _productoService.FindSkuKeyMatchAsync(key);
+                var correctSkuKey = await _productoService.FindSkuKeyMatch(key);
                 if (!string.IsNullOrEmpty(correctSkuKey) && correctSkuKey != key)
                 {
                     return Redirect($"/{correctSkuKey}");
                 }
                 var userAuthenticated = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId);
-                var result = await _productoService.GetSkuByKeyAsync(correctSkuKey, userAuthenticated ? userId : null);
+                var result = await _productoService.GetSkuByKey(correctSkuKey, userAuthenticated ? userId : null);
 
                 return View("VerProducto", result);
             }
@@ -229,7 +229,7 @@ namespace UYCommerce.Controllers
         [HttpPost]
         public async Task<JsonResult> Autocomplete(string query)
         {
-            var productos = await _productoService.GetProductosByQueryNameAsync(query);
+            var productos = await _productoService.GetProductosByQueryName(query);
             return Json(productos);
         }
 
@@ -239,7 +239,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _productoService.DeleteSkuAsync(skuId);
+                await _productoService.DeleteSku(skuId);
             }
             catch (NotFoundException e)
             {
@@ -259,7 +259,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _productoService.DeleteProductoAsync(productoId);
+                await _productoService.DeleteProducto(productoId);
             }
             catch (NotFoundException e)
             {
@@ -283,7 +283,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                await _productoService.FeatureProductAsync(productId, featured);
+                await _productoService.FeatureProduct(productId, featured);
             }
             catch (NotFoundException e)
             {

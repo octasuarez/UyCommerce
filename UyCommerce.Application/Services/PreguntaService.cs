@@ -24,13 +24,13 @@ namespace UyCommerce.Application.Services
             this._productoRepository = productoRepository;
         }
 
-        public async Task<Pregunta> GetPreguntaByIdAsync(int id)
+        public async Task<Pregunta> GetPreguntaById(int id)
         {
             return await _preguntaRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(Pregunta), id);
         }
 
-        public async Task<Pregunta> GetPreguntaByRespuestaIdAsync(int respuestaId)
+        public async Task<Pregunta> GetPreguntaByRespuestaId(int respuestaId)
         {
             return await _preguntaRepository.GetPreguntaByRespuestaId(respuestaId)
                 ?? throw new NotFoundException(nameof(Pregunta),respuestaId);
@@ -41,13 +41,13 @@ namespace UyCommerce.Application.Services
             return await _preguntaRepository.GetPreguntas(answered);
         }
 
-        public async Task UpdatePreguntaRespuestaAsync(RespuestaDTO respuesta)
+        public async Task UpdatePreguntaRespuesta(RespuestaDTO respuesta)
         {
             if(respuesta.PreguntaId < 0 || string.IsNullOrEmpty(respuesta.Contenido))
             {
                 throw new Exception("Respuesta invalida.");
             }
-            var pregunta = await GetPreguntaByIdAsync(respuesta.PreguntaId);
+            var pregunta = await GetPreguntaById(respuesta.PreguntaId);
             pregunta.Respuesta = new Respuesta()
             {
                 Contenido = respuesta.Contenido,

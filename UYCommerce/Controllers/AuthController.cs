@@ -28,29 +28,26 @@ namespace UYCommerce.Controllers
             {
                 try
                 {
-                    var usuario = await _authService.AuthenticateUsuarioAsync(loginModel.Email.ToLower(), loginModel.Password);
-                    if (usuario is not null)
-                    {
-                        var claims = new List<Claim>{
+                    var usuario = await _authService.AuthenticateUsuario(loginModel.Email.ToLower(), loginModel.Password);
+                    var claims = new List<Claim>{
                             new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                             new(ClaimTypes.Name, usuario.Email!),
                             new("FullName", usuario.Nombre!),
                             new(ClaimTypes.Role, usuario.Rol!.Nombre!),
                             new("CarritoId", usuario.Carrito.Id.ToString()),
                         };
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var authProperties = new AuthenticationProperties
-                        {
-                            AllowRefresh = true,
-                            IsPersistent = loginModel.RememberMe,
-                        };
-                        await HttpContext.SignInAsync(
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            new ClaimsPrincipal(claimsIdentity),
-                            authProperties);
-                        HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos.Count.ToString());
-                        return (usuario.Rol.Nombre == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("Index", "Home");
-                    }
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        AllowRefresh = true,
+                        IsPersistent = loginModel.RememberMe,
+                    };
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+                    HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos.Count.ToString());
+                    return (usuario.Rol.Nombre == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("Index", "Home");
                 }
                 catch (NotFoundException)
                 {
@@ -78,8 +75,8 @@ namespace UYCommerce.Controllers
             {
                 try
                 {
-                    var success = await _authService.RegisterUsuarioAsync(registerModel.Nombre, registerModel.Email, registerModel.Password);
-                    if (success) return await Login(new LoginModel { Email = registerModel.Email, Password = registerModel.Password});
+                    var success = await _authService.RegisterUsuario(registerModel.Nombre, registerModel.Email, registerModel.Password);
+                    if (success) return await Login(new LoginModel { Email = registerModel.Email, Password = registerModel.Password });
                 }
                 catch (Exception)
                 {
@@ -126,9 +123,9 @@ namespace UYCommerce.Controllers
             try
             {
                 var codigoIsValid = await _authService.VerifyCodigoRecuperacion(codigo);
-                if(codigoIsValid) return View("CambiarPwd", new PasswordRecuperacionModel { Codigo = codigo });
+                if (codigoIsValid) return View("CambiarPwd", new PasswordRecuperacionModel { Codigo = codigo });
             }
-            catch (Exception){}
+            catch (Exception) { }
             return View("NotFound");
         }
 

@@ -20,7 +20,7 @@ namespace UyCommerce.Application.Services
             this._fileService = fileService;
         }
 
-        public async Task AddCategoriaAsync(CategoriaDTO categoriaDto, Stream? imgStream)
+        public async Task AddCategoria(CategoriaDTO categoriaDto, Stream? imgStream)
         {
             Categoria newCategoria = new();
 
@@ -74,12 +74,12 @@ namespace UyCommerce.Application.Services
 
             await _categoriaRepository.CreateAsync(newCategoria);
         }
-        public async Task<Categoria?> GetCategoriaByIdAsync(int id)
+        public async Task<Categoria?> GetCategoriaById(int id)
         {
             return await _categoriaRepository.GetByIdNoTrackingAsync(id);
         }
 
-        public async Task<List<Categoria>> GetCategoriasAsync()
+        public async Task<List<Categoria>> GetCategorias()
         {
             return await _categoriaRepository.GetAllAsync();
         }
@@ -92,18 +92,18 @@ namespace UyCommerce.Application.Services
             await _categoriaRepository.UpdateAsync(categoria);
         }
 
-        public async Task<List<Atributo>?> GetCategoriaAtributosAsync(int id)
+        public async Task<List<Atributo>?> GetCategoriaAtributos(int id)
         {
             var categoria = await _categoriaRepository.GetByIdAsync(id) ?? throw new NotFoundException(nameof(Categoria), id);
             return await _atributoRepository.GetAtributosByCategoriaAsync(categoria);
         }
 
-        public async Task<List<Categoria>> GetCategoriasCompleteAsync()
+        public async Task<List<Categoria>> GetCategoriasComplete()
         {
             return await _categoriaRepository.GetCategoriasCompleteAsync();
         }
 
-        public async Task<List<Categoria>> GetCategoriasInicioAsync()
+        public async Task<List<Categoria>> GetCategoriasInicio()
         {
             return await _categoriaRepository.GetCategoriasInicioAsync();
         }

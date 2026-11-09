@@ -12,10 +12,7 @@ namespace UyCommerce.Application.Services
     public class UsuarioService : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IProductoRepository _productoRepository;
         private readonly ISkuRepository _skuRepository;
-        private readonly IReviewRepository _reviewRepository;
-        private readonly IOrdenRepository _ordenRepository;
 
         public UsuarioService(IUsuarioRepository usuarioRepository
             , IProductoRepository productoRepository
@@ -24,18 +21,15 @@ namespace UyCommerce.Application.Services
             , IOrdenRepository ordenRepository)
         {
             _usuarioRepository = usuarioRepository;
-            this._productoRepository = productoRepository;
             this._skuRepository = skuRepository;
-            this._reviewRepository = reviewRepository;
-            this._ordenRepository = ordenRepository;
         }
 
-        public async Task<List<Usuario>> GetUsuariosClientesAsync()
+        public async Task<List<Usuario>> GetUsuariosClientes()
         {
             return await _usuarioRepository.GetUsuariosClientesAsync();
         }
 
-        public async Task<Usuario> GetUsuarioFavoritosByIdAsync(int id)
+        public async Task<Usuario> GetUsuarioFavoritosById(int id)
         {
             var usuario = await _usuarioRepository.GetUsuarioAndFavoritos(id);
             if (usuario is null)
@@ -85,56 +79,6 @@ namespace UyCommerce.Application.Services
             if (!usuario.Favoritos.Remove(sku)) { usuario.Favoritos.Add(sku); }
             await _usuarioRepository.UpdateAsync(usuario);
             return (usuario.Favoritos.Contains(sku) ? "Se agrego a favoritos" : "Se elimino de favoritos");
-        }
-
-        public async Task<GetReviewsDto> GetReviewsAndProductos(int id)
-        {
-            GetReviewsDto result = new()
-            {
-                Reviews = await _reviewRepository.GetReviewsByUsuarioId(id)
-            };
-
-            var productosReviews = result.Reviews.Count > 0 ? result.Reviews.Select(r => r.Producto).ToList() : [];
-            var productosOrdenes = await _ordenRepository.GetProductosFromOrdenesByUsuarioId(id);
-            foreach (var producto in productosOrdenes)
-            {
-                if (!productosReviews.Exists(pr => pr.Id == producto.Id))
-                    result.Productos.Add(producto);
-            }
-
-            return result;
-        }
-
-        public async Task CreateReview(ReviewDTO reviewDto, int userId)
-        {
-            var usuario = await _usuarioRepository.GetByIdAsync(userId)
-                ?? throw new NotFoundException(nameof(Usuario), userId);
-            var producto = await _productoRepository.GetByIdAsync(reviewDto.ProductoId)
-                ?? throw new NotFoundException(nameof(Producto), reviewDto.ProductoId);
-            Review review = new()
-            {
-                Puntuacion = reviewDto.Valoracion,
-                Texto = reviewDto.Comentario,
-                Producto = producto,
-                ProductoId = reviewDto.ProductoId,
-                Usuario = usuario,
-                UsuarioId = usuario.Id,
-            };
-
-            usuario.Reviews.Add(review);
-            await _usuarioRepository.UpdateAsync(usuario);
-        }
-
-        public async Task UpdateReview(UpdateReviewDTO updatedReview, int userId)
-        {
-            var reviewToUpdate = await _reviewRepository.GetByIdAsync(updatedReview.ReviewId)
-                ?? throw new NotFoundException(nameof(Review), updatedReview.ReviewId);
-            if (reviewToUpdate.UsuarioId != userId)
-                throw new Exception($"Review no le pertence a usuario {userId}");
-
-            reviewToUpdate.Texto = updatedReview.Comentario;
-            reviewToUpdate.Puntuacion = updatedReview.Valoracion;
-            await _reviewRepository.UpdateAsync(reviewToUpdate);
         }
     }
 }

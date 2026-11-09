@@ -23,7 +23,7 @@ namespace UYCommerce.Controllers
         [Route("admin/categorias")]
         public async Task<IActionResult> GetCategorias()
         {
-            var categorias = await _categoriaService.GetCategoriasCompleteAsync();
+            var categorias = await _categoriaService.GetCategoriasComplete();
             return View("../Admin/GetCategorias", categorias);
         }
 
@@ -31,7 +31,7 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetCategoriasApi()
         {
-            var categorias = await _categoriaService.GetCategoriasAsync();
+            var categorias = await _categoriaService.GetCategorias();
             return Ok(categorias.Select(x => new { x.Id, x.Nombre }).ToList());
         }
 
@@ -43,7 +43,7 @@ namespace UYCommerce.Controllers
             {
                 if (int.TryParse(categoriaId, out int id))
                 {
-                    var atributos = await _categoriaService.GetCategoriaAtributosAsync(id);
+                    var atributos = await _categoriaService.GetCategoriaAtributos(id);
                     return Ok(atributos?.Select(a => new { a.Id, a.Nombre }).ToList());
                 }
             }
@@ -88,7 +88,7 @@ namespace UYCommerce.Controllers
                     imgStream = categoria.Imagen.OpenReadStream();
                 }
 
-                await _categoriaService.AddCategoriaAsync(newCategoria, imgStream);
+                await _categoriaService.AddCategoria(newCategoria, imgStream);
                 return Redirect("/admin/categorias");
             }
             catch (Exception e)
@@ -101,7 +101,7 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<Categoria?> GetCategoriaById(int categoriaId)
         {
-            var categoria = await _categoriaService.GetCategoriaByIdAsync(categoriaId);
+            var categoria = await _categoriaService.GetCategoriaById(categoriaId);
             return categoria;
         }
 
