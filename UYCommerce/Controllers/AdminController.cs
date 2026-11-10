@@ -50,52 +50,16 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public async Task<IActionResult> Dashboard(DateTime? fchDesde, DateTime? fchHasta)
         {
-            fchDesde ??= DateTime.Now.AddYears(-1);
-            fchHasta ??= DateTime.Now;
-            List<PuntoGrafica> puntos = [];
-            List<PuntoGrafica> puntosGanacias = [];
-            List<ProductoOrden> productos = [];
-            var ordenes = await _ordenService.GetOrdenesByDate(fchDesde, fchHasta);
-
-            if (ordenes != null && ordenes.Count > 0)
+            try
             {
-                productos = [.. ordenes.Where(o => o.Productos != null).SelectMany(o => o.Productos)];
-
-                int i = 0;
-                DateTime fecha = fchDesde.Value;
-                while (fecha < fchHasta.Value)
-                {
-                    fecha = fchDesde.Value.AddMonths(i);
-
-                    puntos.Add(new PuntoGrafica
-                    {
-                        x = DateTimeFormatInfo.CurrentInfo.GetMonthName(fecha.Month) + " " + fecha.Year,
-                        y = ordenes.Where(o => o.FechaDeCompra.Month == fecha.Month
-                        && o.FechaDeCompra.Year == fecha.Year)
-                        .Where(o => o.Productos != null).SelectMany(o => o.Productos).Count()
-                    });
-
-                    puntosGanacias.Add(new PuntoGrafica
-                    {
-                        x = DateTimeFormatInfo.CurrentInfo.GetMonthName(fecha.Month) + " " + fecha.Year,
-                        y = (double)ordenes.Where(o => o.FechaDeCompra.Month == fecha.Month
-                        && o.FechaDeCompra.Year == fecha.Year).Sum(o => o.Total)!
-                    });
-
-                    i += 1;
-                }
+                fchDesde ??= DateTime.Now.AddYears(-1);
+                fchHasta ??= DateTime.Now;
+                return View(await _ordenService.GetDashboard(fchDesde, fchHasta));
             }
-            DashboardVM result = new()
+            catch (Exception)
             {
-                FechaDesde = (DateTime)fchDesde,
-                FechaHasta = (DateTime)fchHasta,
-                Productos = productos,
-                PuntosVentas = puntos,
-                PuntosGanacias = puntosGanacias,
-                Ordenes = ordenes ?? [],
-            };
-
-            return View(result);
+            }
+            return View();
         }
 
         [HttpGet("admin/preguntas/{option?}")]
@@ -139,7 +103,7 @@ namespace UYCommerce.Controllers
         public async Task<IActionResult> GetOrdenes()
         {
             var ordenes = await _ordenService.GetOrdenesUsuarios();
-            List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario  }).ToList();
+            List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario }).ToList();
             return View(result);
         }
 

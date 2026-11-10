@@ -52,14 +52,14 @@ namespace UyCommerce.Application.Services
             return usuario;
         }
 
-        public async Task<List<FavoritosDto>> GetFavoritosByUsuarioId(int id)
+        public async Task<List<SkuFavoritoDto>> GetFavoritosByUsuarioId(int id)
         {
             var usuario = await GetUsuarioById(id);
-            List<FavoritosDto> favoritos = [.. usuario.Favoritos.Select(f => new FavoritosDto
+            List<SkuFavoritoDto> favoritos = [.. usuario.Favoritos.Select(f => new SkuFavoritoDto
             {
                 Id = f.Id,
                 Key = f.Key,
-                Imagenes = f.Imagenes ?? [],
+                Imagenes = f.Imagenes.Select(i => i.ImagenNombre).ToList() ?? [],
                 Nombre = f.Nombre,
                 Precio = f.Precio,
                 PrecioAnterior = f.PrecioAnterior,

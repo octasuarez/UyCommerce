@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
-using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.Categorias;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 using UYCommerce.ViewModels;
@@ -71,7 +71,7 @@ namespace UYCommerce.Controllers
             }
             try
             {
-                CategoriaDTO newCategoria = new CategoriaDTO
+                CreateCategoriaRequest newCategoria = new CreateCategoriaRequest
                 {
                     Nombre = categoria.Nombre,
                     Atributos = categoria.Atributos,

@@ -1,6 +1,6 @@
-﻿namespace UyCommerce.Application.DTOs
+﻿namespace UyCommerce.Application.DTOs.Categorias
 {
-	public class CategoriaDTO
+	public class CreateCategoriaRequest
 	{
         public string Nombre { get; set; }
         public bool MostrarEnInicio { get; set; } = false;

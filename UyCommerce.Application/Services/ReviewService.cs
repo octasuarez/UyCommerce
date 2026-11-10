@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
-using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.Reviews;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -43,9 +43,9 @@ namespace UyCommerce.Application.Services
         }
 
 
-        public async Task<GetReviewsDto> GetReviewsAndProductos(int id)
+        public async Task<GetReviewsResponse> GetReviewsAndProductos(int id)
         {
-            GetReviewsDto result = new()
+            GetReviewsResponse result = new()
             {
                 Reviews = await _reviewRepository.GetReviewsByUsuarioId(id)
             };
@@ -61,7 +61,7 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task CreateReview(ReviewDTO reviewDto, int userId)
+        public async Task CreateReview(CreateReviewRequest reviewDto, int userId)
         {
             var usuario = await _usuarioRepository.GetByIdAsync(userId)
                 ?? throw new NotFoundException(nameof(Usuario), userId);
@@ -81,7 +81,7 @@ namespace UyCommerce.Application.Services
             await _usuarioRepository.UpdateAsync(usuario);
         }
 
-        public async Task UpdateReview(UpdateReviewDTO updatedReview, int userId)
+        public async Task UpdateReview(UpdateReviewRequest updatedReview, int userId)
         {
             var reviewToUpdate = await _reviewRepository.GetByIdAsync(updatedReview.ReviewId)
                 ?? throw new NotFoundException(nameof(Review), updatedReview.ReviewId);

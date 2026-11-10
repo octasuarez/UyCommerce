@@ -7,8 +7,13 @@
 <body>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div class="container-fluid" style="padding-right:10%;">
-        <h5 class="my-5 text-center">Dashboard</h5>
-
+        @if(Model == null)
+        {
+            <h3>Sorry, we are having problems loading the dashboad, try again later...</h3>    
+        }
+        else
+        {
+            <h5 class="my-5 text-center">Dashboard</h5>
         <div class="mx-auto col-12" style="">
             <div class="">
                 <form class="d-flex align-items-center justify-content-center" method="get" asp-action="Dashboard">
@@ -20,9 +25,7 @@
                     <h6 class="mb-0 me-1">@Localizer["To:"]</h6>
                     <input class="card p-2" type="date" name="fchHasta" value="@DateTime.Today.ToString("yyyy-MM-dd")"
                     max="@DateTime.Today.ToString("yyyy-MM-dd")" />
-
                 </form>
-
             </div>
 
             <div class="d-flex">
@@ -99,7 +102,7 @@
                 </table>
 
             </div>
-
+            }
         </div>
         @section Scripts {
             <script type="text/javascript" src="~/js/pages/admin/dashboard.js"></script>

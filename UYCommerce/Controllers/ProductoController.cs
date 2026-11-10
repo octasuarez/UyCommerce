@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
-using UyCommerce.Application.DTOs;
 using UyCommerce.Domain.Exceptions;
 using UyCommerce.Application.Common.Enums;
 using UYCommerce.ViewModels;
+using UyCommerce.Application.DTOs.Productos;
+using UyCommerce.Application.DTOs.Images;
 
 namespace UYCommerce.Controllers
 {
@@ -44,7 +45,7 @@ namespace UYCommerce.Controllers
             {
                 try
                 {
-                    AddProductoDto newProducto = new AddProductoDto()
+                    AddProductoRequest newProducto = new AddProductoRequest()
                     {
                         Nombre = producto.Nombre,
                         Descripcion = producto.Descripcion,
@@ -56,12 +57,12 @@ namespace UYCommerce.Controllers
                     if (producto.Imagenes.Any())
                     {
                         var imagenes = producto.Imagenes
-                            .Select(i => new CreateImageDto() { ImageName = i.Name, Stream = i.OpenReadStream() })
+                            .Select(i => new CreateImageRequest() { ImageName = i.Name, Stream = i.OpenReadStream() })
                             .ToList();
                         newProducto.Imagenes = imagenes;
                     }
 
-                    await _productoService.AddProductoAsync(newProducto);
+                    await _productoService.AddProducto(newProducto);
                 }
                 catch (ArgumentOutOfRangeException e)
                 {
@@ -112,15 +113,15 @@ namespace UYCommerce.Controllers
             {
                 try
                 {
-                    List<CreateImageDto> imagenes = [];
+                    List<CreateImageRequest> imagenes = [];
                     skuModel.AtributoValores ??= [];
 
                     if (skuModel.Imagenes != null)
                     {
-                        imagenes = [.. skuModel.Imagenes.Select(i => new CreateImageDto() { ImageName = i.Name, Stream = i.OpenReadStream() })];
+                        imagenes = [.. skuModel.Imagenes.Select(i => new CreateImageRequest() { ImageName = i.Name, Stream = i.OpenReadStream() })];
                     }
 
-                    AddSkuAProductoDto skuDto = new()
+                    AddSkuAProductoRequest skuDto = new()
                     {
                         AtributoValores = (List<int>)skuModel.AtributoValores,
                         Imagenes = imagenes,
@@ -149,7 +150,7 @@ namespace UYCommerce.Controllers
         [Route("/search")]
         public async Task<IActionResult> BuscarProductosPorQuery(string query, int orden = 1, int pag = 1, int qty = 3)
         {
-            GetProductosDto result = new();
+            GetProductosResponse result = new();
 
             if (pag < 1 || string.IsNullOrEmpty(query) || orden < 1 || orden > 3 || qty < 3)
             {

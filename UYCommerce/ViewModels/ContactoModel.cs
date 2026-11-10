@@ -2,7 +2,7 @@
 
 namespace UyCommerce.Application.DTOs
 {
-	public class ContactoDTO
+	public class ContactoModel
 	{
 		[Required(ErrorMessage = "Escriba un asunto")]
 		public string? Asunto { get; set; }

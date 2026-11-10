@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UyCommerce.Application.DTOs.Ordenes;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IOrdenService
     {
-        Task<List<Orden>> GetOrdenesByDate(DateTime? startDate, DateTime? endDate);
+        Task<GetDashboardResponse> GetDashboard(DateTime? startDate, DateTime? endDate);
         Task<List<Orden>> GetOrdenes();
         Task DeleteOrden();
         Task<List<Orden>> GetOrdenesUsuarios();

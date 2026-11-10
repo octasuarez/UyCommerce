@@ -1,7 +1,7 @@
 ﻿using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
-using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.Categorias;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -20,7 +20,7 @@ namespace UyCommerce.Application.Services
             this._fileService = fileService;
         }
 
-        public async Task AddCategoria(CategoriaDTO categoriaDto, Stream? imgStream)
+        public async Task AddCategoria(CreateCategoriaRequest categoriaDto, Stream? imgStream)
         {
             Categoria newCategoria = new();
 

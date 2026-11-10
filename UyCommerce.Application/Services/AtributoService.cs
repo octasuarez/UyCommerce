@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
-using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.Atributos;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -23,7 +23,7 @@ namespace UyCommerce.Application.Services
             await _atributoRepository.CreateAsync(newAtributo);
         }
 
-        public async Task AddAtributoValor(AgregarValorDTO atributoDto)
+        public async Task AddAtributoValor(AddAtributoValorRequest atributoDto)
         {
             var atributoDb = await _atributoRepository.GetAtributoConValoresByIdAsync(atributoDto.atributoId)
                 ?? throw new NotFoundException(nameof(Atributo),atributoDto.atributoId);

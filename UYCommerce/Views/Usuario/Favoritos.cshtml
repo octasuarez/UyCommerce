@@ -1,4 +1,4 @@
-﻿@model ICollection<FavoritosDto>
+﻿@model List<SkuFavoritoDto>
 
 <body class="bg-body-tertiary">
 
@@ -18,7 +18,7 @@
                         <li class="border mx-auto p-2">
                             <div class="d-lg-flex ">
                                 <div class="d-inline ms-5">
-                                    <img src="~/Imagenes/Productos/@s.Imagenes!.First().ImagenNombre"
+                                    <img src="~/Imagenes/Productos/@s.Imagenes!.First()"
                                          style="height:200px;width:200px;" class="object-fit-contain " />
                                 </div>
 
@@ -68,6 +68,6 @@
 
         </section>
         @section Scripts {
-            <script src="~/js/favoritos.js"></script>
+            <script src="~/js/pages/usuario/favoritos.js"></script>
         }
     </body>

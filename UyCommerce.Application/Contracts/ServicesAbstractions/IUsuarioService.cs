@@ -12,7 +12,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<Usuario> GetUsuarioFavoritosById(int id);
         Task<List<Usuario>> GetUsuariosClientes();
         Task<Usuario> GetUsuarioById(int id);
-        Task<List<FavoritosDto>> GetFavoritosByUsuarioId(int id);
+        Task<List<SkuFavoritoDto>> GetFavoritosByUsuarioId(int id);
         Task<string> AddToFavoritos(int skuId, int userId);
         
     }

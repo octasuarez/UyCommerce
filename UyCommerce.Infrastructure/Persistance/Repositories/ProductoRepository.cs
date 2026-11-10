@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Common.Enums;
 using UyCommerce.Application.Contracts.Persistance;
-using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Infrastructure.Persistance.Repositories
@@ -41,9 +41,9 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<GetProductosDto> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
+        public async Task<GetProductosResponse> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
         {
-            GetProductosDto result = new();
+            GetProductosResponse result = new();
             var items = GetQueryProductosComplete()
                 .AsNoTracking()
                 .Where(p => p.Nombre.ToLower().StartsWith(query.ToLower()))

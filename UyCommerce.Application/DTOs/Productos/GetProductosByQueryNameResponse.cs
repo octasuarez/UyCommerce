@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UyCommerce.Application.DTOs
+namespace UyCommerce.Application.DTOs.Productos
 {
-    public class GetProductosByQueryNameDto
+    public class GetProductosByQueryNameResponse
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

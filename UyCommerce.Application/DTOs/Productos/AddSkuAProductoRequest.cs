@@ -1,14 +1,15 @@
-﻿using UyCommerce.Domain.Entities;
+﻿using UyCommerce.Application.DTOs.Images;
+using UyCommerce.Domain.Entities;
 
-namespace UyCommerce.Application.DTOs
+namespace UyCommerce.Application.DTOs.Productos
 {
-    public class AddSkuAProductoDto
+    public class AddSkuAProductoRequest
     {
             public int ProductoId { get; set; }
             public string Nombre { get; set; } = string.Empty;
             public double Precio { get; set; }
             public int Stock { get; set; }
-            public List<CreateImageDto> Imagenes { get; set; } = [];
+            public List<CreateImageRequest> Imagenes { get; set; } = [];
             public List<int> AtributoValores { get; set; } = [];
             public List<Atributo> Atributos { get; set; } = [];
             public Producto Producto { get; set; } = new();

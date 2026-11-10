@@ -6,6 +6,8 @@ using UyCommerce.Domain.Entities;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Exceptions;
+using UyCommerce.Application.DTOs.Reviews;
+using UyCommerce.Application.DTOs.Preguntas;
 
 namespace UYCommerce.Controllers
 {
@@ -16,16 +18,19 @@ namespace UYCommerce.Controllers
         private readonly IPreguntaService _preguntaService;
         private readonly IUsuarioService _usuarioService;
         private readonly IOrdenService _ordenService;
+        private readonly IReviewService _reviewService;
 
         public UsuarioController(IEmailService emailService
             , IPreguntaService preguntaService
             , IUsuarioService usuarioService
-            , IOrdenService ordenService)
+            , IOrdenService ordenService
+            , IReviewService reviewService)
         {
             this._emailService = emailService;
             this._preguntaService = preguntaService;
             this._usuarioService = usuarioService;
             this._ordenService = ordenService;
+            this._reviewService = reviewService;
         }
 
         #region ordenes
@@ -107,7 +112,7 @@ namespace UYCommerce.Controllers
             try
             {
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                var result = await _usuarioService.GetReviewsAndProductos(userId);
+                var result = await _reviewService.GetReviewsAndProductos(userId);
                 return View("Reviews", result);
             }
             catch (Exception e)
@@ -117,14 +122,14 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AgregarReview([FromBody] ReviewDTO reviewDTO)
+        public async Task<IActionResult> AgregarReview([FromBody] CreateReviewRequest reviewDTO)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    await _usuarioService.CreateReview(reviewDTO, userId);
+                    await _reviewService.CreateReview(reviewDTO, userId);
                     return Ok("Se agrego la review");
                 }
                 catch (NotFoundException)
@@ -141,14 +146,14 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateReview([FromBody] UpdateReviewDTO reviewDTO)
+        public async Task<IActionResult> UpdateReview([FromBody] UpdateReviewRequest reviewDTO)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    await _usuarioService.UpdateReview(reviewDTO, userId);
+                    await _reviewService.UpdateReview(reviewDTO, userId);
                     return Ok("Se actualizo la review correctamente");
                 }
                 catch (Exception e)
@@ -163,7 +168,7 @@ namespace UYCommerce.Controllers
         #region preguntas
 
         [HttpPost]
-        public async Task<IActionResult> AgregarPregunta(CreatePreguntaDTO pregunta)
+        public async Task<IActionResult> AgregarPregunta(CreatePreguntaRequest pregunta)
         {
             try
             {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Domain.Entities;
 
-namespace UyCommerce.Application.DTOs
+namespace UyCommerce.Application.DTOs.Productos
 {
-    public class GetProductosDto
+    public class GetProductosResponse
     {
         public ICollection<Sku>? Skus { get; set; }
         public ICollection<Categoria>? Categorias { get; set; }

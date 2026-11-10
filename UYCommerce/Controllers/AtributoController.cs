@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UyCommerce.Application.DTOs;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Exceptions;
+using UyCommerce.Application.DTOs.Atributos;
 
 namespace UYCommerce.Controllers
 {
@@ -44,7 +44,7 @@ namespace UYCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AgregarValor([FromBody] AgregarValorDTO atributoValor)
+        public async Task<IActionResult> AgregarValor([FromBody] AddAtributoValorRequest atributoValor)
         {
 
             if (string.IsNullOrEmpty(atributoValor.Valor) || atributoValor.atributoId < 0)

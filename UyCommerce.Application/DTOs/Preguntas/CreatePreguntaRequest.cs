@@ -1,7 +1,6 @@
-﻿
-namespace UyCommerce.Application.DTOs
+﻿namespace UyCommerce.Application.DTOs.Preguntas
 {
-	public class CreatePreguntaDTO
+	public class CreatePreguntaRequest
 	{
         public int ProductoId { get; set; }
         public required string Contenido { get; set; }

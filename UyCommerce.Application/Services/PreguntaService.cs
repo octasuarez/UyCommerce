@@ -4,6 +4,7 @@ using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.Preguntas;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -56,7 +57,7 @@ namespace UyCommerce.Application.Services
             };
             await _preguntaRepository.UpdateAsync(pregunta);
         }
-        public async Task CreatePregunta(CreatePreguntaDTO preguntaDto, int userId)
+        public async Task CreatePregunta(CreatePreguntaRequest preguntaDto, int userId)
         {
             var usuario = await _usuarioRepository.GetByIdAsync(userId)
                 ?? throw new NotFoundException(nameof(Usuario), userId);

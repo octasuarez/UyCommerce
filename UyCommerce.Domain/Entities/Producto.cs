@@ -10,7 +10,7 @@ namespace UyCommerce.Domain.Entities
         public string? NombreClave { get; set; }
         public string? Descripcion { get; set; }
         public int VecesComprado { get; set; } = 0;
-        public virtual Categoria? Categoria { get; set; }
+        public virtual Categoria Categoria { get; set; }
         public virtual Marca? Marca { get; set; }
         public virtual ICollection<Pregunta> Preguntas { get; set; } = [];
         public ICollection<ProductoImagen>? Imagenes { get; set; }

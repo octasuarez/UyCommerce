@@ -5,7 +5,7 @@ using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.DTOs
 {
-    public class FavoritosDto
+    public class SkuFavoritoDto
     {
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
@@ -14,7 +14,7 @@ namespace UyCommerce.Application.DTOs
         public double Precio { get; set; }
         public double PrecioAnterior { get; set; }
         public ICollection<AtributoValor> AtributosValores { get; set; } = [];
-        public ICollection<SkuImagen> Imagenes { get; set; } = [];
+        public List<string> Imagenes { get; set; } = [];
         public bool IsInCart { get; set; } = false;
     }
 }

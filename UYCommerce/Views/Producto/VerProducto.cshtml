@@ -1,4 +1,5 @@
-﻿@model GetSkuByKeyDto
+﻿@using UyCommerce.Application.DTOs.Productos;
+@model GetSkuByKeyResponse
 
 <body>
     <div class="container-lg-fluid p-3 col-lg-10 mx-lg-auto">
@@ -231,8 +232,8 @@
 
             <h3 class="text-center">@Localizer["Questions"]</h3>
 
-            <h5 id="pcount" data-count=@Model.Sku?.Producto?.Preguntas!.Count>
-                @Model.Sku?.Producto?.Preguntas?.Count @Localizer["Questions"]
+            <h5 id="pcount" data-count=@Model.Preguntas.Count>
+                @Model.Preguntas.Count @Localizer["Questions"]
             </h5>
 
             <div class="row mb-4 mt-3">
@@ -256,9 +257,9 @@
 
             <div class="my-5" id="Preguntas">
 
-                @if (Model.Sku?.Producto?.Preguntas != null && Model.Sku.Producto.Preguntas.Any())
+                @if (Model.Preguntas != null && Model.Preguntas.Any())
                 {
-                    foreach (var p in Model.Sku.Producto.Preguntas)
+                    foreach (var p in Model.Preguntas)
                     {
                         <h5>@p.Usuario.Nombre</h5>
                         <p>@p.Contenido</p>

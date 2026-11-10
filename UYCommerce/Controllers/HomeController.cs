@@ -80,7 +80,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Contacto([FromBody] ContactoDTO contacto)
+    public IActionResult Contacto([FromBody] ContactoModel contacto)
     {
         if (!ModelState.IsValid)
         {
