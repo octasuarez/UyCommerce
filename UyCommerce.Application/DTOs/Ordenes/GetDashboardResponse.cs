@@ -17,5 +17,9 @@ namespace UyCommerce.Application.DTOs.Ordenes
         public double Total { get { return Productos.Sum(p => p.Precio * p.Cantidad); } }
     }
 
-    public record PuntoGrafica{public string x; public double y; };
+    public class PuntoGrafica
+    {
+        public string x { get; set; }
+        public double y { get; set; }
+    };
 }

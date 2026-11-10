@@ -1,8 +1,10 @@
-﻿@using UyCommerce.Application.Common.Enums
+﻿@using UyCommerce.Application.Common.Enums;
+@using UyCommerce.Application.DTOs.Ordenes;
+
 @{
     Layout = "AdminLayout";
 }
-@model DashboardVM
+@model GetDashboardResponse
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -92,7 +94,7 @@
                             <tr>
                                 <td><img src="~/Imagenes/Productos/@p.Sku.Imagenes.First().ImagenNombre" style="height:50px;" />
                                 </td>
-                                <td><a class="link-dark" target="_blank" href="/@p.SkuId">@p.Nombre</a></td>
+                                <td><a class="link-dark" target="_blank" href="/@p.Sku.Key">@p.Nombre</a></td>
                                 <td>@p.Sku.Key</td>
                                 <td>$@p.Precio</td>
                                 <td>@p.Cantidad</td>
