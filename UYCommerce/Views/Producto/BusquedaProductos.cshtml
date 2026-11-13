@@ -33,6 +33,7 @@
                                href="/c/@Model.Categoria.CategoriaPadre.Nombre">@Localizer[Model.Categoria.CategoriaPadre.Nombre!]</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">@Localizer[Model.Categoria!.Nombre!]</li>
+                        <li class="breadcrumb-item active" aria-current="page">@Localizer[Model.Categoria!.Nombre!]</li>
                     }
                     else if (Model.Categoria != null)
                     {
@@ -156,7 +157,7 @@
                             {
                                 <div id="@s.Id" class="card product-card m-3" style="height:600px;width: 400px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        @if (Model.Favoritos is not null && Model.Favoritos.Contains(s))
+                                        @if (s.EsFavorito)
                                         {
                                             <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
@@ -167,7 +168,7 @@
                                     </a>
                                     <a href="/@s.Key" class="text-decoration-none text-reset">
                                         <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;"
-                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0)" alt="Producto">
                                     </a>
                                     <div class="card-body">
                                         <ul class="text-center p-0">
@@ -175,7 +176,7 @@
                                             @for (int i = 0; i < 5; i++)
                                             {
                                                 <li class="d-inline text-warning p-0 me-1">
-                                                    <i class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star")"></i>
+                                                    <i class="bi @(i < s.Puntuacion ? "bi-star-fill" : "bi-star")"></i>
                                                 </li>
                                             }
                                         </ul>

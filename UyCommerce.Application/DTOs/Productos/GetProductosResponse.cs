@@ -7,16 +7,37 @@ namespace UyCommerce.Application.DTOs.Productos
 {
     public class GetProductosResponse
     {
-        public ICollection<Sku>? Skus { get; set; }
-        public ICollection<Categoria>? Categorias { get; set; }
-        public ICollection<Sku>? Favoritos { get; set; }
-        public Categoria? Categoria { get; set; }
-        public ICollection<Categoria>? SubCategorias { get; set; }
-        public ICollection<Producto>? Productos { get; set; }
+        public List<GetProductosSkuDto>? Skus { get; set; }
+        public List<GetProductosCategoriaDto>? Categorias { get; set; }
+        public GetProductosCategoriaSelectedDto? Categoria { get; set; }
+        public List<GetProductosCategoriaDto>? SubCategorias { get; set; }
         public List<KeyValuePair<string, string>>? Atributos { get; set; }
         public IEnumerable<IGrouping<Atributo, AtributoValor>>? Filtros { get; set; }
         public decimal NumberOfPages { get; set; }
         public int Page { get; set; }
         public int TotalItems { get; set; }
+    }
+
+    public class GetProductosSkuDto
+    {
+        public int Id { get; set; }
+        public string Key { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+        public List<string> Imagenes { get; set; } = [];
+        public double Precio { get; set; }
+        public double PrecioAnterior { get; set; }
+        public int Puntuacion { get; set; }
+        public bool EsFavorito { get; set; } = false;
+    }
+
+    public class GetProductosCategoriaDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+    }
+
+    public class GetProductosCategoriaSelectedDto : GetProductosCategoriaDto
+    {
+        public GetProductosCategoriaDto? CategoriaPadre { get; set; }
     }
 }

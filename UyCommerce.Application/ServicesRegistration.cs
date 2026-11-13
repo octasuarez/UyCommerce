@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Mapster;
+using MapsterMapper;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.Services;
@@ -24,6 +27,12 @@ namespace UyCommerce.Application
             services.AddScoped<IMarcaService, MarcaService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPagosService, PagosService>();
+
+            var config = TypeAdapterConfig.GlobalSettings;
+            config.Scan(Assembly.GetExecutingAssembly());
+
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
             return services;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using MapsterMapper;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
+using UyCommerce.Application.DTOs.ExternalServices.Paypal;
 using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
@@ -26,6 +28,7 @@ namespace UyCommerce.Application.Services
         private readonly ISkuRepository _skuRepository;
         private readonly IOrdenRepository _ordenRepository;
         private readonly ICarritoService _carritoService;
+        private readonly IMapper _mapper;
 
         public ProductoService(IProductoRepository productoRepository
             , ICategoriaRepository categoriaRepository
@@ -35,7 +38,8 @@ namespace UyCommerce.Application.Services
             , IUsuarioRepository usuarioRepository
             , ISkuRepository skuRepository
             , IOrdenRepository ordenRepository
-            , ICarritoService carritoService)
+            , ICarritoService carritoService
+            , IMapper mapper)
         {
             _productoRepository = productoRepository;
             this._categoriaRepository = categoriaRepository;
@@ -46,6 +50,7 @@ namespace UyCommerce.Application.Services
             this._skuRepository = skuRepository;
             this._ordenRepository = ordenRepository;
             this._carritoService = carritoService;
+            this._mapper = mapper;
             this._imgFilesPath = "Imagenes/Productos";
         }
 
@@ -111,14 +116,19 @@ namespace UyCommerce.Application.Services
 
         public async Task<GetProductosResponse> GetProductosByQuery(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId)
         {
-            var result = await _productoRepository.GetProductosByQueryAsync(query, orderBy, pag-1, qty);
-            result.Categorias = await _categoriaRepository.GetCategoriasPadreAsync();
+            GetProductosResponse result = new();
+            var skus = await _productoRepository.GetProductosByQueryAsync(query, orderBy, pag - 1, qty);
+            result.Skus = _mapper.Map<List<GetProductosSkuDto>>(skus);
+            result.TotalItems = skus.Count;
+            var categorias = await _categoriaRepository.GetCategoriasPadreAsync();
+            result.Categorias = _mapper.Map<List<GetProductosCategoriaDto>>(categorias);
             result.NumberOfPages = (result.TotalItems + qty - 1) / qty;
             result.Page = pag;
             if (userId != null)
             {
                 var user = await _usuarioRepository.GetUsuarioAndFavoritos((int)userId);
-                result.Favoritos = user != null && user.Favoritos != null ? (List<Sku>)user.Favoritos : [];
+                var favoritos = user != null && user.Favoritos != null ? (List<Sku>)user.Favoritos : [];
+                result.Skus.ForEach(s => s.EsFavorito = favoritos.Exists(f => f.Id == s.Id));
             }
             return result;
         }
@@ -148,7 +158,7 @@ namespace UyCommerce.Application.Services
                 ?? throw new NotFoundException(nameof(Producto), id);
 
             var ordenesWithProducto = await _ordenRepository.GetOrdenesByProductoIdAsync(id);
-            if (ordenesWithProducto.Count > 0) 
+            if (ordenesWithProducto.Count > 0)
                 throw new ArgumentOutOfRangeException("No se puede eliminar el producto porque existen ordenes con el");
 
             var productosCarrito = await _carritoService.GetProductosCarritoByProductoId(id);
@@ -165,7 +175,7 @@ namespace UyCommerce.Application.Services
             var categoriasInicio = await _categoriaRepository.GetCategoriasInicioAsync();
             var skus = await _skuRepository.GetSkusByCategoriaOrCategoriaPadreIdAsync(categoriaDb.Id);
             List<Sku> productosFavUsuario = [];
-            if(usuarioId != null)
+            if (usuarioId != null)
             {
                 var user = await _usuarioRepository.GetUsuarioAndFavoritos((int)usuarioId)
                     ?? throw new NotFoundException(nameof(Usuario), usuarioId);
@@ -181,7 +191,7 @@ namespace UyCommerce.Application.Services
                                                        .ToList();
             }
             var filtrosGrp = skus.SelectMany(s => s.AtributosValores!).DistinctBy(a => a.Id).GroupBy(s => s.Atributo)!;
-            if(atributosValores.Count == 0)
+            if (atributosValores.Count == 0)
             {
                 skus = [.. skus.DistinctBy(s => s.ProductoId)];
             }
@@ -204,17 +214,20 @@ namespace UyCommerce.Application.Services
                     break;
             }
 
+            result.Skus = _mapper.Map<List<GetProductosSkuDto>>(skus.Skip(numPag * qty).Take(qty));
+            if (productosFavUsuario.Count > 0)
+            {
+                result.Skus.ForEach(s => s.EsFavorito = productosFavUsuario.Exists(f => f.Id == s.Id));
+            }
             result.NumberOfPages = (skus.Count + qty - 1) / qty;
-            result.Skus = [.. skus.Skip(numPag * qty).Take(qty)];
-            result.Categoria = categoriaDb;
-            result.Categorias = categoriasInicio;
-            result.Favoritos = productosFavUsuario;
+            result.Categoria = _mapper.Map<GetProductosCategoriaSelectedDto>(categoriaDb);
+            result.Categorias = _mapper.Map<List<GetProductosCategoriaDto>>(categoriasInicio);
             result.Filtros = filtrosGrp;
             result.Atributos = atributosValores;
             result.Page = numPag + 1;
-            result.SubCategorias = categoriaDb.SubCategorias?.Count > 0 ? categoriaDb.SubCategorias.OrderBy(c => c.Id).ToList() :
+            var subCategorias = categoriaDb.SubCategorias?.Count > 0 ? categoriaDb.SubCategorias.OrderBy(c => c.Id).ToList() :
                 categoriaDb.CategoriaPadre?.SubCategorias?.OrderBy(c => c.Id).ToList();
-            result.Categoria.CategoriaPadre?.SubCategorias?.OrderBy(c => c.Id).ToList();
+            result.SubCategorias = _mapper.Map<List<GetProductosCategoriaDto>>(subCategorias);
 
             return result;
         }
@@ -275,11 +288,11 @@ namespace UyCommerce.Application.Services
             };
 
             result.Sku = skuDto;
-            result.Reviews = [..sku.Producto.Reviews];
+            result.Reviews = [.. sku.Producto.Reviews];
             result.Categoria = sku.Producto.Categoria;
             result.ProductosRelacionados = await _skuRepository.GetSkusByCategoriaOrCategoriaPadreIdAsync(sku.Producto.Categoria!.Id);
             result.PuntuacionPromedio = reviews != null && reviews.Any() ? reviews.Average(r => r.Puntuacion) : 0;
-            result.Preguntas = [..preguntas];
+            result.Preguntas = [.. preguntas];
             result.Reviews = [.. reviews];
 
             if (usuarioId != null)

@@ -11,7 +11,5 @@ namespace UyCommerce.Application.DTOs.Productos
             public int Stock { get; set; }
             public List<CreateImageRequest> Imagenes { get; set; } = [];
             public List<int> AtributoValores { get; set; } = [];
-            public List<Atributo> Atributos { get; set; } = [];
-            public Producto Producto { get; set; } = new();
     }
 }

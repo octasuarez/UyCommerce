@@ -41,16 +41,13 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<GetProductosResponse> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
+        public async Task<List<Sku>> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty)
         {
-            GetProductosResponse result = new();
             var items = GetQueryProductosComplete()
                 .AsNoTracking()
                 .Where(p => p.Nombre.ToLower().StartsWith(query.ToLower()))
                 .SelectMany(p => p.Skus)
                 .Include(s => s.Producto).ThenInclude(p => p.Reviews);
-
-            result.TotalItems = items.Count();
 
             switch (orderBy)
             {
@@ -66,8 +63,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 default:
                     break;
             }
-            result.Skus = await items.Skip(pag * qty).Take(qty).ToListAsync();
-            return result;
+            return await items.Skip(pag * qty).Take(qty).ToListAsync();
         }
 
         public async Task<List<Producto>> GetProductosByQueryNameAsync(string query)

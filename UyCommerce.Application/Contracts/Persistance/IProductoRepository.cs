@@ -11,7 +11,7 @@ namespace UyCommerce.Application.Contracts.Persistance
         Task<Producto?> GetProductoCompleteByIdNoTrackingAsync(int id);
         Task<Producto?> GetProductoCompleteByIdAsync(int id);
         Task<Producto?> GetProductoByNombreAsync(string nombre);
-        Task<GetProductosResponse> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty);
+        Task<List<Sku>> GetProductosByQueryAsync(string query, ProductsOrderBy orderBy, int pag, int qty);
         Task<List<Producto>> GetProductosByQueryNameAsync(string query);
         Task UpdateStock(List<ProductoOrden> productos);
     }

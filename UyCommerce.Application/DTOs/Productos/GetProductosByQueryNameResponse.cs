@@ -7,8 +7,8 @@ namespace UyCommerce.Application.DTOs.Productos
     public class GetProductosByQueryNameResponse
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string NombreClave { get; set; }
-        public string ImagenNombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string NombreClave { get; set; } = string.Empty;
+        public string ImagenNombre { get; set; } = string.Empty;
     }
 }
