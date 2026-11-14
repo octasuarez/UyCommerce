@@ -15,18 +15,18 @@
                         <span class="visually-hidden">Home</span>
                     </a>
                 </li>
-                @if (Model.Categoria != null && Model.Categoria.CategoriaPadre != null)
+                @if (Model.Categoria != null && !string.IsNullOrEmpty(Model.Categoria.CategoriaPadreNombre))
                 {
                     <li class="breadcrumb-item" aria-current="page">
                         <a class="link-body-emphasis fw-semibold text-decoration-none"
-                           href="/c/@Model.Categoria.CategoriaPadre.Nombre">
-                            @Localizer[Model.Categoria.CategoriaPadre.Nombre!]
+                           href="/c/@Model.Categoria.CategoriaPadreNombre">
+                            @Localizer[Model.Categoria.CategoriaPadreNombre]
                         </a>
                     </li>
                     <li class="breadcrumb-item" aria-current="page">
                         <a class="link-body-emphasis fw-semibold text-decoration-none"
                            href="/c/@Model.Categoria.Nombre">
-                            @Localizer[Model.Categoria.Nombre!]
+                            @Localizer[Model.Categoria.Nombre]
                         </a>
                     </li>
                 }
@@ -48,14 +48,14 @@
 
                     <img id="imgmain" class="magniflier object-fit-contain d-flex mx-auto img-fluid"
                          style="height:600px;width:600px;"
-                         src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                         src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0)" />
 
                     <ul class="list-unstyled d-flex">
                         <li class="me-2">
                             <img onmouseover="cambiarImagen(this)"
                                  class="object-fit-contain active-img"
                                  style="height:100px;width:100px;"
-                                 src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0).ImagenNombre" />
+                                 src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(0)" />
                         </li>
                         @if (Model.Sku.Imagenes!.Count > 1)
                         {
@@ -65,7 +65,7 @@
                                     <img onmouseover="cambiarImagen(this)"
                                          class="object-fit-contain"
                                          style="height:100px;width:100px;"
-                                         src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i).ImagenNombre" />
+                                         src="~/Imagenes/Productos/@Model.Sku.Imagenes!.ElementAt(i)" />
                                 </li>
 
                             }
@@ -83,18 +83,18 @@
                  style="height:fit-content;position:relative;"
                  data-sku-key="@Model.Sku.Producto.NombreClave"
                  data-producto-id="@Model.Sku.Producto.Id">
-                <p class="text-secondary p-0 m-0">@Model.Sku.Producto?.VecesComprado @Localizer["Sold"]</p>
+                <p class="text-secondary p-0 m-0">@Model.Sku.Producto.VecesComprado @Localizer["Sold"]</p>
                 <h1 class="mb-2">@Model.Sku.Nombre</h1>
                 @if (Model.Sku.Producto?.Reviews is not null)
                 {
                     <ul class="p-0 mb-2">
                         <li class="d-inline">
-                            <p class="d-inline">@Model.Sku.Producto!.GetPuntuacionPromedio()</p>
+                            <p class="d-inline">@Model.Sku.Producto.Puntuacion</p>
                         </li>
                         @for (int i = 0; i < 5; i++)
                         {
                             <li class="d-inline text-warning p-0">
-                                <i class="bi bi-star-fill @(i < Model.Sku.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star")"></i>
+                                <i class="bi bi-star-fill @(i < Model.Sku.Producto.Puntuacion ? "bi-star-fill" : "bi-star")"></i>
                             </li>
                         }
                         <li class="d-inline">
@@ -232,8 +232,8 @@
 
             <h3 class="text-center">@Localizer["Questions"]</h3>
 
-            <h5 id="pcount" data-count=@Model.Preguntas.Count>
-                @Model.Preguntas.Count @Localizer["Questions"]
+            <h5 id="pcount" data-count=@Model.Sku.Producto.Preguntas.Count>
+                @Model.Sku.Producto.Preguntas.Count @Localizer["Questions"]
             </h5>
 
             <div class="row mb-4 mt-3">
@@ -257,17 +257,17 @@
 
             <div class="my-5" id="Preguntas">
 
-                @if (Model.Preguntas != null && Model.Preguntas.Any())
+                @if (Model.Sku.Producto.Preguntas != null && Model.Sku.Producto.Preguntas.Any())
                 {
-                    foreach (var p in Model.Preguntas)
+                    foreach (var p in Model.Sku.Producto.Preguntas)
                     {
-                        <h5>@p.Usuario.Nombre</h5>
+                        <h5>@p.NombreUsuario</h5>
                         <p>@p.Contenido</p>
                         <p class="fs-6 fw-lighter">@p.Fecha</p>
 
                         if (p.Respuesta != null)
                         {
-                            <p>@p.Respuesta.Contenido</p>
+                            <p>@p.Respuesta</p>
                         }
                     }
                 }
@@ -284,21 +284,21 @@
         @*Reviews*@
 
         <div id="reviews" class="w-100">
-            @if (Model.Reviews != null && Model.Reviews.Any())
+            @if (Model.Sku.Producto.Reviews != null && Model.Sku.Producto.Reviews.Any())
             {
-                <h3 class="text-center mb-3">@Model.Reviews.Count() Reviews</h3>
+                <h3 class="text-center mb-3">@Model.Sku.Producto.Reviews.Count() Reviews</h3>
 
-                <h5 class="text-center">@Localizer["Average rating"] @Model.PuntuacionPromedio</h5>
+                <h5 class="text-center">@Localizer["Average rating"] @Model.Sku.Producto.Puntuacion</h5>
 
                 <ul class="list-unstyled">
-                    @foreach (var r in Model.Reviews)
+                    @foreach (var r in Model.Sku.Producto.Reviews)
                     {
                         <li class="py-2">
 
                             <div class="d-flex align-items-center">
 
                                 <i class="bi bi-person-circle fs-2 me-2" style="color:slategray;"></i>
-                                <p class="fs-5 me-4 mb-0">@r.Usuario!.Nombre</p>
+                                <p class="fs-5 me-4 mb-0">@r.UsuarioNombre</p>
                                 <ul class="d-block row text-center p-0 align-items-center">
                                     @for (int i = 0; i < 5; i++)
                                     {
@@ -336,7 +336,7 @@
                             {
                                 <div id="@s.Id" class="card product-card m-lg-3 mb-3 mb-lg-0 child" style="height:600px;width: 380px;min-width:380px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        @if (Model.Favoritos is not null && Model.Favoritos.Contains(s))
+                                        @if (s.EsFavorito)
                                         {
                                             <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
@@ -347,7 +347,7 @@
                                     </a>
                                     <a href="/@s.Key" class="text-decoration-none text-reset">
                                         <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;"
-                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0).ImagenNombre" alt="Producto">
+                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0)" alt="Producto">
                                     </a>
                                     <div class="card-body">
                                         <ul class="text-center p-0">
@@ -355,7 +355,7 @@
                                             @for (int i = 0; i < 5; i++)
                                             {
                                                 <li class="d-inline text-warning p-0 me-1">
-                                                    <i class="bi @(i < s.Producto!.GetPuntuacionPromedio() ? "bi-star-fill" : "bi-star")"></i>
+                                                    <i class="bi @(i < s.Producto.Puntuacion ? "bi-star-fill" : "bi-star")"></i>
                                                 </li>
                                             }
                                         </ul>

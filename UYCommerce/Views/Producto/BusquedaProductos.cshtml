@@ -4,9 +4,7 @@
 <body>
 
     <div class="container-fluid col-sm-12 col-lg-11 d-flex flex-column" style="">
-
-
-        @if (Model.Categorias is null || !Model.Categorias.Any())
+        @if (Model.Categorias is null || !(Model.Categorias.Count > 0))
         {
 
             <div class="d-flex mx-auto my-auto">
@@ -44,20 +42,19 @@
                 </ol>
             </nav>
 
-            //Categorias Y Filtros
             <div class="d-lg-flex">
                 <div class="flex-shrink-0 border" style="padding:50px 200px 50px 50px;">
 
-                    @if (Model.Atributos != null && Model.Atributos.Any())
+                    @if (Model.Atributos.Count > 0)
                     {
                         <h4 class="fw-bold mb-4">@Localizer["Filters"]</h4>
                         <div>
                             <ul class="list-unstyled">
 
-                                @foreach (var a in Model.Atributos)
+                                @foreach (var atributo in Model.Atributos)
                                 {
-                                    <li class="filtro" data-value="@a.Key-@a.Value" onclick="QuitarFiltro(this)">
-                                        <a>@a.Key @a.Value</a><i class="bi bi-x"></i>
+                                    <li class="filtro" data-value="@atributo.Key-@atributo.Value" onclick="QuitarFiltro(this)">
+                                        <a>@atributo.Key @atributo.Value</a><i class="bi bi-x"></i>
                                     </li>
                                 }
                             </ul>
@@ -66,23 +63,23 @@
                     <h4 class="fw-bold mb-4">@Localizer["Categories"]</h4>
 
                     <ul class="list-unstyled">
-                        @foreach (var c in Model.Categorias!)
+                        @foreach (var categoria in Model.Categorias)
                         {
                             <li class="mb-2">
                                 @if (Model.Categoria is not null)
                                 {
 
-                                    <a href="/c/@c.Nombre"
-                                       class="fs-5 text-decoration-none @(Model.Categoria.Id == c.Id ? Html.Raw("text-info") : "text-body")">
-                                        @Localizer[c.Nombre!]
+                                    <a href="/c/@categoria.Nombre"
+                                       class="fs-5 text-decoration-none @(Model.Categoria.Id == categoria.Id ? Html.Raw("text-info") : "text-body")">
+                                        @Localizer[categoria.Nombre]
                                     </a>
 
-                                    if (c.Id == Model.Categoria.Id || c.Id == Model.Categoria.CategoriaPadre?.Id)
+                                    if (categoria.Id == Model.Categoria.Id || categoria.Id == Model.Categoria.CategoriaPadre?.Id)
                                     {
 
                                         <div class="ps-3 mt-3">
                                             <ul class="list-unstyled">
-                                                @foreach (var sc in Model.SubCategorias!)
+                                                @foreach (var sc in Model.SubCategorias)
                                                 {
                                                     <li class="mb-3">
                                                         <a href="/c/@sc.Nombre"
@@ -97,8 +94,8 @@
                                 }
                                 else
                                 {
-                                    <a href="/c/@c.Nombre" class="fs-5 text-decoration-none text-body">
-                                        @Localizer[c.Nombre!]
+                                    <a href="/c/@categoria.Nombre" class="fs-5 text-decoration-none text-body">
+                                        @Localizer[categoria.Nombre]
                                     </a>
                                 }
                             </li>
@@ -106,23 +103,23 @@
                     </ul>
 
 
-                    @if (Model.Categoria is not null && Model.Filtros is not null && Model.Filtros.Any())
+                    @if (Model.Categoria is not null && Model.Filtros.Count > 0)
                     {
                         <h4 class="fw-bold mb-4">@Localizer["Filters"]</h4>
                         <ul class="list-unstyled">
-                            @foreach (var a in Model.Filtros)
+                            @foreach (var filtro in Model.Filtros)
                             {
-                                if (Model.Atributos == null || !Model.Atributos.Any(atr => atr.Key == a.Key.Nombre?.ToLower()))
+                                if (Model.Atributos == null || !Model.Atributos.Any(atr => atr.Key == filtro.Nombre?.ToLower()))
                                 {
                                     <li class="mb-3">
-                                        <p class="fs-5 fw-semibold">@a.Key.Nombre</p>
+                                        <p class="fs-5 fw-semibold">@filtro.Nombre</p>
                                         <ul class="list-unstyled">
 
-                                            @foreach (var v in a)
+                                            @foreach (var valor in filtro.Valores)
                                             {
                                                 <li class="atributo">
-                                                    <a data-value="@a.Key.Nombre-@v.Valor" onclick="AgregarFiltro(this)"
-                                                       class="text-decoration-none text-body">@v.Valor</a>
+                                                    <a data-value="@filtro.Nombre-@valor" onclick="AgregarFiltro(this)"
+                                                       class="text-decoration-none text-body">@valor</a>
                                                 </li>
                                             }
                                         </ul>
@@ -136,9 +133,9 @@
 
                 <div class="d-flex flex-column w-100">
 
-                    <h4 class="d-block" style="padding-left:35%;">@Model.Skus!.Count @Localizer["Results"]</h4>
+                    <h4 class="d-block" style="padding-left:35%;">@Model.Skus.Count @Localizer["Results"]</h4>
 
-                    @if (Model.Skus is not null && Model.Skus!.Any())
+                    @if (Model.Skus.Count > 0)
                     {
                         <div class="d-flex align-items-center col-xl-4 mx-4">
                             <h5 class="text-nowrap me-2">@Localizer["Order By:"]</h5>
@@ -150,14 +147,12 @@
                             </select>
                         </div>
 
-                        //List of Products
                         <div class="d-flex flex-wrap w-100">
-
-                            @foreach (var s in Model.Skus)
+                            @foreach (var sku in Model.Skus)
                             {
-                                <div id="@s.Id" class="card product-card m-3" style="height:600px;width: 400px;">
+                                <div id="@sku.Id" class="card product-card m-3" style="height:600px;width: 400px;">
                                     <a onclick="AgregarAFavoritos(this)" class="product-like-icon" data-tip="Add to Wishlist">
-                                        @if (s.EsFavorito)
+                                        @if (sku.EsFavorito)
                                         {
                                             <i class="bi bi-heart-fill text-danger position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
@@ -166,25 +161,24 @@
                                             <i class="bi bi-heart position-absolute end-0 p-2 fs-4 text-secondary"></i>
                                         }
                                     </a>
-                                    <a href="/@s.Key" class="text-decoration-none text-reset">
+                                    <a href="/@sku.Key" class="text-decoration-none text-reset">
                                         <img class="card-img-top" style="height:400px;min-width:100%;object-fit:contain;"
-                                             src="~/Imagenes/Productos/@s.Imagenes!.ElementAt(0)" alt="Producto">
+                                             src="~/Imagenes/Productos/@sku.Imagenes?.ElementAt(0)" alt="Producto">
                                     </a>
                                     <div class="card-body">
                                         <ul class="text-center p-0">
-
                                             @for (int i = 0; i < 5; i++)
                                             {
                                                 <li class="d-inline text-warning p-0 me-1">
-                                                    <i class="bi @(i < s.Puntuacion ? "bi-star-fill" : "bi-star")"></i>
+                                                    <i class="bi @(i < sku.Puntuacion ? "bi-star-fill" : "bi-star")"></i>
                                                 </li>
                                             }
                                         </ul>
-                                        <a href="/@s.Key" class="text-decoration-none text-reset">
-                                            <h4 class="card-title text-center">@s.Nombre</h4>
+                                        <a href="/@sku.Key" class="text-decoration-none text-reset">
+                                            <h4 class="card-title text-center">@sku.Nombre</h4>
                                             <p class="card-text text-center">
-                                                @(s.PrecioAnterior > 0 ? Html.Raw($"<strike class=\"card-text text-secondary\">{s.PrecioAnterior}</strike>") : "")
-                                                <b class="card-text text-center fs-5"> $@s.Precio</b>
+                                                @(sku.PrecioAnterior > 0 ? Html.Raw($"<strike class=\"card-text text-secondary\">{sku.PrecioAnterior}</strike>") : "")
+                                                <b class="card-text text-center fs-5"> $@sku.Precio</b>
                                             </p>
                                         </a>
                                     </div>
@@ -201,12 +195,11 @@
                                         {
                                             <li class="page-item"><a data-pag="@(Model.Page - 1)" class="page-link">Previous</a> </li>
                                         }
-                                        for (int i = 0; i < Model.NumberOfPages; i++)
+                                        for (int pageNum = 1; pageNum < (Model.NumberOfPages + 1); pageNum++)
                                         {
-                                            var p = i + 1;
-                                            <li class="page-item @(Model.Page == p ? "active" : "")">
-                                                <a data-pag="@p"
-                                                   class="page-link">@p</a>
+                                            <li class="page-item @(Model.Page == pageNum ? "active" : "")">
+                                                <a data-pag="@pageNum"
+                                                   class="page-link">@pageNum</a>
                                             </li>
                                         }
                                         if (Model.NumberOfPages > Model.Page)

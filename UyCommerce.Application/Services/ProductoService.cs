@@ -222,7 +222,7 @@ namespace UyCommerce.Application.Services
             result.NumberOfPages = (skus.Count + qty - 1) / qty;
             result.Categoria = _mapper.Map<GetProductosCategoriaSelectedDto>(categoriaDb);
             result.Categorias = _mapper.Map<List<GetProductosCategoriaDto>>(categoriasInicio);
-            result.Filtros = filtrosGrp;
+            result.Filtros = [.. filtrosGrp.Select(g => new GetProductosFiltrosDto() { Nombre = g.Key.Nombre, Valores = g.Select(av => av.Valor).ToList() })];
             result.Atributos = atributosValores;
             result.Page = numPag + 1;
             var subCategorias = categoriaDb.SubCategorias?.Count > 0 ? categoriaDb.SubCategorias.OrderBy(c => c.Id).ToList() :
@@ -259,47 +259,16 @@ namespace UyCommerce.Application.Services
 
             var skus = await _skuRepository.GetSkusByProductoIdAsync(sku.ProductoId);
 
-            var reviews = sku.Producto.Reviews.Select(r => new Review()
-            {
-                Puntuacion = r.Puntuacion,
-                Texto = r.Texto,
-                Usuario = new Usuario() { Nombre = r.Usuario.Nombre }
-            });
-            var preguntas = sku.Producto.Preguntas.Select(p => new Pregunta()
-            {
-                Contenido = p.Contenido,
-                Fecha = p.Fecha,
-                Usuario = new Usuario() { Nombre = p.Usuario.Nombre },
-                Respuesta = new Respuesta() { Contenido = p.Respuesta.Contenido, Fecha = p.Respuesta.Fecha }
-            });
-
-            SkuDto skuDto = new()
-            {
-                AtributosValores = sku.AtributosValores,
-                Id = sku.Id,
-                Imagenes = sku.Imagenes,
-                Key = sku.Key,
-                Nombre = sku.Nombre,
-                Precio = sku.Precio,
-                PrecioAnterior = sku.PrecioAnterior,
-                Producto = sku.Producto,
-                ProductoId = sku.ProductoId,
-                Stock = sku.Stock,
-            };
-
-            result.Sku = skuDto;
-            result.Reviews = [.. sku.Producto.Reviews];
-            result.Categoria = sku.Producto.Categoria;
-            result.ProductosRelacionados = await _skuRepository.GetSkusByCategoriaOrCategoriaPadreIdAsync(sku.Producto.Categoria!.Id);
-            result.PuntuacionPromedio = reviews != null && reviews.Any() ? reviews.Average(r => r.Puntuacion) : 0;
-            result.Preguntas = [.. preguntas];
-            result.Reviews = [.. reviews];
+            result.Sku = _mapper.Map<GetSkuByKeySkuDto>(sku);
+            result.Categoria = _mapper.Map<GetSkuByKeyCategoriaDto>(sku.Producto.Categoria);
+            var productosRelacionados = await _skuRepository.GetSkusByCategoriaOrCategoriaPadreIdAsync(sku.Producto.Categoria.Id);
+            result.ProductosRelacionados = productosRelacionados.Count > 0 ? _mapper.Map<List<GetSkuByKeySkuDto>>(productosRelacionados) : [];
 
             if (usuarioId != null)
             {
                 var usuario = await _usuarioRepository.GetUsuarioAndFavoritos((int)usuarioId)
                 ?? throw new NotFoundException(nameof(Usuario), usuarioId);
-                result.Favoritos = [.. usuario.Favoritos];
+                result.ProductosRelacionados.ForEach(p => p.EsFavorito = usuario.Favoritos.Any(f => f.Id == p.Id));
             }
 
             if (sku.AtributosValores != null && sku.AtributosValores.Count > 0)
@@ -316,7 +285,9 @@ namespace UyCommerce.Application.Services
                                                        Nombre = a.Atributo.Nombre,
                                                    }
                                                }).ToList();
+
                 opciones = [.. opciones.Distinct()];
+
                 var opcionesPorAtributo = opciones.GroupBy(a => a.Atributo.Id)
                                                   .Select(g => new AtributoDto
                                                   {
