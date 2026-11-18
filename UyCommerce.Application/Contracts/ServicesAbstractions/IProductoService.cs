@@ -6,7 +6,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IProductoService
     {
-        Task<List<Producto>> GetFeaturedProducts();
+        Task<GetFeaturedProductsResponse> GetFeaturedProducts(int? userId);
         Task<List<Producto>> GetProductosComplete();
         Task AddProducto(AddProductoRequest addProductoDto);
         Task<Producto?> GetProductoCompleteByIdNoTracking(int id);

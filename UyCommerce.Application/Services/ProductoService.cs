@@ -104,9 +104,32 @@ namespace UyCommerce.Application.Services
             await _productoRepository.UpdateAsync(producto);
         }
 
-        public async Task<List<Producto>> GetFeaturedProducts()
+        public async Task<GetFeaturedProductsResponse> GetFeaturedProducts(int? userId)
         {
-            return await _productoRepository.GetFeaturedProductsAsync();
+            GetFeaturedProductsResponse result = new();
+            var productos = await _productoRepository.GetFeaturedProductsAsync();
+
+            if(productos.Count > 0)
+            {
+                result.Skus = _mapper.Map<List<GetFeaturedProductsSkuDto>>(productos
+                    .OrderByDescending(p => p.GetPuntuacionPromedio())
+                    .Select(p => p.Skus!.First()).ToList());
+            }
+
+            if (userId != null)
+            {
+                var usuario = await _usuarioRepository.GetUsuarioAndFavoritos((int)userId);
+                var favoritos = usuario != null && usuario.Favoritos != null ? (List<Sku>)usuario.Favoritos : [];
+                result.Skus.ForEach(s => s.EsFavorito = favoritos.Exists(f => f.Id == s.Id));
+            }
+
+            var categorias = await _categoriaRepository.GetCategoriasInicioAsync();
+            var carousel = await _imagesService.GetCarouselImages();
+
+            result.Categorias = _mapper.Map<List<GetFeaturedProductsCategoriaDto>>(categorias);
+            result.ImagenesCarousel = carousel.Select(c => c.Name).ToList();
+
+            return result;
         }
 
         public async Task<Producto?> GetProductoCompleteByIdNoTracking(int id)

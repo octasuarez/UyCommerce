@@ -47,6 +47,13 @@ namespace UyCommerce.Application.Mappings
             config.NewConfig<Categoria, GetSkuByKeyCategoriaDto>()
                 .Map(dest => dest.Nombre, src => src.Nombre)
                 .Map(dest => dest.CategoriaPadreNombre, src => src.CategoriaPadre != null ? src.CategoriaPadre.Nombre : string.Empty);
+
+            config.NewConfig<Sku, GetFeaturedProductsSkuDto>()
+                .Map(dest => dest.ProductoPuntuacion, src => src.Producto.GetPuntuacionPromedio())
+                .Map(dest => dest.Imagenes, src => src.Imagenes.Select(i => i.ImagenNombre));
+
+            config.NewConfig<Categoria, GetFeaturedProductsCategoriaDto>()
+                .Map(dest => dest.Imagen, src => src.ImagenNombre);
         }
     }
 }

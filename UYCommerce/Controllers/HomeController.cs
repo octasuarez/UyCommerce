@@ -5,7 +5,7 @@ using System.Security.Claims;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
-using UYCommerce.ViewModels;
+using UyCommerce.Application.DTOs.Productos;
 
 namespace UYCommerce.Controllers;
 
@@ -14,62 +14,45 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly IEmailService _emailService;
     private readonly IProductoService _productoService;
-    private readonly IUsuarioService _usuarioService;
-    private readonly ICategoriaService _categoriaService;
-    private readonly IImagesService _imagesService;
     private readonly IMemoryCache _cache;
+    private readonly IConfiguration _config;
 
     public HomeController(
         IMemoryCache cache,
         ILogger<HomeController> logger,
         IProductoService productoService,
-        IUsuarioService usuarioService,
-        ICategoriaService categoriaService,
-        IImagesService imagesService,
-        IEmailService emailService)
+        IEmailService emailService,
+        IConfiguration configuration)
     {
         _logger = logger;
         _emailService = emailService;
         _productoService = productoService;
-        _usuarioService = usuarioService;
-        _categoriaService = categoriaService;
-        _imagesService = imagesService;
         _cache = cache;
+        _config = configuration;
     }
 
     public async Task<IActionResult> Index()
     {
-        HomeVM homeVM = new HomeVM();
+        GetFeaturedProductsResponse result = new();
         try
         {
-            if (_cache.TryGetValue<HomeVM>("homeVM", out var homeCache) && homeCache.Skus.Any())
+            if (_cache.TryGetValue<GetFeaturedProductsResponse>("Productos", out var homeCache) && homeCache.Skus.Any())
             {
-                homeVM = homeCache;
+                result = homeCache;
             }
             else
             {
-                var productos = await _productoService.GetFeaturedProducts();
-                var skus = productos
-                    .OrderByDescending(p => p.GetPuntuacionPromedio())
-                    .Select(p => p.Skus!.First()).ToList();
-                homeVM.Skus = skus;
-                homeVM.Categorias = await _categoriaService.GetCategoriasInicio();
-                homeVM.Carousel = await _imagesService.GetCarouselImages();
-                _cache.Set("homeVM", homeVM, TimeSpan.FromHours(1));
+                int? userId = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int id) ? id : null;
+                result = await _productoService.GetFeaturedProducts(userId);
+                _cache.Set("Productos", result, TimeSpan.FromHours(1));
             }
 
-            if (User.Identity is not null && User.Identity.IsAuthenticated
-                && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
-            {
-                var usuario = await _usuarioService.GetUsuarioFavoritosById(userId);
-                homeVM.Favoritos = usuario.Favoritos;
-            }
         }
         catch (Exception)
         {
         }
 
-        return View(homeVM);
+        return View(result);
     }
 
     [HttpGet]
@@ -91,7 +74,9 @@ public class HomeController : Controller
         }
         try
         {
-            _emailService.SendEmail("octasuarezp@gmail.com", contacto.Asunto!, contacto.Mensaje!);
+            var email = _config["ContactEmail"];
+            if (string.IsNullOrEmpty(email)) throw new Exception("Contact email not set");
+            _emailService.SendEmail(email, contacto.Asunto!, contacto.Mensaje!);
         }
         catch (Exception e)
         {
