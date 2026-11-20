@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.DTOs.Productos;
+using UyCommerce.Application.DTOs.Usuarios;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Mappings
@@ -54,6 +55,8 @@ namespace UyCommerce.Application.Mappings
 
             config.NewConfig<Categoria, GetFeaturedProductsCategoriaDto>()
                 .Map(dest => dest.Imagen, src => src.ImagenNombre);
+
+            config.NewConfig<Orden, GetOrdenesByUsuarioIdResponse>();
         }
     }
 }

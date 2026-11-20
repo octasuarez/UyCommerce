@@ -1,10 +1,12 @@
-﻿using System;
+﻿using MapsterMapper;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs.Ordenes;
+using UyCommerce.Application.DTOs.Usuarios;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -13,10 +15,12 @@ namespace UyCommerce.Application.Services
     public class OrdenService : IOrdenService
     {
         private readonly IOrdenRepository _ordenRepository;
+        private readonly IMapper _mapper;
 
-        public OrdenService(IOrdenRepository ordenRepository)
+        public OrdenService(IOrdenRepository ordenRepository, IMapper mapper)
         {
             _ordenRepository = ordenRepository;
+            _mapper = mapper;
         }
         public async Task<GetDashboardResponse> GetDashboard(DateTime? startDate, DateTime? endDate)
         {
@@ -89,9 +93,10 @@ namespace UyCommerce.Application.Services
             return await _ordenRepository.GetOrdenesByProductoIdAsync(productoId);
         }
 
-        public async Task<List<Orden>> GetOrdenesByUsuarioId(int userId)
+        public async Task<List<GetOrdenesByUsuarioIdResponse>> GetOrdenesByUsuarioId(int userId)
         {
-            return await _ordenRepository.GetOrdenesByUsuarioId(userId);
+            var ordenes = await _ordenRepository.GetOrdenesByUsuarioId(userId);
+            return _mapper.Map<List<GetOrdenesByUsuarioIdResponse>>(ordenes);
         }
 
         public async Task<Orden> GetOrdenById(int id)

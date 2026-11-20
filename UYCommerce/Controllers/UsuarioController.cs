@@ -1,13 +1,13 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UyCommerce.Application.DTOs;
-using UyCommerce.Domain.Entities;
+using System.Security.Claims;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
-using UyCommerce.Domain.Exceptions;
-using UyCommerce.Application.DTOs.Reviews;
+using UyCommerce.Application.DTOs;
 using UyCommerce.Application.DTOs.Preguntas;
+using UyCommerce.Application.DTOs.Reviews;
+using UyCommerce.Application.DTOs.Usuarios;
+using UyCommerce.Domain.Exceptions;
 
 namespace UYCommerce.Controllers
 {
@@ -39,7 +39,7 @@ namespace UYCommerce.Controllers
         [Route("Compras")]
         public async Task<IActionResult> GetCompras()
         {
-            List<Orden> ordenes = [];
+            List<GetOrdenesByUsuarioIdResponse> ordenes = [];
             try
             {
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
