@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UyCommerce.Application.DTOs.Atributos;
 using UyCommerce.Application.DTOs.Ordenes;
 using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Domain.Entities;
@@ -62,6 +63,9 @@ namespace UyCommerce.Application.Mappings
 
             config.NewConfig<Orden, GetOrdenesUsuariosOrdenDto>();
             config.NewConfig<Usuario, GetOrdenesUsuariosUsuarioDto>();
+
+            config.NewConfig<Atributo, GetAtributosResponse>();
+
         }
 
     }
