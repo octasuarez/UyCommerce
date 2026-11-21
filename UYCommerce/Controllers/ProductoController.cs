@@ -213,7 +213,7 @@ namespace UYCommerce.Controllers
                 }
                 var userAuthenticated = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId);
                 var result = await _productoService.GetSkuByKey(correctSkuKey, userAuthenticated ? userId : null);
-
+                result.IsAuthenticated = userAuthenticated;
                 return View("VerProducto", result);
             }
             catch (NotFoundException e)

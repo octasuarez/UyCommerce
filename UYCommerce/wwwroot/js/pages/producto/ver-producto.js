@@ -53,7 +53,6 @@ function AgregarProductoAlCarrito(e) {
     detalles.innerHTML += loading;
 
 
-
     $.ajax({
         type: 'POST',
         url: "/Carrito/AgregarProductoAlCarrito",

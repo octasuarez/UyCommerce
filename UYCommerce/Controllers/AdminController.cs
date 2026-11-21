@@ -65,36 +65,55 @@ namespace UYCommerce.Controllers
         [HttpGet("admin/preguntas/{option?}")]
         public async Task<IActionResult> GetPreguntas(string? option)
         {
-            var answered = option?.Equals("respondidas");
-            var preguntas = await _preguntaService.GetPreguntas(answered);
-            ViewBag.selected = option;
+            try
+            {
+                var answered = option?.Equals("respondidas");
+                var preguntas = await _preguntaService.GetPreguntas(answered);
+                ViewBag.selected = option;
 
-            return View("Preguntas", preguntas);
+                return View("Preguntas", preguntas);
+            }
+            catch (Exception e) { }
+            return View("Preguntas");
         }
 
         [HttpGet]
         [Route("admin/clientes")]
         public async Task<IActionResult> GetClientes()
         {
-            var clientes = await _usuarioService.GetUsuariosClientes();
-            return View(clientes);
+            try
+            {
+                return View(await _usuarioService.GetUsuariosClientes());
+            }
+            catch (Exception e)
+            { }
+            return View();
         }
 
         [HttpGet]
         [Route("admin/productos")]
         public async Task<IActionResult> GetProductos()
         {
-
-            var productos = await _productoService.GetProductosComplete();
-            return View(productos);
+            try
+            {
+                return View(await _productoService.GetProductosComplete());
+            }
+            catch (Exception e)
+            { }
+            return View();
         }
 
         [HttpGet]
         [Route("admin/atributos")]
         public async Task<IActionResult> GetAtributos()
         {
-            var atributos = await _atributoService.GetAtributos();
-            return View(atributos);
+            try
+            {
+                return View(await _atributoService.GetAtributos());
+            }
+            catch (Exception e)
+            { }
+            return View();
         }
 
 
@@ -102,23 +121,38 @@ namespace UYCommerce.Controllers
         [Route("admin/ordenes")]
         public async Task<IActionResult> GetOrdenes()
         {
-            return View(await _ordenService.GetOrdenesUsuarios());
+            try
+            {
+                return View(await _ordenService.GetOrdenesUsuarios());
+            }
+            catch (Exception e)
+            { }
+            return View();
         }
 
         [HttpGet]
         [Route("admin/reviews")]
         public async Task<IActionResult> GetReviews()
         {
-            var reviews = await _reviewService.GetReview();
-            return View(reviews);
+            try
+            {
+                return View(await _reviewService.GetReviews());
+            }
+            catch (Exception e) { }
+            return View();
         }
 
         [HttpGet]
         [Route("admin/carousel")]
         public async Task<IActionResult> Carousel()
         {
-            var carouselImages = await _imagesService.GetCarouselImages();
-            return View(carouselImages);
+            try
+            {
+                return View(await _imagesService.GetCarouselImages());
+            }
+            catch (Exception e)
+            { }
+            return View();
         }
         #endregion [HttpGet]
 

@@ -164,58 +164,40 @@
                     }
                     else
                     {
-                        <div class="form-row mt-5">
-
-                            <div class="mb-3 mx-auto">
-                                <p class="text-success mb-0">@Localizer["In Stock"]</p>
-                                <p class="d-inline">@Localizer["Quantity:"]</p>
-
-                                <select id="qty" class="d-inline">
-                                    @for (int i = 1; i < Model.Sku.Stock + 1; i++)
+                        <div class="form-row mt-3 align-items-center">
+                            <p class="text-success mb-0">@Localizer["In Stock"]</p>
+                            <div class="d-flex align-items-center">
+                                <div class="">
+                                    <div class="d-flex">
+                                        <p class="my-auto">@Localizer["Quantity:"]</p>
+                                        <select id="qty" class="form-select ms-1">
+                                            @for (int i = 1; i < Model.Sku.Stock + 1; i++)
+                                            {
+                                                <option value=@i>@i</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mx-auto w-75">
+                                    @if (!Model.IsAuthenticated)
                                     {
-                                        <option value=@i>@i</option>
+                                        <a style="" value="@Model.Sku.Id" href="/Login"
+                                           class="fw-semibold my-auto fs-5 form-control btn btn-primary bg-gradient py-2">
+                                            @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
+                                        </a>
                                     }
-                                </select>
-                            </div>
-
-                            <div class="form-row input-group mx-auto" style="width:70%;">
-                                @if (!User.Identity!.IsAuthenticated)
-                                {
-                                    <a style="" value="@Model.Sku.Id" href="/Login"
-                                       class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">
-                                        @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)"
-                                            class="fs-5 form-control btn btn-primary bg-gradient py-2 mb-2">
-                                        @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
-                                    </button>
-                                }
+                                    else
+                                    {
+                                        <button value="@Model.Sku.Id" onclick="AgregarProductoAlCarrito(this)"
+                                                class="fw-semibold my-auto fs-5 form-control btn btn-primary bg-gradient py-2">
+                                            @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
+                                        </button>
+                                    }
+                                </div>
                             </div>
 
                         </div>
                     }
-                }
-                else
-                {
-                    <div class="form-row">
-                        <div class="form-row input-group">
-                            <div class="input-grpup-prepend col-2">
-                                <input class="form-control text-center fs-5 fw-semibold py-2"
-                                       type="number" inputmode="numeric" min="1" required value="1" />
-                            </div>
-                            <button disabled onclick="AgregarProductoAlCarrito(this)"
-                                    class="fs-5 form-control btn btn-primary py-2 fw-semibold mb-2">
-                                @Localizer["Add to cart"] <i class="bi bi-cart-fill"></i>
-                            </button>
-                        </div>
-                        <button disabled type="submit"
-                                class="form-control btn btn-primary py-2 fw-semibold fs-5">
-                            @Localizer["Buy"]
-                        </button>
-                    </div>
                 }
             </div>
         </div>

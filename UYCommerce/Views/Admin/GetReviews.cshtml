@@ -1,16 +1,13 @@
-﻿@model List<UyCommerce.Domain.Entities.Review>
+﻿@model UyCommerce.Application.DTOs.Reviews.GetReviewsResponse
 @{
     Layout = "AdminLayout";
 }
 
 <body>
-
     <div class="container-fluid">
-
-        <h5 class="my-5">@Localizer["Reviews"] @Model.Count</h5>
-
+        <h5 class="my-5">@Localizer["Reviews"] @Model.Reviews.Count</h5>
         <ul class="list-unstyled">
-            @foreach (var r in Model)
+            @foreach (var r in Model.Reviews)
             {
 
                 <li class="card my-2 p-2">
@@ -49,7 +46,6 @@
                         </div>
                     </div>
                 </li>
-
             }
         </ul>
     </div>

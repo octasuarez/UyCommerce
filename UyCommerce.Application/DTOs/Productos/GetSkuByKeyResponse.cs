@@ -8,6 +8,7 @@ namespace UyCommerce.Application.DTOs.Productos
         public List<AtributoDto> Opciones { get; set; } = [];
         public List<GetSkuByKeySkuDto> ProductosRelacionados { get; set; } = [];
         public GetSkuByKeyCategoriaDto Categoria { get; set; } = new();
+        public bool IsAuthenticated { get; set; } = false;
     }
 
     public class GetSkuByKeySkuDto

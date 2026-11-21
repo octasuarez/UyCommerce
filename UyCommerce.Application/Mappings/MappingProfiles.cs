@@ -5,6 +5,7 @@ using System.Text;
 using UyCommerce.Application.DTOs.Atributos;
 using UyCommerce.Application.DTOs.Ordenes;
 using UyCommerce.Application.DTOs.Productos;
+using UyCommerce.Application.DTOs.Reviews;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Mappings
@@ -66,7 +67,10 @@ namespace UyCommerce.Application.Mappings
 
             config.NewConfig<Atributo, GetAtributosResponse>();
 
+            config.NewConfig<Review, GetReviewDto>();
+            config.NewConfig<Producto, GetReviewsProductoDto>();
         }
+
 
     }
 }

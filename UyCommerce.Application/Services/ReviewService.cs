@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MapsterMapper;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
@@ -15,16 +16,19 @@ namespace UyCommerce.Application.Services
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IProductoRepository _productoRepository;
         private readonly IOrdenRepository _ordenRepository;
+        private readonly IMapper _mapper;
 
         public ReviewService(IReviewRepository reviewRepository
             , IUsuarioRepository usuarioRepository
             , IProductoRepository productoRepository
-            , IOrdenRepository ordenRepository)
+            , IOrdenRepository ordenRepository
+            , IMapper mapper)
         {
             this._reviewRepository = reviewRepository;
             this._usuarioRepository = usuarioRepository;
             this._productoRepository = productoRepository;
             this._ordenRepository = ordenRepository;
+            this._mapper = mapper;
         }
 
         public async Task DeleteReview(int id)
@@ -37,15 +41,15 @@ namespace UyCommerce.Application.Services
             await _reviewRepository.DeleteAsync(review);
         }
 
-        public async Task<List<Review>> GetReview()
+        public async Task<GetReviewsResponse> GetReviews()
         {
-            return await _reviewRepository.GetReviewsAsync();
+            return new GetReviewsResponse { Reviews = _mapper.Map<List<GetReviewDto>>(await _reviewRepository.GetReviewsAsync()) };
         }
 
 
-        public async Task<GetReviewsResponse> GetReviewsAndProductos(int id)
+        public async Task<GetReviewsAndProductsResponse> GetReviewsAndProductos(int id)
         {
-            GetReviewsResponse result = new()
+            GetReviewsAndProductsResponse result = new()
             {
                 Reviews = await _reviewRepository.GetReviewsByUsuarioId(id)
             };
