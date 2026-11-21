@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UyCommerce.Application.DTOs.Ordenes;
 using UyCommerce.Application.DTOs.Productos;
-using UyCommerce.Application.DTOs.Usuarios;
 using UyCommerce.Domain.Entities;
 
 namespace UyCommerce.Application.Mappings
@@ -57,6 +57,9 @@ namespace UyCommerce.Application.Mappings
                 .Map(dest => dest.Imagen, src => src.ImagenNombre);
 
             config.NewConfig<Orden, GetOrdenesByUsuarioIdResponse>();
+
+            config.NewConfig<Orden, GetOrdenByIdResponse>();
         }
+
     }
 }

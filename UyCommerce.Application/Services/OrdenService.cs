@@ -6,7 +6,6 @@ using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs.Ordenes;
-using UyCommerce.Application.DTOs.Usuarios;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -73,24 +72,9 @@ namespace UyCommerce.Application.Services
             return response;
         }
 
-        public async Task<List<Orden>> GetOrdenes()
-        {
-            return await _ordenRepository.GetOrdenesAsync();
-        }
-
-        public Task DeleteOrden()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<Orden>> GetOrdenesUsuarios()
         {
             return await _ordenRepository.GetOrdenesUsuariosAsync();
-        }
-
-        public async Task<List<Orden>> GetOrdenesByProductoId(int productoId)
-        {
-            return await _ordenRepository.GetOrdenesByProductoIdAsync(productoId);
         }
 
         public async Task<List<GetOrdenesByUsuarioIdResponse>> GetOrdenesByUsuarioId(int userId)
@@ -99,11 +83,11 @@ namespace UyCommerce.Application.Services
             return _mapper.Map<List<GetOrdenesByUsuarioIdResponse>>(ordenes);
         }
 
-        public async Task<Orden> GetOrdenById(int id)
+        public async Task<GetOrdenByIdResponse> GetOrdenById(int id)
         {
             var orden = await _ordenRepository.GetOrdenCompleteById(id)
                 ?? throw new NotFoundException(nameof(Orden), id);
-            return orden;
+            return _mapper.Map<GetOrdenByIdResponse>(orden);
         }
     }
 }

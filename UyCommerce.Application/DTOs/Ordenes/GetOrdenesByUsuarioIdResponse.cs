@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UyCommerce.Application.DTOs.Usuarios
+namespace UyCommerce.Application.DTOs.Ordenes
 {
     public class GetOrdenesByUsuarioIdResponse
     {
