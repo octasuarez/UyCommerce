@@ -59,6 +59,9 @@ namespace UyCommerce.Application.Mappings
             config.NewConfig<Orden, GetOrdenesByUsuarioIdResponse>();
 
             config.NewConfig<Orden, GetOrdenByIdResponse>();
+
+            config.NewConfig<Orden, GetOrdenesUsuariosOrdenDto>();
+            config.NewConfig<Usuario, GetOrdenesUsuariosUsuarioDto>();
         }
 
     }

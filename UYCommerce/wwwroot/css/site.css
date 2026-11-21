@@ -437,3 +437,8 @@ button.accept-policy {
     z-index: 1000;
     width:0%;
 }
+
+.modal-content{
+    text-wrap: nowrap;
+    width: fit-content;
+}

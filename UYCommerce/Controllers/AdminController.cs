@@ -102,9 +102,7 @@ namespace UYCommerce.Controllers
         [Route("admin/ordenes")]
         public async Task<IActionResult> GetOrdenes()
         {
-            var ordenes = await _ordenService.GetOrdenesUsuarios();
-            List<OrdenVM> result = ordenes.Select(o => new OrdenVM { Orden = o, Usuario = o.Usuario }).ToList();
-            return View(result);
+            return View(await _ordenService.GetOrdenesUsuarios());
         }
 
         [HttpGet]

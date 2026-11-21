@@ -1,4 +1,4 @@
-﻿@model List<OrdenVM>
+﻿@model List<UyCommerce.Application.DTOs.Ordenes.GetOrdenesUsuariosResponse>
 @{
     Layout = "AdminLayout";
 }
@@ -33,30 +33,31 @@
                             <td>$@o.Orden.Total</td>
                             <td>@o.Orden.Estado.Descripcion</td>
                             <td class="text-center">
-                                <a href="#" class="btn btn-primary" data-bs-toggle="modal"
-                                   data-bs-target="#modalOrden@(o.Orden.Id)">@Localizer["Order details"]</a>
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#modal-orden@(o.Orden.Id)">
+                                    @Localizer["Order details"]
+                                </button>
                                 <!-- Modal Orden-->
-                                <div class="modal fade" id="modalOrden@(o.Orden.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="modal-orden@(o.Orden.Id)" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["Order"] @o.Orden.Id @o.Orden.FechaDeCompra</h1>
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["Order"] @o.Orden.Id - @o.Orden.FechaDeCompra</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
                                             </div>
                                             <div class="modal-body">
-
-                                                    <div class="mb-5" style="border-bottom:solid 1px lightgray;">
-                                                        <h5 class="fw-bold">@Localizer["Address"]</h5>
-                                                        <span>
-                                                            @o.Orden.Direccion?.Id
-                                                            @o.Orden.Direccion?.address_line_1
-                                                            @o.Orden.Direccion?.address_line_2
-                                                            @o.Orden.Direccion?.admin_area_1
-                                                            @o.Orden.Direccion?.admin_area_2
-                                                            @o.Orden.Direccion?.country_code
-                                                            @o.Orden.Direccion?.postal_code
-                                                        </span>
-                                                    </div>
+                                                <div class="mb-5" style="border-bottom:solid 1px lightgray;">
+                                                    <h5 class="fw-bold">@Localizer["Address"]</h5>
+                                                    <span>
+                                                        @o.Orden.Direccion.Id
+                                                        @o.Orden.Direccion.address_line_1
+                                                        @o.Orden.Direccion.address_line_2
+                                                        @o.Orden.Direccion.admin_area_1
+                                                        @o.Orden.Direccion.admin_area_2
+                                                        @o.Orden.Direccion.country_code
+                                                        @o.Orden.Direccion.postal_code
+                                                    </span>
+                                                </div>
 
                                                 <div>
                                                     <h5 class="fw-bold">@Localizer["Buyer"]</h5>
@@ -106,17 +107,8 @@
                                                     </table>
                                                 </div>
                                                 <div>
-                                                    <p class="fw-bold">Total: $@o.Orden.Total</p>
+                                                    <p class="h2 mt-5"> Total: $@o.Orden.Total</p>
                                                 </div>
-
-                                                <div>
-                                                    <p><strong>@Localizer["State"]:</strong> @o.Orden.Estado</p>
-                                                    <p><strong>@Localizer["Date delivered"]:</strong> @o.Orden.FechaDeEntrega</p>
-                                                </div>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
                                             </div>
                                         </div>
                                     </div>

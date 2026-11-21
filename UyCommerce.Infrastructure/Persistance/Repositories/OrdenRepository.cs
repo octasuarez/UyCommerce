@@ -50,6 +50,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         {
             return await _context.Ordenes
                 .AsNoTracking()
+                .Include(o => o.Direccion)
                 .Include(o => o.Estado)
                 .Include(o => o.Usuario)
                 .Include(o => o.Productos).ThenInclude(p => p.Sku)

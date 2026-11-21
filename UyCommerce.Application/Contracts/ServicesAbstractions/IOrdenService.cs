@@ -9,7 +9,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
     public interface IOrdenService
     {
         Task<GetDashboardResponse> GetDashboard(DateTime? startDate, DateTime? endDate);
-        Task<List<Orden>> GetOrdenesUsuarios();
+        Task<List<GetOrdenesUsuariosResponse>> GetOrdenesUsuarios();
         Task<List<GetOrdenesByUsuarioIdResponse>> GetOrdenesByUsuarioId(int userId);
         Task<GetOrdenByIdResponse> GetOrdenById(int id);
     }

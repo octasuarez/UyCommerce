@@ -72,9 +72,14 @@ namespace UyCommerce.Application.Services
             return response;
         }
 
-        public async Task<List<Orden>> GetOrdenesUsuarios()
+        public async Task<List<GetOrdenesUsuariosResponse>> GetOrdenesUsuarios()
         {
-            return await _ordenRepository.GetOrdenesUsuariosAsync();
+            var ordenes = await _ordenRepository.GetOrdenesUsuariosAsync();
+            return ordenes.Select(o => new GetOrdenesUsuariosResponse
+            {
+                Orden = _mapper.Map<GetOrdenesUsuariosOrdenDto>(o),
+                Usuario = _mapper.Map<GetOrdenesUsuariosUsuarioDto>(o.Usuario)
+            }).ToList();
         }
 
         public async Task<List<GetOrdenesByUsuarioIdResponse>> GetOrdenesByUsuarioId(int userId)
