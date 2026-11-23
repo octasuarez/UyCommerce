@@ -18,8 +18,4 @@
     <ProjectReference Include="..\UyCommerce.Domain\UyCommerce.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\Usuarios\" />
-  </ItemGroup>
-
 </Project>

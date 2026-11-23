@@ -5,6 +5,7 @@ using System.Security.Claims;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Domain.Exceptions;
 using UYCommerce.ViewModels;
+using UyCommerce.Application.DTOs.Usuarios;
 
 namespace UYCommerce.Controllers
 {
@@ -29,25 +30,28 @@ namespace UYCommerce.Controllers
                 try
                 {
                     var usuario = await _authService.AuthenticateUsuario(loginModel.Email.ToLower(), loginModel.Password);
-                    var claims = new List<Claim>{
+                    if (usuario != null)
+                    {
+                        var claims = new List<Claim>{
                             new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                             new(ClaimTypes.Name, usuario.Email!),
                             new("FullName", usuario.Nombre!),
-                            new(ClaimTypes.Role, usuario.Rol!.Nombre!),
+                            new(ClaimTypes.Role, usuario.Rol.ToString()),
                             new("CarritoId", usuario.Carrito.Id.ToString()),
                         };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        AllowRefresh = true,
-                        IsPersistent = loginModel.RememberMe,
-                    };
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-                    HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos.Count.ToString());
-                    return (usuario.Rol.Nombre == "Admin") ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("Index", "Home");
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var authProperties = new AuthenticationProperties
+                        {
+                            AllowRefresh = true,
+                            IsPersistent = loginModel.RememberMe,
+                        };
+                        await HttpContext.SignInAsync(
+                            CookieAuthenticationDefaults.AuthenticationScheme,
+                            new ClaimsPrincipal(claimsIdentity),
+                            authProperties);
+                        HttpContext.Session.SetString("cartItems", usuario.Carrito.Productos.Count.ToString());
+                        return (usuario.Rol == AuthenticateUsuarioRol.Admin) ? RedirectToAction("Dashboard", "Admin") : RedirectToAction("Index", "Home");
+                    }
                 }
                 catch (NotFoundException)
                 {

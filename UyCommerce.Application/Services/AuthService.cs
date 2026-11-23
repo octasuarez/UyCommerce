@@ -1,10 +1,12 @@
 ﻿using Konscious.Security.Cryptography;
+using MapsterMapper;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Application.DTOs.Usuarios;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -15,24 +17,32 @@ namespace UyCommerce.Application.Services
     {
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
         public IUsuarioRepository _usuarioRepository { get; }
-        public AuthService(IUsuarioRepository usuarioRepository, IEmailService emailService, IConfiguration configuration)
+        public AuthService(
+            IUsuarioRepository usuarioRepository
+            , IEmailService emailService
+            , IConfiguration configuration
+            , IMapper mapper)
         {
             _usuarioRepository = usuarioRepository;
             _emailService = emailService;
             this._configuration = configuration;
+            this._mapper = mapper;
         }
 
-        public async Task<Usuario> AuthenticateUsuario(string email, string password)
+        public async Task<AuthenticateUsuarioResponse?> AuthenticateUsuario(string email, string password)
         {
-            var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(email)
+            var usuarioDb = await _usuarioRepository.GetUsuarioByEmailAsync(email)
                 ?? throw new NotFoundException(nameof(Usuario), email);
-            if (!usuario.Activo) throw new Exception("Usuario inhabilitado");
-            return await VerifyPassword(password, usuario.Password) == true ? usuario : null;
+            if (!usuarioDb.Activo) throw new Exception("Usuario inhabilitado");
+            var validLogin = await VerifyPassword(password, usuarioDb.Password) == true;
+            if (validLogin) return _mapper.Map<AuthenticateUsuarioResponse>(usuarioDb);
+            return null;
         }
 
-        private async Task<bool> VerifyPassword(string password, string phc)
+        private static async Task<bool> VerifyPassword(string password, string phc)
         {
             string[] phcParts = phc.Split('$');
             string algorithm = phcParts[0];

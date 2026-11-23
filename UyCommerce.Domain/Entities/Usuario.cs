@@ -8,7 +8,7 @@
         public string Password { get; set; } = string.Empty;
         public bool Activo { get; set; } = true;
 
-        public Rol? Rol { get; set; }
+        public Rol Rol { get; set; } = new();
         public Carrito Carrito { get; set; } = new();
         public virtual ICollection<Orden>? Ordenes { get; set; }
         public virtual ICollection<Sku> Favoritos { get; set; } = [];
