@@ -1,8 +1,10 @@
-﻿using System;
+﻿using MapsterMapper;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Application.DTOs.Carritos;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -13,12 +15,18 @@ namespace UyCommerce.Application.Services
         private readonly ICarritoRepository _carritoRepository;
         private readonly ISkuRepository _skuRepository;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IMapper _mapper;
 
-        public CarritoService(ICarritoRepository carritoRepository, ISkuRepository skuRepository, IUsuarioRepository usuarioRepository)
+        public CarritoService(
+            ICarritoRepository carritoRepository
+            , ISkuRepository skuRepository
+            , IUsuarioRepository usuarioRepository
+            , IMapper mapper)
         {
             _carritoRepository = carritoRepository;
             this._skuRepository = skuRepository;
             this._usuarioRepository = usuarioRepository;
+            this._mapper = mapper;
         }
 
         public async Task<int> AddProductoAlCarrito(int userId, int skuId, int quantity)
@@ -79,11 +87,11 @@ namespace UyCommerce.Application.Services
             return carrito;
         }
 
-        public async Task<Carrito> GetCarritoCompleteByUserId(int userId)
+        public async Task<GetCarritoCompleteByUserIdResponse> GetCarritoCompleteByUserId(int userId)
         {
             var carrito = await _carritoRepository.GetCarritoCompleteByUserIdAsync(userId)
                 ?? throw new NotFoundException(nameof(Carrito), userId);
-            return carrito;
+            return _mapper.Map<GetCarritoCompleteByUserIdResponse>(carrito);
         }
 
         public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoId(int productoId)

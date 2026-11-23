@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.DTOs.Atributos;
+using UyCommerce.Application.DTOs.Carritos;
 using UyCommerce.Application.DTOs.Ordenes;
 using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Application.DTOs.Reviews;
@@ -73,6 +74,12 @@ namespace UyCommerce.Application.Mappings
 
             config.NewConfig<Usuario, AuthenticateUsuarioResponse>()
                 .Map(dest => dest.Rol, src => (AuthenticateUsuarioRol)src.Rol.Id);
+
+            config.NewConfig<ProductoCarrito, GetCarritoCompleteByUserIdProductoCarritoDto>()
+                .Map(dest => dest.Total, src => src.GetTotalString());
+
+            config.NewConfig<Carrito, GetCarritoCompleteByUserIdResponse>()
+                .Map(dest => dest.Total, src => src.GetTotal());
         }
 
 

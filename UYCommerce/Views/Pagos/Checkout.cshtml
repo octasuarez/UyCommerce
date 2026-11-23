@@ -1,4 +1,4 @@
-﻿@model UyCommerce.Domain.Entities.Carrito
+﻿@model UyCommerce.Application.DTOs.Carritos.GetCarritoCompleteByUserIdResponse
 
 <!DOCTYPE html>
 <html lang="en">
@@ -88,11 +88,11 @@
                             {
                                 <li class="px-3 py-1 fs-5 d-flex">
                                     <p> @p.Sku!.Nombre x @p.Cantidad</p>
-                                    <p class="ms-auto fw-bold">$@p.GetTotalString()</p>
+                                    <p class="ms-auto fw-bold">$@p.Total</p>
                                 </li>
                             }
                         </ul>
-                        <h4 class="text-center"><strong>Total:</strong> $@Model.GetTotal()</h4>
+                        <h4 class="text-center"><strong>Total:</strong> $@Model.Total</h4>
                     </div>
 
                     <div class="border mx-3 my-3"></div>

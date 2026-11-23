@@ -73,7 +73,7 @@ function ModificarQty(e) {
   };
   $.ajax({
     type: "POST",
-    url: '@Url.Action("AgregarProductoAlCarrito", "Carrito")',
+    url: '/Carrito/AgregarProductoAlCarrito',
     data: formData,
     success: function (response) {
       location.reload();
@@ -87,7 +87,7 @@ function EliminarProductoCarrito(e) {
   };
   $.ajax({
     type: "POST",
-    url: '@Url.Action("EliminarProductoCarrito", "Carrito")',
+    url: '/Carrito/EliminarProductoCarrito',
     data: formData,
     success: function (response) {
       location.reload();
