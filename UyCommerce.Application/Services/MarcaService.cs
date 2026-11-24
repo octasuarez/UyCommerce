@@ -1,8 +1,10 @@
-﻿using System;
+﻿using MapsterMapper;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
+using UyCommerce.Application.DTOs.Marcas;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 
@@ -11,10 +13,12 @@ namespace UyCommerce.Application.Services
     public class MarcaService : IMarcaService
     {
         private readonly IMarcaRepository _marcaRepository;
+        private readonly IMapper _mapper;
 
-        public MarcaService(IMarcaRepository marcaRepository)
+        public MarcaService(IMarcaRepository marcaRepository, IMapper mapper)
         {
             _marcaRepository = marcaRepository;
+            this._mapper = mapper;
         }
 
         public async Task AddMarca(string nombre)
@@ -45,14 +49,15 @@ namespace UyCommerce.Application.Services
                 ?? throw new NotFoundException(nameof(Marca), id);
         }
 
-        public async Task<List<Marca>> GetMarcas()
+        public async Task<GetMarcasResponse> GetMarcas()
         {
-            return await _marcaRepository.GetAllAsync();
+            return new GetMarcasResponse { Marcas = _mapper.Map<List<GetMarcasDto>>(await _marcaRepository.GetAllAsync()) };
         }
 
-        public async Task<List<Marca>> GetMarcasWithProductos()
+        public async Task<GetMarcasWithProductosResponse> GetMarcasWithProductos()
         {
-            return await _marcaRepository.GetMarcasWithProductosAsync();
+            var marcas = await _marcaRepository.GetMarcasWithProductosAsync();
+            return new GetMarcasWithProductosResponse() { Marcas = _mapper.Map<List<GetMarcasWithProductosMarcaDto>>(marcas) }; ;
         }
     }
 }

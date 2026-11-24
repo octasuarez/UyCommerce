@@ -24,8 +24,8 @@ namespace UYCommerce.Controllers
         [Route("admin/marcas")]
         public async Task<IActionResult> GetMarcas()
         {
-            var marcas = await _marcaService.GetMarcasWithProductos();
-            return View("../Admin/GetMarcas", marcas);
+            var response = await _marcaService.GetMarcasWithProductos();
+            return View("../Admin/GetMarcas", response);
         }
 
         [HttpGet]
@@ -34,7 +34,7 @@ namespace UYCommerce.Controllers
             try
             {
                 var marcas = await _marcaService.GetMarcas();
-                return Ok(marcas);
+                return Ok(marcas.Marcas);
             }
             catch (Exception e) { }
             return BadRequest();
@@ -80,7 +80,6 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public async Task<Marca?> GetMarcaById(int id)
         {
-
             var marca = await _marcaService.GetMarcaAndProductosById(id);
             return marca;
         }

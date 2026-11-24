@@ -1,4 +1,4 @@
-﻿@model List<UyCommerce.Domain.Entities.Marca>
+﻿@model UyCommerce.Application.DTOs.Marcas.GetMarcasWithProductosResponse
 @{
     Layout = "AdminLayout";
 }
@@ -49,12 +49,12 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var m in Model)
+            @foreach (var m in Model.Marcas)
             {
                 <tr>
                     <td>@m.Id</td>
                     <td>@m.Nombre</td>
-                    <td>@m.Productos?.Count()</td>
+                    <td>@m.Productos.Count()</td>
                     <td class="d-flex">
                         <button data-marca-id="@m.Id" class="btn btn-danger ms-auto me-5" type="button"
                                 onclick="DeleteMarca(this)">
