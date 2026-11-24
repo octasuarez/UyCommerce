@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UyCommerce.Application.DTOs.Atributos;
 using UyCommerce.Application.DTOs.Carritos;
+using UyCommerce.Application.DTOs.Categorias;
 using UyCommerce.Application.DTOs.Ordenes;
 using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Application.DTOs.Reviews;
@@ -80,6 +81,9 @@ namespace UyCommerce.Application.Mappings
 
             config.NewConfig<Carrito, GetCarritoCompleteByUserIdResponse>()
                 .Map(dest => dest.Total, src => src.GetTotal());
+
+
+            config.NewConfig<Categoria, GetCategoriasDto>();
         }
 
 

@@ -1,4 +1,5 @@
-﻿using UyCommerce.Application.Contracts.Persistance;
+﻿using MapsterMapper;
+using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs.Categorias;
@@ -12,12 +13,18 @@ namespace UyCommerce.Application.Services
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly IAtributoRepository _atributoRepository;
         private readonly IFileService _fileService;
+        private readonly IMapper _mapper;
 
-        public CategoriaService(ICategoriaRepository categoriaRepository, IAtributoRepository atributoRepository, IFileService fileService)
+        public CategoriaService(
+            ICategoriaRepository categoriaRepository
+            , IAtributoRepository atributoRepository
+            , IFileService fileService
+            , IMapper mapper)
         {
             _categoriaRepository = categoriaRepository;
             this._atributoRepository = atributoRepository;
             this._fileService = fileService;
+            this._mapper = mapper;
         }
 
         public async Task AddCategoria(CreateCategoriaRequest categoriaDto, Stream? imgStream)
@@ -79,13 +86,14 @@ namespace UyCommerce.Application.Services
             return await _categoriaRepository.GetByIdNoTrackingAsync(id);
         }
 
-        public async Task<List<Categoria>> GetCategorias()
+        public async Task<GetCategoriasResponse> GetCategorias()
         {
-            return await _categoriaRepository.GetAllAsync();
+            var categorias = await _categoriaRepository.GetAllAsync();
+            return new GetCategoriasResponse { Categorias = _mapper.Map<List<GetCategoriasDto>>(categorias) };
         }
         public async Task FeatureCategoria(int categoriaId, bool feature)
         {
-            var categoria = await _categoriaRepository.GetByIdAsync(categoriaId) 
+            var categoria = await _categoriaRepository.GetByIdAsync(categoriaId)
                 ?? throw new NotFoundException(nameof(Categoria), categoriaId);
 
             categoria.MostrarEnInicio = feature;

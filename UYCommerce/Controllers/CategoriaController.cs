@@ -31,8 +31,7 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetCategoriasApi()
         {
-            var categorias = await _categoriaService.GetCategorias();
-            return Ok(categorias.Select(x => new { x.Id, x.Nombre }).ToList());
+            return Ok((await _categoriaService.GetCategorias()).Categorias);
         }
 
         [HttpPost]

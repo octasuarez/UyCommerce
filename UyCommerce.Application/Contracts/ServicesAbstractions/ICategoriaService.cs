@@ -5,7 +5,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
 public interface ICategoriaService
     {
-        Task<List<Categoria>> GetCategorias();
+        Task<GetCategoriasResponse> GetCategorias();
         Task<List<Categoria>> GetCategoriasInicio();
         Task<Categoria?> GetCategoriaById(int id);
         Task AddCategoria(CreateCategoriaRequest categoriaDto, Stream? imgStream);

@@ -31,8 +31,13 @@ namespace UYCommerce.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMarcasApi()
         {
-            var marcas = _marcaService.GetMarcas();
-            return Ok(marcas);
+            try
+            {
+                var marcas = await _marcaService.GetMarcas();
+                return Ok(marcas);
+            }
+            catch (Exception e) { }
+            return BadRequest();
         }
 
         [HttpGet]
@@ -58,7 +63,8 @@ namespace UYCommerce.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> DeleteMarca(int marcaId) {
+        public async Task<IActionResult> DeleteMarca(int marcaId)
+        {
 
             try
             {
@@ -72,7 +78,8 @@ namespace UYCommerce.Controllers
         }
 
         [HttpGet]
-        public async Task<Marca?> GetMarcaById(int id) {
+        public async Task<Marca?> GetMarcaById(int id)
+        {
 
             var marca = await _marcaService.GetMarcaAndProductosById(id);
             return marca;
