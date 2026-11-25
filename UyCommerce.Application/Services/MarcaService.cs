@@ -1,7 +1,4 @@
 ﻿using MapsterMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs.Marcas;
@@ -36,17 +33,6 @@ namespace UyCommerce.Application.Services
             var marca = await _marcaRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException(nameof(Marca), id);
             await _marcaRepository.DeleteAsync(marca);
-        }
-
-        public async Task<Marca> GetMarcaAndProductosById(int id)
-        {
-            return await _marcaRepository.GetMarcaAndProductosAsync(id);
-        }
-
-        public async Task<Marca> GetMarcaById(int id)
-        {
-            return await _marcaRepository.GetByIdAsync(id)
-                ?? throw new NotFoundException(nameof(Marca), id);
         }
 
         public async Task<GetMarcasResponse> GetMarcas()

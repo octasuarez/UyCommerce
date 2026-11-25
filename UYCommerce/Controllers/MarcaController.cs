@@ -77,12 +77,6 @@ namespace UYCommerce.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        public async Task<Marca?> GetMarcaById(int id)
-        {
-            var marca = await _marcaService.GetMarcaAndProductosById(id);
-            return marca;
-        }
     }
 }
 
