@@ -8,7 +8,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
 {
     public interface IAtributoService
     {
-        Task<List<GetAtributosResponse>> GetAtributos();
+        Task<GetAtributosResponse> GetAtributos();
         Task AddAtributoValor(AddAtributoValorRequest atributoDto);
         Task AddAtributo(string nombre);
     }

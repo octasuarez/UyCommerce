@@ -7,11 +7,17 @@ namespace UyCommerce.Application.DTOs.Atributos
 {
     public class GetAtributosResponse
     {
+        public List<GetAtributosAtributoDto> Atributos { get; set; } = [];
+    }
+
+    public class GetAtributosAtributoDto
+    {
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public List<GetAtributoValorDto> Valores { get; set; } = [];
         public virtual List<GetAtributosCategoriaDto> Categorias { get; set; } = [];
         public virtual List<GetAtributosProductoDto> Productos { get; set; } = [];
+
     }
 
     public class GetAtributoValorDto

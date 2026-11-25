@@ -19,7 +19,7 @@ namespace UYCommerce.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetAtributosJson()
         {
-            return Ok(await _atributoService.GetAtributos());
+            return Ok((await _atributoService.GetAtributos()).Atributos);
         }
 
         [HttpPost]

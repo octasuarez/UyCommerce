@@ -109,7 +109,7 @@ namespace UYCommerce.Controllers
         {
             try
             {
-                return View(await _atributoService.GetAtributos());
+                return View((await _atributoService.GetAtributos()).Atributos);
             }
             catch (Exception e)
             { }

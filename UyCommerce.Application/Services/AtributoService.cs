@@ -45,9 +45,10 @@ namespace UyCommerce.Application.Services
             await _atributoRepository.UpdateAsync(atributoDb);
         }
 
-        public async Task<List<GetAtributosResponse>> GetAtributos()
+        public async Task<GetAtributosResponse> GetAtributos()
         {
-            return _mapper.Map<List<GetAtributosResponse>>(await _atributoRepository.GetAtributosAsync());
+            var atributos = await _atributoRepository.GetAtributosAsync();
+            return new GetAtributosResponse { Atributos = _mapper.Map<List<GetAtributosAtributoDto>>(atributos) };
         }
     }
 }

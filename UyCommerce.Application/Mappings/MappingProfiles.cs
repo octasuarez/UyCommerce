@@ -69,7 +69,7 @@ namespace UyCommerce.Application.Mappings
             config.NewConfig<Orden, GetOrdenesUsuariosOrdenDto>();
             config.NewConfig<Usuario, GetOrdenesUsuariosUsuarioDto>();
 
-            config.NewConfig<Atributo, GetAtributosResponse>();
+            config.NewConfig<Atributo, GetAtributosAtributoDto>();
 
             config.NewConfig<Review, GetReviewDto>();
             config.NewConfig<Producto, GetReviewsProductoDto>();
