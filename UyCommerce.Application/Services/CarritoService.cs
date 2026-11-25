@@ -1,7 +1,4 @@
 ﻿using MapsterMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs.Carritos;
@@ -75,18 +72,6 @@ namespace UyCommerce.Application.Services
             await _carritoRepository.UpdateAsync(carrito);
         }
 
-        public async Task DeleteProductosCarrito(List<ProductoCarrito> productosCarrito)
-        {
-            await _carritoRepository.DeleteProductosCarritoAsync(productosCarrito);
-        }
-
-        public async Task<Carrito> GetCarritoByUserId(int userId)
-        {
-            var carrito = await _carritoRepository.GetCarritoByUserIdAsync(userId) 
-                ?? throw new NotFoundException(nameof(Carrito), userId);
-            return carrito;
-        }
-
         public async Task<GetCarritoCompleteByUserIdResponse> GetCarritoCompleteByUserId(int userId)
         {
             var carrito = await _carritoRepository.GetCarritoCompleteByUserIdAsync(userId)
@@ -94,9 +79,5 @@ namespace UyCommerce.Application.Services
             return _mapper.Map<GetCarritoCompleteByUserIdResponse>(carrito);
         }
 
-        public async Task<List<ProductoCarrito>> GetProductosCarritoByProductoId(int productoId)
-        {
-            return await _carritoRepository.GetProductosCarritoByProductoIdAsync(productoId);
-        }
     }
 }

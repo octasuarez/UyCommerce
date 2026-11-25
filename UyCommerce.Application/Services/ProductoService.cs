@@ -1,15 +1,9 @@
 ﻿using MapsterMapper;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UyCommerce.Application.Common.Enums;
 using UyCommerce.Application.Contracts.Persistance;
 using UyCommerce.Application.Contracts.Persistance.Services;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs;
-using UyCommerce.Application.DTOs.ExternalServices.Paypal;
 using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
@@ -29,6 +23,7 @@ namespace UyCommerce.Application.Services
         private readonly IOrdenRepository _ordenRepository;
         private readonly ICarritoService _carritoService;
         private readonly IMapper _mapper;
+        private readonly ICarritoRepository _carritoRepository;
 
         public ProductoService(IProductoRepository productoRepository
             , ICategoriaRepository categoriaRepository
@@ -39,7 +34,8 @@ namespace UyCommerce.Application.Services
             , ISkuRepository skuRepository
             , IOrdenRepository ordenRepository
             , ICarritoService carritoService
-            , IMapper mapper)
+            , IMapper mapper
+            , ICarritoRepository carritoRepository)
         {
             _productoRepository = productoRepository;
             this._categoriaRepository = categoriaRepository;
@@ -51,6 +47,7 @@ namespace UyCommerce.Application.Services
             this._ordenRepository = ordenRepository;
             this._carritoService = carritoService;
             this._mapper = mapper;
+            this._carritoRepository = carritoRepository;
             this._imgFilesPath = "Imagenes/Productos";
         }
 
@@ -184,8 +181,8 @@ namespace UyCommerce.Application.Services
             if (ordenesWithProducto.Count > 0)
                 throw new ArgumentOutOfRangeException("No se puede eliminar el producto porque existen ordenes con el");
 
-            var productosCarrito = await _carritoService.GetProductosCarritoByProductoId(id);
-            if (productosCarrito.Count > 0) await _carritoService.DeleteProductosCarrito(productosCarrito);
+            var productosCarrito = await _carritoRepository.GetProductosCarritoByProductoIdAsync(id);
+            if (productosCarrito.Count > 0) await _carritoRepository.DeleteProductosCarritoAsync(productosCarrito);
 
             await _productoRepository.DeleteAsync(producto);
         }
