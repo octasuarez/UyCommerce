@@ -57,7 +57,7 @@ namespace UYCommerce.Controllers
                     if (producto.Imagenes.Any())
                     {
                         var imagenes = producto.Imagenes
-                            .Select(i => new CreateImageRequest() { ImageName = i.Name, Stream = i.OpenReadStream() })
+                            .Select(i => new CreateImageRequest() { ImageName = i.FileName, Stream = i.OpenReadStream() })
                             .ToList();
                         newProducto.Imagenes = imagenes;
                     }

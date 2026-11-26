@@ -67,9 +67,7 @@ namespace UyCommerce.Application.Services
             if (imgStream is not null && !string.IsNullOrEmpty(categoriaDto.ImagenNombre))
             {
                 using var newStream = imgStream;
-                bool saved = await _fileService.SaveFile(categoriaDto.ImagenNombre, imgStream, "Imagenes/Categorias");
-                if (!saved)
-                    throw new Exception("No se pudo guardar la imagen.");
+                await _fileService.SaveFile(categoriaDto.ImagenNombre, imgStream, "Imagenes/Categorias");
             }
 
             newCategoria.Nombre = categoriaDto.Nombre;
@@ -81,9 +79,11 @@ namespace UyCommerce.Application.Services
 
             await _categoriaRepository.CreateAsync(newCategoria);
         }
-        public async Task<Categoria?> GetCategoriaById(int id)
+        public async Task<GetCategoriaByIdResponse> GetCategoriaById(int id)
         {
-            return await _categoriaRepository.GetByIdNoTrackingAsync(id);
+            var categoria = await _categoriaRepository.GetByIdNoTrackingAsync(id)
+                ?? throw new NotFoundException(nameof(Categoria), id);
+            return _mapper.Map<GetCategoriaByIdResponse>(categoria);
         }
 
         public async Task<GetCategoriasResponse> GetCategorias()
@@ -100,20 +100,22 @@ namespace UyCommerce.Application.Services
             await _categoriaRepository.UpdateAsync(categoria);
         }
 
-        public async Task<List<Atributo>?> GetCategoriaAtributos(int id)
+        public async Task<GetCategoriaAtributosResponse> GetCategoriaAtributos(int id)
         {
+            GetCategoriaAtributosResponse response = new();
             var categoria = await _categoriaRepository.GetByIdAsync(id) ?? throw new NotFoundException(nameof(Categoria), id);
-            return await _atributoRepository.GetAtributosByCategoriaAsync(categoria);
+            var atributos = await _atributoRepository.GetAtributosByCategoriaAsync(categoria);
+            if (atributos != null && atributos.Count > 0)
+            {
+                response.Atributos = _mapper.Map<List<GetCategoriaAtributosAtributoDto>>(atributos);
+            }
+            return response;
         }
 
-        public async Task<List<Categoria>> GetCategoriasComplete()
+        public async Task<GetCategoriasCompleteResponse> GetCategoriasComplete()
         {
-            return await _categoriaRepository.GetCategoriasCompleteAsync();
-        }
-
-        public async Task<List<Categoria>> GetCategoriasInicio()
-        {
-            return await _categoriaRepository.GetCategoriasInicioAsync();
+            var categorias = await _categoriaRepository.GetCategoriasCompleteAsync();
+            return new GetCategoriasCompleteResponse { Categorias = _mapper.Map<List<GetCategoriasCompleteDto>>(categorias) };
         }
     }
 }

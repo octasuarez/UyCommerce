@@ -25,7 +25,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
         public async Task<Producto?> GetProductoByNombreAsync(string nombre)
         {
             return await _context.Productos
-                .FirstOrDefaultAsync(p => p.Nombre!.Equals(nombre, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefaultAsync(p => p.Nombre.ToLower().Equals(nombre.ToLower()));
         }
 
         public async Task<Producto?> GetProductoCompleteByIdAsync(int id)

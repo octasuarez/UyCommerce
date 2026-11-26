@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using System.Xml.Linq;
 using UyCommerce.Application.Contracts.Persistance.Services;
+using UyCommerce.Domain.Exceptions;
 
 namespace UyCommerce.Infrastructure.Services.Files
 {
@@ -10,19 +10,20 @@ namespace UyCommerce.Infrastructure.Services.Files
 
         public FileService(IWebHostEnvironment environment) => _environment = environment;
 
-        public async Task<bool> SaveFile(string name, Stream stream, string folder)
+        public async Task SaveFile(string name, Stream stream, string folder)
         {
             var basePath = Path.Combine(_environment.WebRootPath, folder);
+            var path = basePath + "/" + name;
 
-            if (stream.Length < 0)
+            if (stream.Length < 0) throw new Exception("Wrong file length");
+
+            if (this.FilesExists([name],folder))
             {
-                return false;
+                throw new FileExistsException(name);
             }
 
-            var path = basePath + "/" + name;
             using var destinationStream = new FileStream(path, FileMode.Create);
             await stream.CopyToAsync(destinationStream);
-            return Directory.Exists(path);
         }
 
 

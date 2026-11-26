@@ -32,9 +32,14 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Atributo>?> GetAtributosByCategoriaAsync(Categoria categoria)
+        public async Task<ICollection<Atributo>?> GetAtributosByCategoriaAsync(Categoria categoria)
         {
-            return await _context.Atributos.Where(a => a.Categorias != null && a.Categorias.Contains(categoria)).ToListAsync();
+            var categoriaDb = await _context.Categorias
+                .AsNoTracking()
+                .Include(c => c.Atributos)
+                .FirstOrDefaultAsync(c => c.Id == categoria.Id);
+
+            return categoriaDb.Atributos;
         }
     }
 }

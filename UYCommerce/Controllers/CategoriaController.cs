@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using UyCommerce.Application.Contracts.ServicesAbstractions;
 using UyCommerce.Application.DTOs.Categorias;
-using UyCommerce.Domain.Entities;
 using UyCommerce.Domain.Exceptions;
 using UYCommerce.ViewModels;
 
@@ -23,8 +22,13 @@ namespace UYCommerce.Controllers
         [Route("admin/categorias")]
         public async Task<IActionResult> GetCategorias()
         {
-            var categorias = await _categoriaService.GetCategoriasComplete();
-            return View("../Admin/GetCategorias", categorias);
+            GetCategoriasCompleteResponse response = new();
+            try
+            {
+                response = await _categoriaService.GetCategoriasComplete();
+            }
+            catch (Exception e) { }
+            return View("../Admin/GetCategorias", response);
         }
 
         [HttpGet]
@@ -42,8 +46,7 @@ namespace UYCommerce.Controllers
             {
                 if (int.TryParse(categoriaId, out int id))
                 {
-                    var atributos = await _categoriaService.GetCategoriaAtributos(id);
-                    return Ok(atributos?.Select(a => new { a.Id, a.Nombre }).ToList());
+                    return Ok(await _categoriaService.GetCategoriaAtributos(id));
                 }
             }
             catch (NotFoundException e)
@@ -96,15 +99,6 @@ namespace UYCommerce.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Policy = "Admin")]
-        public async Task<Categoria?> GetCategoriaById(int categoriaId)
-        {
-            var categoria = await _categoriaService.GetCategoriaById(categoriaId);
-            return categoria;
-        }
-
-
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> Feature(int categoriaId, bool featured)
@@ -115,7 +109,7 @@ namespace UYCommerce.Controllers
                 return Ok("Categoria actualizada correctamente.");
             }
             catch (NotFoundException e)
-            {}
+            { }
             catch (Exception e) { }
             return BadRequest("No se pudo actualizar la categoria.");
         }

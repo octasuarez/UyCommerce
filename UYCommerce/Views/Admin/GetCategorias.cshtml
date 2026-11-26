@@ -1,4 +1,4 @@
-﻿@model List<UyCommerce.Domain.Entities.Categoria>
+﻿@model UyCommerce.Application.DTOs.Categorias.GetCategoriasCompleteResponse
 @{
     Layout = "AdminLayout";
 }
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var c in Model)
+            @foreach (var c in Model.Categorias)
             {
                 <tr>
                     <td style="height: 100px; width: 100px;align-content:center;">

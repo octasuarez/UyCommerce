@@ -27,14 +27,7 @@
                            accept="image/*" />
                     <span class="text-danger" asp-validation-for="Imagenes"></span>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Categoria</label>
-                    <select id="Categorias" class="form-select" asp-for="CategoriaId" name="CategoriaId"
-                            onchange="GetAtributos(this.value)">
-                        <option value="-1">Selecciona una categoria</option>
-                    </select>
-                    <span class="text-danger" asp-validation-for="CategoriaId"></span>
-                </div>
+
                 <div class="mb-3">
                     <label class="form-label">Marca</label>
                     <select id="Marcas" class="form-select" asp-for="MarcaId" name="MarcaId">
@@ -43,10 +36,17 @@
                     <span class="text-danger" asp-validation-for="MarcaId"></span>
                 </div>
 
-
-                <div id="Atributos" class="">
-
+                <div class="mb-3">
+                    <label class="form-label">Categoria</label>
+                    <select id="Categorias" class="form-select" asp-for="CategoriaId" name="CategoriaId"
+                            onchange="GetAtributos(this.value)">
+                        <option value="-1">Selecciona una categoria</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="CategoriaId"></span>
                 </div>
+                <div id="Atributos" class=""></div>
+
+
 
                 <button type="submit" class=" btn btn-primary mx-auto d-flex">Crear</button>
             </form>

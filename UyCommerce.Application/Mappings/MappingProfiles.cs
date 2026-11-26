@@ -87,6 +87,11 @@ namespace UyCommerce.Application.Mappings
 
             config.NewConfig<Marca, GetMarcasDto>();
             config.NewConfig<Marca, GetMarcasWithProductosMarcaDto>();
+
+            config.NewConfig<Categoria, GetCategoriaByIdResponse>();
+            config.NewConfig<Categoria, GetCategoriasCompleteDto>();
+
+            config.NewConfig<Atributo, GetCategoriaAtributosAtributoDto>();
         }
 
 

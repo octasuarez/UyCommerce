@@ -68,9 +68,16 @@ namespace UyCommerce.Application.Services
 
         public async Task SaveImageFile(string imgName, Stream stream, string path)
         {
-            if (!await _fileService.SaveFile(imgName, stream, path))
+            try
             {
-                throw new ArgumentOutOfRangeException($"No se pudo guardar la imagen {imgName}");
+                await _fileService.SaveFile(imgName, stream, path);
+            }
+            catch (FileExistsException e)
+            {
+            }
+            catch(Exception e)
+            {
+                throw;
             }
         }
 
