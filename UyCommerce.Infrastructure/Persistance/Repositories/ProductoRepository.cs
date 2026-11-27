@@ -104,6 +104,7 @@ namespace UyCommerce.Infrastructure.Persistance.Repositories
                 .Include(p => p.Marca)
                 .Include(p => p.Preguntas)
                 .Include(p => p.Reviews)
+                .Include(p => p.Atributos)
                 .Include(p => p.Skus)!.ThenInclude(s => s.Imagenes)
                 .Include(p => p.Skus)!.ThenInclude(s => s.AtributosValores)!.ThenInclude(a => a.Atributo)
                 .AsQueryable();

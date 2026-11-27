@@ -8,6 +8,7 @@ using UyCommerce.Application.Common.Enums;
 using UYCommerce.ViewModels;
 using UyCommerce.Application.DTOs.Productos;
 using UyCommerce.Application.DTOs.Images;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace UYCommerce.Controllers
 {
@@ -15,11 +16,16 @@ namespace UYCommerce.Controllers
     {
         private readonly IFileService _fileService;
         private readonly IProductoService _productoService;
+        private readonly ICategoriaService _categoriaService;
+        private readonly IMarcaService _marcaService;
 
-        public ProductoController(IFileService fileService, IProductoService productoService)
+        public ProductoController(IFileService fileService, IProductoService productoService,
+            ICategoriaService categoriaService, IMarcaService marcaService)
         {
             _fileService = fileService;
             this._productoService = productoService;
+            this._categoriaService = categoriaService;
+            this._marcaService = marcaService;
         }
 
         public IActionResult Index()
@@ -30,17 +36,18 @@ namespace UYCommerce.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Admin")]
-        public IActionResult CrearProducto()
+        public async Task<IActionResult> CrearProducto()
         {
-
-            return View();
+            ProductoModel model = new();
+            await GetSelectsForCrearProducto(model);
+            return View(model);
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CrearProducto(ProductoModel producto)
         {
-
+            string error;
             if (ModelState.IsValid)
             {
                 try
@@ -63,46 +70,60 @@ namespace UYCommerce.Controllers
                     }
 
                     await _productoService.AddProducto(newProducto);
+                    return Redirect("/admin/productos");
                 }
                 catch (ArgumentOutOfRangeException e)
                 {
-                    Response.StatusCode = 400;
+                    error = e.Message;
                 }
                 catch (NotFoundException e)
                 {
                     Response.StatusCode = 404;
+                    error = e.Message;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Response.StatusCode = 500;
+                    error = "Hubo un error al guardar el producto, intente denuevo mas tarde.";
                 }
-
-                return Redirect("/admin/productos");
+                ModelState.AddModelError("", error);
             }
 
+            await GetSelectsForCrearProducto(producto);
+
             return View(producto);
+        }
+
+        private async Task GetSelectsForCrearProducto(ProductoModel model)
+        {
+            var categorias = (await _categoriaService.GetCategorias()).Categorias;
+            var marcas = (await _marcaService.GetMarcas()).Marcas;
+            model.Categorias = new SelectList(categorias, "Id", "Nombre");
+            model.Marcas = new SelectList(marcas, "Id", "Nombre");
         }
 
         [HttpGet]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AgregarSku(int productoId)
         {
-
-            var producto = await _productoService.GetProductoCompleteByIdNoTracking(productoId);
-
-            if (producto is null || producto.Atributos!.Count == 0 && producto.Skus!.Count != 0)
+            try
             {
-                return Redirect("/productos");
+                var producto = await _productoService.GetProductoCompleteByIdNoTracking(productoId);
+
+                AgregarSkuModel skuModel = new()
+                {
+                    ProductoId = producto.Id,
+                    Atributos = producto.Atributos,
+                    Producto = producto,
+                };
+
+                return View(skuModel);
+            }
+            catch (Exception){
+                Response.StatusCode = 500;
             }
 
-            AgregarSkuModel skuModel = new()
-            {
-                ProductoId = producto.Id,
-                Atributos = producto.Atributos,
-                Producto = producto,
-            };
-
-            return View(skuModel);
+            return Redirect("/admin/productos");
         }
 
         [HttpPost]

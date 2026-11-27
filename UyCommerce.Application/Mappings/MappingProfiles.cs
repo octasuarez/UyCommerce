@@ -92,6 +92,7 @@ namespace UyCommerce.Application.Mappings
             config.NewConfig<Categoria, GetCategoriasCompleteDto>();
 
             config.NewConfig<Atributo, GetCategoriaAtributosAtributoDto>();
+
         }
 
 

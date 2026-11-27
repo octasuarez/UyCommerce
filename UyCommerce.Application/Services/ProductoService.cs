@@ -58,7 +58,7 @@ namespace UyCommerce.Application.Services
             Producto newProducto = new();
             var productoDb = await _productoRepository.GetProductoByNombreAsync(addProductoDto.Nombre);
             if (productoDb != null)
-                throw new ArgumentOutOfRangeException($"{nameof(Producto)} con nombre {addProductoDto.Nombre} ya existe.");
+                throw new ArgumentOutOfRangeException("",$"{nameof(Producto)} con nombre {addProductoDto.Nombre} ya existe.");
 
             var categoria = await _categoriaRepository.GetCategoriaByIdCompleteAsync(addProductoDto.CategoriaId)
                 ?? throw new NotFoundException(nameof(Categoria), addProductoDto.CategoriaId);
@@ -69,9 +69,6 @@ namespace UyCommerce.Application.Services
             var atributos = categoria?.Atributos?.Where(a => addProductoDto.Atributos.Contains(a.Id)).ToList();
             var nombreClave = addProductoDto.Nombre.ToLower().Replace(" ", "-");
             var imgFileNames = addProductoDto.Imagenes.Select(i => i.ImageName).ToList();
-
-            if (_fileService.FilesExists(imgFileNames, _imgFilesPath))
-                throw new ArgumentOutOfRangeException($"Imagen ya existe.");
 
             newProducto.Nombre = addProductoDto.Nombre;
             newProducto.NombreClave = nombreClave;
@@ -129,9 +126,11 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task<Producto?> GetProductoCompleteByIdNoTracking(int id)
+        public async Task<Producto> GetProductoCompleteByIdNoTracking(int id)
         {
-            return await _productoRepository.GetProductoCompleteByIdNoTrackingAsync(id);
+            var producto = await _productoRepository.GetProductoCompleteByIdNoTrackingAsync(id)
+                ?? throw new NotFoundException(nameof(Producto), id);
+            return producto;
         }
 
         public async Task<GetProductosResponse> GetProductosByQuery(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId)

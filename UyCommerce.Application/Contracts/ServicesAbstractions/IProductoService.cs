@@ -9,7 +9,7 @@ namespace UyCommerce.Application.Contracts.ServicesAbstractions
         Task<GetFeaturedProductsResponse> GetFeaturedProducts(int? userId);
         Task<List<Producto>> GetProductosComplete();
         Task AddProducto(AddProductoRequest addProductoDto);
-        Task<Producto?> GetProductoCompleteByIdNoTracking(int id);
+        Task<Producto> GetProductoCompleteByIdNoTracking(int id);
         Task<GetProductosResponse> GetProductosByQuery(string query, ProductsOrderBy orderBy, int pag, int qty, int? userId);
         Task<List<GetProductosByQueryNameResponse>> GetProductosByQueryName(string query);
         Task AddSkuAProducto(AddSkuAProductoRequest addSkuAProductoDto);
