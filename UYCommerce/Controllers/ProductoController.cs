@@ -109,20 +109,17 @@ namespace UYCommerce.Controllers
             try
             {
                 var producto = await _productoService.GetProductoCompleteByIdNoTracking(productoId);
-
                 AgregarSkuModel skuModel = new()
                 {
                     ProductoId = producto.Id,
                     Atributos = producto.Atributos,
                     Producto = producto,
                 };
-
                 return View(skuModel);
             }
             catch (Exception){
                 Response.StatusCode = 500;
             }
-
             return Redirect("/admin/productos");
         }
 
@@ -152,7 +149,7 @@ namespace UYCommerce.Controllers
                         Stock = skuModel.Stock
                     };
 
-                    await _productoService.AddSkuAProducto(skuDto);
+                    await _productoService.AddSkuProducto(skuDto);
                     var producto = await _productoService.GetProductoCompleteByIdNoTracking(skuModel.ProductoId);
                     skuModel.Atributos = producto?.Atributos;
                 }

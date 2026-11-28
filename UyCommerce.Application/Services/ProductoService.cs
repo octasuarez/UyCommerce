@@ -58,7 +58,7 @@ namespace UyCommerce.Application.Services
             Producto newProducto = new();
             var productoDb = await _productoRepository.GetProductoByNombreAsync(addProductoDto.Nombre);
             if (productoDb != null)
-                throw new ArgumentOutOfRangeException("",$"{nameof(Producto)} con nombre {addProductoDto.Nombre} ya existe.");
+                throw new ArgumentOutOfRangeException("", $"{nameof(Producto)} con nombre {addProductoDto.Nombre} ya existe.");
 
             var categoria = await _categoriaRepository.GetCategoriaByIdCompleteAsync(addProductoDto.CategoriaId)
                 ?? throw new NotFoundException(nameof(Categoria), addProductoDto.CategoriaId);
@@ -103,7 +103,7 @@ namespace UyCommerce.Application.Services
             GetFeaturedProductsResponse result = new();
             var productos = await _productoRepository.GetFeaturedProductsAsync();
 
-            if(productos.Count > 0)
+            if (productos.Count > 0)
             {
                 result.Skus = _mapper.Map<List<GetFeaturedProductsSkuDto>>(productos
                     .OrderByDescending(p => p.GetPuntuacionPromedio())
@@ -319,21 +319,22 @@ namespace UyCommerce.Application.Services
             return result;
         }
 
-        public async Task AddSkuAProducto(AddSkuAProductoRequest addSkuAProductoDto)
+        public async Task AddSkuProducto(AddSkuAProductoRequest addSkuAProductoDto)
         {
             var producto = await _productoRepository.GetProductoCompleteByIdAsync(addSkuAProductoDto.ProductoId)
                 ?? throw new NotFoundException(nameof(Producto), addSkuAProductoDto.ProductoId);
 
-            if (producto.Atributos!.Any() && addSkuAProductoDto.AtributoValores is null
-                || producto.Skus!.Any(s => s.AtributosValores!.All(a => addSkuAProductoDto.AtributoValores!.Any(av => av == a.Id)))
-                || producto.Skus!.Any(s => s.Nombre.ToLower() == addSkuAProductoDto.Nombre.ToLower()))
+            if(producto.Skus!.Any(s => s.Nombre.ToLower() == addSkuAProductoDto.Nombre.ToLower()))
+                throw new Exception("Ya existe un sku con el mismo nombre.");
+
+            if (producto.Atributos != null && producto.Atributos.Count > 0 && addSkuAProductoDto.AtributoValores is null
+                || producto.Skus!.Any(s => s.AtributosValores!.All(a => addSkuAProductoDto.AtributoValores!.Any(av => av == a.Id))))
             {
                 throw new Exception("Atributos invalidos.");
             }
 
-            var key = producto.NombreClave;
+            var key = producto.NombreClave!;
             List<AtributoValor> atributos = [];
-
             if (addSkuAProductoDto.AtributoValores.Count > 0 && producto.Atributos != null && producto.Atributos.Count > 0)
             {
                 key += "/";
@@ -345,10 +346,17 @@ namespace UyCommerce.Application.Services
             }
 
             List<SkuImagen> skuImagenes = [];
-
             if (addSkuAProductoDto.Imagenes.Count > 0)
             {
-                skuImagenes = [.. addSkuAProductoDto.Imagenes.Select(i => new SkuImagen { ImagenNombre = i.ImageName })];
+                foreach (var img in addSkuAProductoDto.Imagenes)
+                {
+                    if (img.Stream != null && img.Stream.Length > 0)
+                    {
+                        await _imagesService.SaveImageFile(img.ImageName, img.Stream, _imgFilesPath);
+                        var newSkuImagen = new SkuImagen { ImagenNombre = img.ImageName };
+                        skuImagenes.Add(newSkuImagen);
+                    }
+                }
             }
             else if (producto.Imagenes != null)
             {
@@ -358,26 +366,13 @@ namespace UyCommerce.Application.Services
             Sku newSku = new()
             {
                 ProductoId = producto.Id,
-                Key = key!.ToLower(),
+                Key = key.ToLower(),
                 Nombre = addSkuAProductoDto.Nombre,
                 Precio = addSkuAProductoDto.Precio,
                 Imagenes = skuImagenes,
                 AtributosValores = atributos,
                 Stock = addSkuAProductoDto.Stock
             };
-
-            if (addSkuAProductoDto.Imagenes.Count > 0)
-            {
-                foreach (var img in addSkuAProductoDto.Imagenes)
-                {
-                    if (img.Stream != null && img.Stream.Length > 0)
-                    {
-                        await _imagesService.SaveImageFile(img.ImageName, img.Stream, _imgFilesPath);
-                        var newSkuImagen = new SkuImagen { ImagenNombre = img.ImageName };
-                        newSku.Imagenes.Add(newSkuImagen);
-                    }
-                }
-            }
 
             producto.Skus ??= [];
             producto.Skus.Add(newSku);

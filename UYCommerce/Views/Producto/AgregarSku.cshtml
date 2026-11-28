@@ -6,52 +6,49 @@
 
 <body style="min-height:500px;padding-right:15%;">
     <div class="container">
-
         <div class="col-5 mx-auto mb-5">
             <h3 class="mt-3 text-center">@Localizer["Create a sku for"] @Model.Producto?.Nombre</h3>
             <img class="my-4 d-flex mx-auto"
                  src="~/Imagenes/Productos/@Model.Producto?.Imagenes?.First().ImagenNombre" style="height:200px;" />
 
             <form asp-action="AgregarSku" asp-controller="Producto" method="post" enctype="multipart/form-data">
-
                 <div class="mb-3">
                     <input type="number" class="form-control" value=@Model.ProductoId asp-for="ProductoId" name="ProductoId" readonly="readonly" hidden />
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">@Localizer["Sku Name"]</label>
                     <input type="text" class="form-control" asp-for="Nombre" name="Nombre" placeholder="" />
-                    <span class="text-danger" asp-validation-for="Nombre"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">@Localizer["Price"]</label>
                     <input type="number" class="form-control" asp-for="Precio" name="Precio" placeholder="Precio" />
-                    <span class="text-danger" asp-validation-for="Precio"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Stock</label>
                     <input type="number" class="form-control" asp-for="Stock" name="Stock" placeholder="Stock" />
-                    <span class="text-danger" asp-validation-for="Stock"></span>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">@Localizer["Images"]</label>
                     <input type="file" class="form-control" asp-for="Imagenes" name="Imagenes" accept="image/*" multiple />
-                    <span class="text-danger" asp-validation-for="Imagenes"></span>
                 </div>
-                @if (Model.Atributos is not null && Model.Atributos.Any())
+                @if (Model.Atributos != null && Model.Atributos.Count > 0)
                 {
-                    for (int i = 0; i < Model.Atributos.Count; i++)
+                    foreach (var atr in Model.Atributos)
                     {
-                        <h6>@Localizer["Select a"] @Model.Atributos.ElementAt(i).Nombre</h6>
-                        <select class="form-select mb-3" name="AtributoValores">
-                            @foreach (var v in Model.Atributos.ElementAt(i).Valores)
-                            {
-                                <option value="@v.Id">@v.Valor</option>
-                            }
-                        </select>
+                        if (atr.Valores != null)
+                        {
+                            <h6>@Localizer["Select a"] @atr.Nombre</h6>
+                            <select class="form-select mb-3" name="AtributoValores">
+                                @foreach (var atrValor in atr.Valores)
+                                {
+                                    <option value="@atrValor.Id">@atrValor.Valor</option>
+                                }
+                            </select>
+                        }
                     }
                 }
 
+                <div class="text-danger" asp-validation-summary="All"></div>
                 <button type="submit" class="btn btn-primary d-flex mx-auto">@Localizer["Create"]</button>
             </form>
         </div>
